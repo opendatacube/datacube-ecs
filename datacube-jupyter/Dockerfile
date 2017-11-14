@@ -1,6 +1,6 @@
 FROM geoscienceaustralia/datacube:latest
 
-RUN source $HOME/.profile
+RUN . $HOME/.profile
 
 RUN conda install jupyter
 
