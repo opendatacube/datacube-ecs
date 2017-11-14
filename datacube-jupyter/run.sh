@@ -1,6 +1,5 @@
 #!/bin/bash
 source $HOME/.profile
-conda install jupyter
 
 export CONF_FILE="$HOME/.datacube.conf"
 
@@ -13,4 +12,4 @@ echo "db_password: $DB_PASSWORD" >> $CONF_FILE
 echo "db_port: $DB_PORT" >> $CONF_FILE
 
 # Start Jupyter
-jupyter notebook --no-browser --allow-root
+jupyter notebook --no-browser --ip 127.0.0.1 --allow-root
