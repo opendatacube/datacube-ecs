@@ -50,6 +50,8 @@ conda create -n agdc python=$PYTHON_VERSION
 
 conda env update -n agdc --file .travis/environment.yaml
 
+source activate agdc
+
 conda clean --tarballs --yes
 
 pip install . --no-deps --upgrade
