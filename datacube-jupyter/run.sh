@@ -1,4 +1,5 @@
 #!/bin/bash
+conda install jupyter
 
 export CONF_FILE="~/.datacube.conf"
 
