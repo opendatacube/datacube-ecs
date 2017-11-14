@@ -9,7 +9,7 @@ services:
   datacube-jupyter:
     image: geoscienceaustralia/datacube-jupyter:latest
     ports: 
-      - 8888:8888
+      - 80:80
     env_file:
       - datacube.config
     links:

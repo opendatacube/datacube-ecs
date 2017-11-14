@@ -1,6 +1,6 @@
 FROM geoscienceaustralia/datacube:latest
 
-EXPOSE 8888
+EXPOSE 80
 
 ADD install.sh /install.sh
 
