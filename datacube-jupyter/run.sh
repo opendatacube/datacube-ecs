@@ -1,7 +1,8 @@
 #!/bin/bash
+source $HOME/.profile
 conda install jupyter
 
-export CONF_FILE="~/.datacube.conf"
+export CONF_FILE="$HOME/.datacube.conf"
 
 # Build Config file
 echo "[datacube]" > $CONF_FILE 
