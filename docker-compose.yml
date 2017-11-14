@@ -1,0 +1,14 @@
+version: '2'
+services:
+  postgres:
+    image: postgres
+    ports: 
+      - 5432:5432
+    env_file:
+      - datacube.config
+  datacube-jupyter:
+    image: geoscienceaustralia/datacube-jupyter:latest
+    env_file:
+      - datacube.config
+    links:
+      - "postgres"

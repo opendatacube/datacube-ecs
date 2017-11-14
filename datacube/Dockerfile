@@ -10,6 +10,6 @@ RUN apt-get update \
 
 RUN locale-gen en_US.UTF-8 en_US
 
-# Run user script
+# Run datacube script
 ADD ./datacube_setup.sh /tmp/datacube_setup.sh
 RUN /tmp/datacube_setup.sh $DC_TAG
