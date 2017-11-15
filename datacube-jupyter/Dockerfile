@@ -6,6 +6,7 @@ ADD install.sh /install.sh
 
 RUN /install.sh
 
+ADD configure.sh /configure.sh
 ADD run.sh /run.sh
 
-ENTRYPOINT ["/run.sh" ]
+ENTRYPOINT ["/configure.sh", "&&", "/run.sh" ]

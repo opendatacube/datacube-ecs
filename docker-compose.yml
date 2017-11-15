@@ -6,8 +6,6 @@ services:
       - 5432:5432
     env_file:
       - datacube.config
-    volumes:
-      - /opt/data:/opt/data
   datacube-jupyter:
     image: geoscienceaustralia/datacube-jupyter:latest
     ports: 
