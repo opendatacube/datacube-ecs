@@ -23,5 +23,9 @@ datacube system init
 datacube product add /opt/data/LS8_OLI_NBART/ls8_nbart_albers.json
 datacube product add /opt/data/LS8_OLI_PQ/ls8_pq_albers.json
 
+# Add to bucket in future
+wget https://raw.githubusercontent.com/GeoscienceAustralia/digitalearthau/develop/digitalearthau/config/products/ls8_scenes.yaml
+datacube product add ls8_scenes.yaml
+
 shopt -s globstar
 datacube dataset add /opt/data/**/*.nc
