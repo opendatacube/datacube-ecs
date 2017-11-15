@@ -7,7 +7,7 @@ services:
     env_file:
       - datacube.config
     volumes:
-      - datacube_data:/opt/data
+      - /opt/data:/opt/data
   datacube-jupyter:
     image: geoscienceaustralia/datacube-jupyter:latest
     ports: 
@@ -15,8 +15,6 @@ services:
     env_file:
       - datacube.config
     volumes:
-      - datacube_data:/opt/data
+      - /opt/data:/opt/data
     links:
       - "postgres"
-volumes:
-  - datacube_data:/opt/data
