@@ -15,7 +15,8 @@ TARGET_DATA="LS8_OLI_NBART/10_-44/LS8_OLI_NBART_3577_10_-44_20170816001616000000
 
 aws s3 cp s3://dea-public-data/LS8_OLI_NBART/ls8_nbart_albers.json /opt/data/LS8_OLI_NBART/
 aws s3 cp s3://dea-public-data/LS8_OLI_PQ/ls8_pq_albers.json /opt/data/LS8_OLI_PQ/
-aws s3 cp --recursive "s3://dea-public-data/$TARGET_DATA" "/opt/data/$TARGET_DATA"
+
+aws s3 cp "s3://dea-public-data/$TARGET_DATA" "/opt/data/$TARGET_DATA"
 
 datacube system init
 
