@@ -20,6 +20,7 @@ aws s3 cp --recursive "s3://dea-public-data/$TARGET_DATA" "/opt/data/$TARGET_DAT
 datacube system init
 
 datacube product add /opt/data/LS8_OLI_NBART/ls8_nbart_albers.json
-datacube product add /opt/data/ls8_pq_albers.json
+datacube product add /opt/data/LS8_OLI_PQ/ls8_pq_albers.json
 
+shopt -s globstar
 datacube dataset add /opt/data/**/*.nc
