@@ -18,11 +18,10 @@ aws s3 cp s3://dea-public-data/LS8_OLI_PQ/ls8_pq_albers.json /opt/data/LS8_OLI_P
 
 aws s3 cp "s3://dea-public-data/$TARGET_DATA" "/opt/data/$TARGET_DATA"
 
-datacube system init
+datacube system init --no-default-types --no-init-users
 
 wget https://raw.githubusercontent.com/GeoscienceAustralia/digitalearthau/develop/digitalearthau/config/metadata-types.yaml
 datacube metadata_type add metadata-types.yaml
-datacube metadata_type update --allow-unsafe metadata-types.yaml
 
 datacube product add /opt/data/LS8_OLI_NBART/ls8_nbart_albers.json
 datacube product add /opt/data/LS8_OLI_PQ/ls8_pq_albers.json
