@@ -19,4 +19,4 @@ services:
     links:
       - "postgres"
 volumes:
-  datacube_data:
+  datacube_data:/opt/data
