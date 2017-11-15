@@ -12,4 +12,4 @@ RUN apt-get update \
 ADD configure.sh /configure.sh
 ADD run.sh /run.sh
 
-ENTRYPOINT ["/configure.sh", "&&", "/run.sh" ]
+ENTRYPOINT ["/bin/sh", "-c", "/configure.sh && /run.sh" ]
