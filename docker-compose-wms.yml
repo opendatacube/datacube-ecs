@@ -1,0 +1,18 @@
+version: '2'
+services:
+  postgres:
+    image: postgres
+    ports: 
+      - 5432:5432
+    env_file:
+      - datacube.config
+  datacube-wms:
+    image: geoscienceaustralia/datacube-wms:latest
+    ports: 
+      - 80:80
+    env_file:
+      - datacube.config
+    volumes:
+      - /opt/data:/opt/data
+    links:
+      - "postgres"
