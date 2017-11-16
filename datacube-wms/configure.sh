@@ -20,6 +20,14 @@ aws s3 cp "s3://dea-public-data/$TARGET_DATA" "/opt/data/$TARGET_DATA"
 
 datacube system init --no-default-types --no-init-users
 
+export PGPASSWORD=$DB_PASSWORD
+
+psql -d $DB_DATABASE \
+     -h $DB_HOSTNAME \
+     -p $DB_PORT \
+     -U $DB_USERNAME \
+     -f $HOME/datacube-wms/create_tables.sql
+
 wget https://raw.githubusercontent.com/GeoscienceAustralia/digitalearthau/develop/digitalearthau/config/metadata-types.yaml
 datacube metadata_type add metadata-types.yaml
 
@@ -33,4 +41,4 @@ datacube product add ls8_scenes.yaml
 shopt -s globstar
 datacube dataset add /opt/data/**/*.nc
 
-python update_ranges.py
+python $HOME/datacube-wms/update_ranges.py
