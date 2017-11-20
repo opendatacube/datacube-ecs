@@ -11,7 +11,7 @@ echo "db_username: $DB_USERNAME" >> $CONF_FILE
 echo "db_password: $DB_PASSWORD" >> $CONF_FILE
 echo "db_port: $DB_PORT" >> $CONF_FILE
 
-TARGET_DATA="LS8_OLI_NBART/10_-44/LS8_OLI_NBART_3577_10_-44_20170816001616000000_v1508468655.nc"
+TARGET_DATA="LS8_OLI_NBART/12_-48/LS8_OLI_NBART_3577_12_-48_2013_v1493805443.nc"
 
 aws s3 cp s3://dea-public-data/LS8_OLI_NBART/ls8_nbart_albers.json /opt/data/LS8_OLI_NBART/
 aws s3 cp s3://dea-public-data/LS8_OLI_PQ/ls8_pq_albers.json /opt/data/LS8_OLI_PQ/
@@ -40,5 +40,10 @@ datacube product add ls8_scenes.yaml
 
 shopt -s globstar
 datacube dataset add /opt/data/**/*.nc
+
+WMS_CONFIG_FILE="$HOME/datacube-wms/datacube_wms/wms_cfg.py"
+echo 'import os' >> $WMS_CONFIG_FILE
+echo 'default_url = "http://localhost:5000/"' >> $WMS_CONFIG_FILE
+echo 'service_cfg["url"] = os.environ.get("PUBLIC_URL", default_url)' >> $WMS_CONFIG_FILE
 
 python $HOME/datacube-wms/update_ranges.py
