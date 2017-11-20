@@ -1,0 +1,28 @@
+name: agdc
+channels:
+- conda-forge
+- defaults
+- nodefaults
+dependencies:
+- pyyaml
+- sqlalchemy
+- python-dateutil
+- jsonschema
+- cachetools
+- cloudpickle >= 0.4.0 # pickle logger objects
+- numpy
+- singledispatch
+- netcdf4
+- psycopg2
+- gdal >= 2.2.0
+- xarray
+- pathlib
+- boto3 = 1.4.3
+- cython # used by netcdf4 at compile only, but needed for compliance checker to load plugins
+- pip:
+  - pypeg2
+  - rasterio
+  - datacube
+
+# [py27] is a preprocessing-selector
+# https://conda.io/docs/user-guide/tasks/build-packages/define-metadata.html#preprocessing-selectors

@@ -12,4 +12,5 @@ RUN locale-gen en_US.UTF-8 en_US
 
 # Run datacube script
 ADD ./datacube_setup.sh /tmp/datacube_setup.sh
+ADD ./environment.yaml /tmp/environment.yaml
 RUN /tmp/datacube_setup.sh $DC_TAG

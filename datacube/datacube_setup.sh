@@ -48,7 +48,7 @@ conda update --all
 
 conda create -n agdc python=$PYTHON_VERSION
 
-conda env update -n agdc --file .travis/environment.yaml
+conda env update -n agdc --file /tmp/environment.yaml
 
 source activate agdc
 
