@@ -11,12 +11,22 @@ echo "db_username: $DB_USERNAME" >> $CONF_FILE
 echo "db_password: $DB_PASSWORD" >> $CONF_FILE
 echo "db_port: $DB_PORT" >> $CONF_FILE
 
-TARGET_DATA="LS8_OLI_NBART/12_-48/LS8_OLI_NBART_3577_12_-48_2013_v1493805443.nc"
 
 aws s3 cp s3://dea-public-data/LS8_OLI_NBART/ls8_nbart_albers.json /opt/data/LS8_OLI_NBART/
 aws s3 cp s3://dea-public-data/LS8_OLI_PQ/ls8_pq_albers.json /opt/data/LS8_OLI_PQ/
 
-aws s3 cp "s3://dea-public-data/$TARGET_DATA" "/opt/data/$TARGET_DATA"
+TARGET_DATA=(
+  "LS8_OLI_NBART/12_-48/LS8_OLI_NBART_3577_12_-48_20170929234644000000_v1508468655.nc"
+  "LS8_OLI_NBART/12_-48/LS8_OLI_NBART_3577_12_-48_20170927235905000000_v1508468655.nc"
+  "LS8_OLI_NBART/12_-48/LS8_OLI_NBART_3577_12_-48_20170927235841000000_v1508468655.nc"
+  "LS8_OLI_NBART/12_-48/LS8_OLI_NBART_3577_12_-48_20170920235251000000_v1508468655.nc"
+  "LS8_OLI_NBART/12_-48/LS8_OLI_NBART_3577_12_-48_20170920235227000000_v1508468655.nc"
+)
+
+for i in "${TARGET_DATA[@]}"
+do
+	aws s3 cp "s3://dea-public-data/$i" "/opt/data/$i"
+done
 
 datacube system init --no-default-types --no-init-users
 
