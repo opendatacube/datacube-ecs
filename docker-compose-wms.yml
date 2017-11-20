@@ -12,6 +12,8 @@ services:
       - 80:80
     env_file:
       - datacube.config
+    environment:
+      - PUBLIC_URL
     volumes:
       - /opt/data:/opt/data
     links:
