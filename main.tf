@@ -4,7 +4,7 @@ terraform {
   backend "s3" {
     # This is an s3bucket you will need to create in your aws
     # space
-    bucket = "gadevs-tfstate"
+    bucket = "dea-devs-tfstate"
 
     # The key should be unique to each stack, because we want to
     # have multiple enviornments alongside each other we set
@@ -15,7 +15,7 @@ terraform {
     region = "ap-southeast-2"
 
     # This is a DynamoDB table with the Primary Key set to LockID
-    dynamodb_table = "terraform-lock"
+    dynamodb_table = "terraform"
   }
 }
 
