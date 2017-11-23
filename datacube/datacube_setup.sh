@@ -31,6 +31,7 @@ done
 # Install conda
 wget -q $MINICONDA_URL -O $HOME/miniconda.sh
 bash $HOME/miniconda.sh -b -f -p $HOME/miniconda
+rm $HOME/miniconda.sh
 
 # reload bash_profile
 source $HOME/.profile
@@ -38,11 +39,10 @@ source $HOME/.profile
 # Download copy of the repo // Could be linked instead for local dev
 git clone $DATACUBE_REPO datacube-core
 cd datacube-core
-git checkout -b $DATACUBE_TAG tags/$DATACUBE_TAG
+git checkout --depth 1 -b $DATACUBE_TAG tags/$DATACUBE_TAG
 
 conda config --set always_yes yes --set changeps1 no
 
-conda config --prepend channels conda-forge/label/dev
 conda config --prepend channels conda-forge
 conda update --all
 
@@ -50,11 +50,13 @@ conda create -n agdc python=$PYTHON_VERSION
 
 conda env update -n agdc --file /tmp/environment.yaml
 
+conda clean --all --yes
+
 source activate agdc
 
-conda clean --tarballs --yes
+conda clean --all --yes
 
-pip install . --no-deps --upgrade
+pip install . --upgrade
 
 # SET SHELL VARIABLES
 for ele in ${SHELL_CONFIGS[@]}
