@@ -12,6 +12,8 @@ terraform {
     # --backend
     key = "ecs-test-stack/"
 
+    encrypt = true
+
     region = "ap-southeast-2"
 
     # This is a DynamoDB table with the Primary Key set to LockID
@@ -57,11 +59,19 @@ module "ecs" {
   enable_jumpbox   = false
 
   # create a new ec2-key pair and add it here
-  key_name = "gadevs-u16329"
+  key_name = "lambda packaging dev"
 
   # Database Configuration
   db_admin_username = "master"
   db_admin_password = "${var.db_admin_password}"
+  db_dns_name = "database"
+  db_zone = "local"
+
+  # Service Configuration
+  service_entrypoint = "datacube-wms"
+  service_compose = "docker-compose-aws.yml"
+  # custom_script = "export PUBLIC_URL=$${module.load_balancer.alb_dns_name}"
+  health_check_path = "/health"
 }
 
 output "dns_name" {
