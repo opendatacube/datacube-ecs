@@ -55,7 +55,8 @@ source activate agdc
 
 conda clean --all --yes
 
-pip install . --upgrade
+pip install "rasterio>0.9"
+pip install . --no-deps --upgrade
 
 # SET SHELL VARIABLES
 for ele in ${SHELL_CONFIGS[@]}

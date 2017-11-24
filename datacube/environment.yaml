@@ -20,8 +20,3 @@ dependencies:
 - boto3 = 1.4.3
 - cython # used by netcdf4 at compile only, but needed for compliance checker to load plugins
 - pypeg2
-- pip:
-  - rasterio
-
-# [py27] is a preprocessing-selector
-# https://conda.io/docs/user-guide/tasks/build-packages/define-metadata.html#preprocessing-selectors
