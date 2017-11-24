@@ -43,7 +43,7 @@ variable "cluster" {
 }
 
 variable "bootstrap_compose" {
-  default = "docker-commpose-bootstrap.yml"
+  default = "docker-compose-bootstrap.yml"
 }
 
 module "ecs" {
