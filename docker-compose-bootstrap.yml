@@ -1,0 +1,8 @@
+version: '2'
+services:
+  datacube-wms-bootstrap:
+    image: geoscienceaustralia/datacube-wms-bootstrap:latest
+    env_file:
+      - datacube.config
+    volumes:
+      - /opt/data:/opt/data
