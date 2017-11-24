@@ -37,9 +37,8 @@ rm $HOME/miniconda.sh
 source $HOME/.profile
 
 # Download copy of the repo // Could be linked instead for local dev
-git clone $DATACUBE_REPO datacube-core
+git clone --depth 1 -b $DATACUBE_TAG $DATACUBE_REPO datacube-core
 cd datacube-core
-git checkout --depth 1 -b $DATACUBE_TAG tags/$DATACUBE_TAG
 
 conda config --set always_yes yes --set changeps1 no
 
