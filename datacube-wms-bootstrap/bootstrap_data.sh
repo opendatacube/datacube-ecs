@@ -1,6 +1,11 @@
 #!/bin/bash
 source $HOME/.profile
 
+set -eu
+set -x
+
+pip install awscli
+
 aws s3 cp s3://dea-public-data/LS8_OLI_NBART/ls8_nbart_albers.json /opt/data/LS8_OLI_NBART/
 aws s3 cp s3://dea-public-data/LS8_OLI_PQ/ls8_pq_albers.json /opt/data/LS8_OLI_PQ/
 
