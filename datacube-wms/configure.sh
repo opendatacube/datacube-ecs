@@ -1,6 +1,9 @@
 #!/bin/bash
 source $HOME/.profile
 
+set -eu
+set -x
+
 export CONF_FILE="$HOME/.datacube.conf"
 
 # Build Config file
