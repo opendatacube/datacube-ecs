@@ -34,11 +34,23 @@ TF_VAR_db_admin_password
   EOF
 }
 
+variable "bootstrap_task_name" {
+  default = "bootstrap-data"
+}
+
+variable "cluster" {
+  default = "datacube"
+}
+
+variable "bootstrap_compose" {
+  default = "docker-commpose-bootstrap.yml"
+}
+
 module "ecs" {
   source = "github.com/GeoscienceAustralia/terraform-ecs"
 
   # Tags to apply to the resources
-  cluster   = "datacube"
+  cluster   = "${var.cluster}"
   workspace = "dev"
   owner     = "YOUR EMAIL HERE"
 
@@ -74,6 +86,33 @@ module "ecs" {
   health_check_path = "/health"
 }
 
+
+resource "null_resource" "bootstrap" {
+  # automatically set off a deploy
+  # after this has run once, you can deploy manually by running
+  # ecs-cli compose --project-name datacube service up
+  triggers {
+    project-name           = "${var.bootstrap_task_name}"
+    cluster                = "${var.cluster}"
+    compose-file           = "${md5(file(var.bootstrap_compose))}"
+    #enable for debugging
+    #timestamp = "${timestamp()}"
+  }
+
+  provisioner "local-exec" {
+    # create and start our our ecs service
+    command = <<EOF
+ecs-cli compose \
+--project-name ${var.bootstrap_task_name} \
+--cluster ${var.cluster} \
+--file ${var.bootstrap_compose} \
+up
+EOF
+  }
+}
+
 output "dns_name" {
   value = "${module.ecs.alb_dns_name}"
 }
+
+
