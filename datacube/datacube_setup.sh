@@ -55,7 +55,7 @@ source activate agdc
 
 conda clean --all --yes
 
-pip install "rasterio>0.9"
+pip install "rasterio>=1.0a10"
 pip install . --no-deps --upgrade
 
 # SET SHELL VARIABLES
