@@ -6,7 +6,7 @@ ARG DC_TAG=datacube-1.5.3
 # Postgres is installed and configured in order to run integration tests
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install --no-install-recommends -y wget bzip2 git postgresql gcc g++
+    && apt-get install --no-install-recommends -y wget bzip2 git postgresql gcc g++ \
     && apt-get clean
 
 RUN locale-gen en_US.UTF-8 en_US
