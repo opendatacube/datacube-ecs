@@ -3,18 +3,18 @@ services:
   postgres:
     image: postgres
     ports: 
-      - 5432:5432
+      - 5432
     env_file:
-      - datacube.config
+      - datacube_local.config
   datacube-wms:
     image: geoscienceaustralia/datacube-wms:latest
     ports: 
       - 80:80
     env_file:
-      - datacube.config
+      - datacube_local.config
     environment:
       - PUBLIC_URL
     volumes:
       - /opt/data:/opt/data
     links:
-      - postgres:database.local
+      - postgres:postgres
