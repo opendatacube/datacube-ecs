@@ -14,7 +14,8 @@ dependencies:
 - singledispatch
 - netcdf4
 - psycopg2
-- gdal >= 2.2.0
+- gdal >= 2.2.3
+- rasterio >= 10.0a11
 - xarray
 - pathlib
 - boto3 = 1.4.3
