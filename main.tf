@@ -70,7 +70,7 @@ module "ecs" {
   desired_capacity = 2
   instance_type    = "t2.small"
   ecs_aws_ami      = "ami-c1a6bda2"
-  enable_jumpbox   = false
+  enable_jumpbox   = true
 
   # create a new ec2-key pair and add it here
   key_name = "lambda packaging dev"
@@ -78,6 +78,7 @@ module "ecs" {
   # Database Configuration
   db_admin_username = "master"
   db_admin_password = "${var.db_admin_password}"
+  db_name = "datacube"
   db_dns_name = "database"
   db_zone = "local"
 
