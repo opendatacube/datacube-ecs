@@ -46,8 +46,12 @@ variable "bootstrap_compose" {
   default = "docker-compose-bootstrap.yml"
 }
 
+variable "aws_region" {
+  default = "ap-southeast-2"
+}
+
 module "ecs" {
-  source = "github.com/GeoscienceAustralia/terraform-ecs"
+  source = "https://github.com/GeoscienceAustralia/terraform-ecs"
 
   # Tags to apply to the resources
   cluster   = "${var.cluster}"
@@ -65,52 +69,78 @@ module "ecs" {
   ssh_ip_address        = "0.0.0.0/0"
 
   # Server Configuration
-  max_size         = 3
+  max_size         = 6
   min_size         = 1
-  desired_capacity = 2
+  desired_capacity = 6
   instance_type    = "t2.small"
   ecs_aws_ami      = "ami-c1a6bda2"
   enable_jumpbox   = true
 
   # create a new ec2-key pair and add it here
-  key_name = "lambda packaging dev"
+  key_name = "ra-tf-dev"
 
   # Database Configuration
   db_admin_username = "master"
   db_admin_password = "${var.db_admin_password}"
-  db_name = "datacube"
   db_dns_name = "database"
   db_zone = "local"
+  db_name = "datacube"
 
   # Service Configuration
   service_entrypoint = "datacube-wms"
   service_compose = "docker-compose-aws.yml"
   # custom_script = "export PUBLIC_URL=$${module.load_balancer.alb_dns_name}"
   health_check_path = "/health"
+
 }
 
-
-resource "null_resource" "bootstrap" {
-  # automatically set off a deploy
-  # after this has run once, you can deploy manually by running
-  # ecs-cli compose --project-name datacube service up
-  triggers {
-    project-name           = "${var.bootstrap_task_name}"
-    cluster                = "${var.cluster}"
-    compose-file           = "${md5(file(var.bootstrap_compose))}"
-    #enable for debugging
-    #timestamp = "${timestamp()}"
+resource "aws_ecs_task_definition" "datacube-service-task" {
+  family = "datacube-wms-service-task"
+  container_definitions = <<EOF
+  [
+    {
+    "name": "datacube-wms",
+    "image": "geoscienceaustralia/datacube-wms:latest",
+    "memory": 1536,
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": 80
+      }
+    ],
+    "mountPoints": [
+      {
+        "containerPath": "/opt/data",
+        "sourceVolume": "volume-0"
+      }
+    ],
+    "environment": [
+      { "name": "DB_USERNAME", "value": "master" },
+      { "name": "DB_PASSWORD", "value": "${var.db_admin_password}" },
+      { "name": "DB_DATABASE", "value": "datacube" },
+      { "name": "DB_HOSTNAME", "value": "database.local" },
+      { "name": "DB_PORT", "value": "5432" },
+      { "name": "PUBLIC_URL", "value": "${module.ecs.alb_load_balancer_dns}"}
+    ]
   }
-
-  provisioner "local-exec" {
-    # create and start our our ecs service
-    command = <<EOF
-ecs-cli compose \
---project-name ${var.bootstrap_task_name} \
---cluster ${var.cluster} \
---file ${var.bootstrap_compose} \
-up
+]
 EOF
+  task_role_arn = "tf_odc_ecs_role"
+  volume {
+    name = "volume-0",
+    host_path = "/opt/data"
+  }
+}
+
+resource "aws_ecs_service" "datacube-service" {
+  name = "datacube-wms-service"
+  cluster = "${var.cluster}"
+  task_definition = "${aws_ecs_task_definition.datacube-service-task.arn}"
+  desired_count = 6
+  load_balancer {
+    target_group_arn = "${module.ecs.alb_target_group_arn}"
+    container_name = "datacube-wms"
+    container_port = "80"
   }
 }
 
