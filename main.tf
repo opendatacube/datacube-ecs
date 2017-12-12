@@ -47,7 +47,7 @@ variable "bootstrap_compose" {
 }
 
 module "ecs" {
-  source = "github.com/GeoscienceAustralia/terraform-ecs"
+  source = "github.com/GeoscienceAustralia/terraform-ecs?ref=v0.1.0"
 
   # Tags to apply to the resources
   cluster   = "${var.cluster}"
@@ -78,25 +78,26 @@ module "ecs" {
   # Database Configuration
   db_admin_username = "master"
   db_admin_password = "${var.db_admin_password}"
-  db_dns_name = "database"
-  db_zone = "local"
+  db_dns_name       = "database"
+  db_zone           = "local"
 
   # Service Configuration
   service_entrypoint = "datacube-wms"
-  service_compose = "docker-compose-aws.yml"
+  service_compose    = "docker-compose-aws.yml"
+
   # custom_script = "export PUBLIC_URL=$${module.load_balancer.alb_dns_name}"
   health_check_path = "/health"
 }
-
 
 resource "null_resource" "bootstrap" {
   # automatically set off a deploy
   # after this has run once, you can deploy manually by running
   # ecs-cli compose --project-name datacube service up
   triggers {
-    project-name           = "${var.bootstrap_task_name}"
-    cluster                = "${var.cluster}"
-    compose-file           = "${md5(file(var.bootstrap_compose))}"
+    project-name = "${var.bootstrap_task_name}"
+    cluster      = "${var.cluster}"
+    compose-file = "${md5(file(var.bootstrap_compose))}"
+
     #enable for debugging
     #timestamp = "${timestamp()}"
   }
@@ -116,5 +117,3 @@ EOF
 output "dns_name" {
   value = "${module.ecs.alb_dns_name}"
 }
-
-
