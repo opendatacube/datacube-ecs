@@ -53,6 +53,8 @@ variable "aws_region" {
 module "ecs" {
   source = "../terraform-ecs"
 
+  aws_region = "${var.aws_region}"
+
   # Tags to apply to the resources
   cluster   = "${var.cluster}"
   workspace = "dev"
@@ -86,97 +88,63 @@ module "ecs" {
   db_name = "datacube"
 
   # Service Configuration
-  service_name = "datacube-wms"
-  # service_entrypoint = "datacube-wms"
+  service_entrypoint = "datacube-wms"
   # service_compose = "docker-compose-aws.yml"
   # custom_script = "export PUBLIC_URL=$${module.load_balancer.alb_dns_name}"
-  # health_check_path = "/health"
-
-  container_image = "geoscienceaustralia/datacube-wms:latest"
-  task_family = "datacube-task-family"
-  task_volume = {
-    name = "volume-0",
-    host_path = "/opt/data/"
-  }
-  task_environment_vars = [
-      { "name"  = "DB_USERNAME"
-        "value" = "master"
-      },
-      { "name"  = "DB_PASSWORD"
-        "value" = "${var.db_admin_password}"
-      },
-      { "name"  = "DB_DATABASE"
-        "value" = "datacube"
-      },
-      { "name"  = "DB_HOSTNAME"
-        "value" = "database.local"
-      },
-      { "name"  = "DB_PORT"
-        "value" = "5432"
-      },
-      { "name"  = "PUBLIC_URL"
-        "value" = "${module.ecs.alb_dns_name}"
-      }
-  ]
-
-  task_mount_points = [
-    {
-      "container_path" = "/opt/data/"
-      "source_volume"  = "volume-0"
-    }
-  ]
+  health_check_path = "/health"
 
 }
 
-# resource "aws_ecs_task_definition" "datacube-service-task" {
-#   family = "datacube-wms-service-task"
-#   container_definitions = <<EOF
-#   [
-#     {
-#     "name": "datacube-wms",
-#     "image": "geoscienceaustralia/datacube-wms:latest",
-#     "memory": 1536,
-#     "essential": true,
-#     "portMappings": [
-#       {
-#         "containerPort": 80
-#       }
-#     ],
-#     "mountPoints": [
-#       {
-#         "containerPath": "/opt/data",
-#         "sourceVolume": "volume-0"
-#       }
-#     ],
-#     "environment": [
-#       { "name": "DB_USERNAME", "value": "master" },
-#       { "name": "DB_PASSWORD", "value": "${var.db_admin_password}" },
-#       { "name": "DB_DATABASE", "value": "datacube" },
-#       { "name": "DB_HOSTNAME", "value": "database.local" },
-#       { "name": "DB_PORT", "value": "5432" },
-#       { "name": "PUBLIC_URL", "value": "${module.ecs.alb_load_balancer_dns}"}
-#     ]
-#   }
-# ]
-# EOF
-#   task_role_arn = "tf_odc_ecs_role"
-#   volume {
-#     name = "volume-0",
-#     host_path = "/opt/data"
-#   }
-# }
+resource "aws_ecs_task_definition" "datacube-service-task" {
+  family = "datacube-wms-service-task"
+  container_definitions = <<EOF
+  [
+    {
+    "name": "datacube-wms",
+    "image": "geoscienceaustralia/datacube-wms:latest",
+    "memory": 1024,
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": 80
+      }
+    ],
+    "mountPoints": [
+      {
+        "containerPath": "/opt/data",
+        "sourceVolume": "volume-0"
+      }
+    ],
+    "environment": [
+      { "name": "DB_USERNAME", "value": "master" },
+      { "name": "DB_PASSWORD", "value": "${var.db_admin_password}" },
+      { "name": "DB_DATABASE", "value": "datacube" },
+      { "name": "DB_HOSTNAME", "value": "database.local" },
+      { "name": "DB_PORT", "value": "5432" },
+      { "name": "PUBLIC_URL", "value": "${module.ecs.alb_dns_name}"}
+    ],
+    "entryPoint": []
+  }
+]
+EOF
+  task_role_arn = "${module.ecs.ecs_policy_role_arn}"
+  volume {
+    name = "volume-0",
+    host_path = "/opt/data"
+  }
+}
 
-# resource "aws_ecs_service" "datacube-service" {
-#   name = "datacube-wms-service"
-#   cluster = "${var.cluster}"
-#   task_definition = "${aws_ecs_task_definition.datacube-service-task.arn}"
-#   desired_count = 6
-#   load_balancer {
-#     target_group_arn = "${module.ecs.alb_target_group_arn}"
-#     container_name = "datacube-wms"
-#     container_port = "80"
-#   }
-# }
+resource "aws_ecs_service" "datacube-service" {
+  name = "datacube-wms-service"
+  cluster = "${var.cluster}"
+  task_definition = "${aws_ecs_task_definition.datacube-service-task.arn}"
+  desired_count = 12
+  load_balancer {
+    target_group_arn = "${module.ecs.alb_target_group_arn}"
+    container_name = "datacube-wms"
+    container_port = "80"
+  }
+}
 
 output "dns_name" {
   value = "${module.ecs.alb_dns_name}"
