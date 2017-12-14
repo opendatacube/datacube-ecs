@@ -144,6 +144,8 @@ resource "aws_ecs_service" "datacube-service" {
     container_name = "datacube-wms"
     container_port = "80"
   }
+  iam_role = "${module.ecs.ecs_policy_role_arn}"
+
 }
 
 output "dns_name" {
