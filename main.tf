@@ -122,7 +122,7 @@ resource "aws_ecs_task_definition" "datacube-service-task" {
       { "name": "DB_DATABASE", "value": "datacube" },
       { "name": "DB_HOSTNAME", "value": "database.local" },
       { "name": "DB_PORT", "value": "5432" },
-      { "name": "PUBLIC_URL", "value": "${module.ecs.alb_load_balancer_dns}"}
+      { "name": "PUBLIC_URL", "value": "${module.ecs.alb_dns_name}"}
     ]
   }
 ]
