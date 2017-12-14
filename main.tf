@@ -51,7 +51,7 @@ variable "aws_region" {
 }
 
 module "ecs" {
-  source = "../terraform-ecs"
+  source = "github.com/GeoscienceAustralia/terraform-ecs?ref=v0.1.0"
 
   aws_region = "${var.aws_region}"
 
@@ -88,6 +88,7 @@ module "ecs" {
   db_name = "datacube"
 
   # Service Configuration
+  service_name = "datacube-wms"
   service_entrypoint = "datacube-wms"
   # service_compose = "docker-compose-aws.yml"
   # custom_script = "export PUBLIC_URL=$${module.load_balancer.alb_dns_name}"
@@ -102,7 +103,7 @@ resource "aws_ecs_task_definition" "datacube-service-task" {
     {
     "name": "datacube-wms",
     "image": "geoscienceaustralia/datacube-wms:latest",
-    "memory": 1024,
+    "memory": 1536,
     "essential": true,
     "portMappings": [
       {
@@ -121,13 +122,12 @@ resource "aws_ecs_task_definition" "datacube-service-task" {
       { "name": "DB_DATABASE", "value": "datacube" },
       { "name": "DB_HOSTNAME", "value": "database.local" },
       { "name": "DB_PORT", "value": "5432" },
-      { "name": "PUBLIC_URL", "value": "${module.ecs.alb_dns_name}"}
-    ],
-    "entryPoint": []
+      { "name": "PUBLIC_URL", "value": "${module.ecs.alb_load_balancer_dns}"}
+    ]
   }
 ]
 EOF
-  task_role_arn = "${module.ecs.ecs_policy_role_arn}"
+  task_role_arn = "tf_odc_ecs_role"
   volume {
     name = "volume-0",
     host_path = "/opt/data"
@@ -138,18 +138,10 @@ resource "aws_ecs_service" "datacube-service" {
   name = "datacube-wms-service"
   cluster = "${var.cluster}"
   task_definition = "${aws_ecs_task_definition.datacube-service-task.arn}"
-  desired_count = 12
+  desired_count = 6
   load_balancer {
     target_group_arn = "${module.ecs.alb_target_group_arn}"
     container_name = "datacube-wms"
     container_port = "80"
   }
-  iam_role = "${module.ecs.ecs_policy_role_arn}"
-
 }
-
-output "dns_name" {
-  value = "${module.ecs.alb_dns_name}"
-}
-
-
