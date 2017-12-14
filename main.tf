@@ -89,9 +89,7 @@ module "ecs" {
 
   # Service Configuration
   service_name = "datacube-wms"
-  service_entrypoint = "datacube-wms"
-  # service_compose = "docker-compose-aws.yml"
-  # custom_script = "export PUBLIC_URL=$${module.load_balancer.alb_dns_name}"
+  use_ecs_cli_compose = false
   health_check_path = "/health"
 
 }
