@@ -127,7 +127,7 @@ resource "aws_ecs_task_definition" "datacube-service-task" {
   }
 ]
 EOF
-  task_role_arn = "tf_odc_ecs_role"
+  task_role_arn = "${module.ecs.ecs_policy_role_arn}"
   volume {
     name = "volume-0",
     host_path = "/opt/data"
