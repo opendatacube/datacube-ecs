@@ -1,28 +1,28 @@
 terraform {
   required_version = ">= 0.10.0"
 
-  backend "s3" {
-    # This is an s3bucket you will need to create in your aws
-    # space
-    bucket = "dea-devs-tfstate"
+  # backend "s3" {
+  #   # This is an s3bucket you will need to create in your aws
+  #   # space
+  #   bucket = "dea-devs-tfstate"
 
-    # The key should be unique to each stack, because we want to
-    # have multiple enviornments alongside each other we set
-    # this dynamically in the bitbucket-pipelines.yml with the
-    # --backend
-    key = "ecs-test-stack/"
+  #   # The key should be unique to each stack, because we want to
+  #   # have multiple enviornments alongside each other we set
+  #   # this dynamically in the bitbucket-pipelines.yml with the
+  #   # --backend
+  #   key = "ecs-test-stack-southeast-1/"
 
-    encrypt = true
+  #   encrypt = true
 
-    region = "ap-southeast-2"
+  #   region = "ap-southeast-1"
 
-    # This is a DynamoDB table with the Primary Key set to LockID
-    dynamodb_table = "terraform"
-  }
+  #   # This is a DynamoDB table with the Primary Key set to LockID
+  #   dynamodb_table = "terraform"
+  # }
 }
 
 provider "aws" {
-  region = "ap-southeast-2"
+  region = "us-east-2"
 }
 
 variable "db_admin_password" {
@@ -47,26 +47,30 @@ variable "bootstrap_compose" {
 }
 
 variable "aws_region" {
-  default = "ap-southeast-2"
+  default = "us-east-2"
+}
+
+variable "workspace" {
+  default = "dev-us-east"
 }
 
 module "ecs" {
-  source = "github.com/GeoscienceAustralia/terraform-ecs?ref=v0.1.0"
+  source = "../terraform-ecs"
 
   aws_region = "${var.aws_region}"
 
   # Tags to apply to the resources
   cluster   = "${var.cluster}"
-  workspace = "dev"
+  workspace = "${var.workspace}"
   owner     = "YOUR EMAIL HERE"
 
   timeout = 6
 
   vpc_cidr              = "10.0.0.0/16"
-  public_subnet_cidrs   = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24"]
-  private_subnet_cidrs  = ["10.0.10.0/24", "10.0.11.0/24", "10.0.12.0/24"]
-  database_subnet_cidrs = ["10.0.20.0/24", "10.0.21.0/24", "10.0.22.0/24"]
-  availability_zones    = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
+  public_subnet_cidrs   = ["10.0.0.0/24", "10.0.1.0/24"]
+  private_subnet_cidrs  = ["10.0.10.0/24", "10.0.11.0/24"]
+  database_subnet_cidrs = ["10.0.20.0/24", "10.0.21.0/24"]
+  availability_zones    = ["us-east-2a", "us-east-2b"]
   ssh_ip_address        = "0.0.0.0/0"
 
   # Server Configuration
@@ -74,7 +78,7 @@ module "ecs" {
   min_size         = 1
   desired_capacity = 1
   instance_type    = "m4.xlarge"
-  ecs_aws_ami      = "ami-c1a6bda2"
+  ecs_aws_ami      = "ami-58f5db3d"
   enable_jumpbox   = true
 
   # create a new ec2-key pair and add it here
@@ -92,54 +96,110 @@ module "ecs" {
   use_ecs_cli_compose = false
   health_check_path = "/health"
 
+  alb_security_group_id = "${list(module.alb_test.alb_security_group_id, module.alb_test_2.alb_security_group_id)}"
 }
 
-resource "aws_ecs_task_definition" "datacube-service-task" {
-  family = "datacube-wms-service-task"
-  container_definitions = <<EOF
-  [
-    {
-    "name": "datacube-wms",
-    "image": "geoscienceaustralia/datacube-wms:latest",
-    "memory": 1536,
-    "essential": true,
-    "portMappings": [
-      {
-        "containerPort": 80
-      }
-    ],
-    "mountPoints": [
-      {
-        "containerPath": "/opt/data",
-        "sourceVolume": "volume-0"
-      }
-    ],
-    "environment": [
-      { "name": "DB_USERNAME", "value": "master" },
-      { "name": "DB_PASSWORD", "value": "${var.db_admin_password}" },
-      { "name": "DB_DATABASE", "value": "datacube" },
-      { "name": "DB_HOSTNAME", "value": "database.local" },
-      { "name": "DB_PORT", "value": "5432" },
-      { "name": "PUBLIC_URL", "value": "${module.ecs.alb_dns_name}"}
-    ]
-  }
-]
-EOF
-  task_role_arn = "${module.ecs.ecs_policy_role_arn}"
-  volume {
-    name = "volume-0",
-    host_path = "/opt/data"
-  }
-}
+module "prod_service" {
+  source = "./modules/ecs"
 
-resource "aws_ecs_service" "datacube-service" {
-  name = "datacube-wms-service"
+  name    = "datacube-wms"
   cluster = "${var.cluster}"
-  task_definition = "${aws_ecs_task_definition.datacube-service-task.arn}"
-  desired_count = 6
-  load_balancer {
-    target_group_arn = "${module.ecs.alb_target_group_arn}"
-    container_name = "datacube-wms"
-    container_port = "80"
-  }
+  family  = "datacube-wms-service-task"
+
+  desired_count = 3
+
+  task_role_arn    = "${module.ecs.ecs_policy_role_arn}"
+  target_group_arn = "${module.alb_test.alb_target_group_arn}"
+  public_url       = "${module.alb_test.alb_dns_name}"
+
+  db_admin_password = "${var.db_admin_password}"
 }
+
+module "test_service" {
+  source = "./modules/ecs"
+
+  name    = "datacube-wms-2"
+  cluster = "${var.cluster}"
+  family  = "datacube-wms-service-task-2"
+
+  desired_count = 3
+
+  task_role_arn    = "${module.ecs.ecs_policy_role_arn}"
+  target_group_arn = "${module.alb_test_2.alb_target_group_arn}"
+  public_url       = "${module.alb_test_2.alb_dns_name}"
+
+  db_admin_password = "${var.db_admin_password}"
+}
+
+module "alb_test" {
+  source = "./modules/alb"
+
+  workspace         = "${var.workspace}"
+  cluster           = "${var.cluster}"
+  service_name      = "datacube-wms"
+  vpc_id            = "${module.ecs.vpc_id}"
+  public_subnet_ids = "${module.ecs.public_subnet_ids}"
+  alb_name          = "alb-test-1"
+}
+
+module "alb_test_2" {
+  source = "./modules/alb"
+
+  workspace         = "${var.workspace}"
+  cluster           = "${var.cluster}"
+  service_name      = "datacube-wms-2"
+  vpc_id            = "${module.ecs.vpc_id}"
+  public_subnet_ids = "${module.ecs.public_subnet_ids}"
+  alb_name          = "alb-test-2"
+}
+
+
+# resource "aws_ecs_task_definition" "datacube-service-task" {
+#   family = "datacube-wms-service-task"
+#   container_definitions = <<EOF
+#   [
+#     {
+#     "name": "datacube-wms",
+#     "image": "geoscienceaustralia/datacube-wms:latest",
+#     "memory": 1024,
+#     "essential": true,
+#     "portMappings": [
+#       {
+#         "containerPort": 80
+#       }
+#     ],
+#     "mountPoints": [
+#       {
+#         "containerPath": "/opt/data",
+#         "sourceVolume": "volume-0"
+#       }
+#     ],
+#     "environment": [
+#       { "name": "DB_USERNAME", "value": "master" },
+#       { "name": "DB_PASSWORD", "value": "${var.db_admin_password}" },
+#       { "name": "DB_DATABASE", "value": "datacube" },
+#       { "name": "DB_HOSTNAME", "value": "database.local" },
+#       { "name": "DB_PORT", "value": "5432" },
+#       { "name": "PUBLIC_URL", "value": "${module.ecs.alb_dns_name}"}
+#     ]
+#   }
+# ]
+# EOF
+#   task_role_arn = "${module.ecs.ecs_policy_role_arn}"
+#   volume {
+#     name = "volume-0",
+#     host_path = "/opt/data"
+#   }
+# }
+
+# resource "aws_ecs_service" "datacube-service" {
+#   name = "datacube-wms-service"
+#   cluster = "${var.cluster}"
+#   task_definition = "${aws_ecs_task_definition.datacube-service-task.arn}"
+#   desired_count = 6
+#   load_balancer {
+#     target_group_arn = "${module.ecs.alb_target_group_arn}"
+#     container_name = "datacube-wms"
+#     container_port = "80"
+#   }
+# }
