@@ -23,6 +23,8 @@ terraform {
 
 # ===============
 # services
+
+
 module "prod_service" {
   source = "../terraform-ecs/modules/ecs"
 
@@ -34,9 +36,38 @@ module "prod_service" {
 
   task_role_arn    = "${module.ecs_policy.role_arn}"
   target_group_arn = "${module.alb_test.alb_target_group}"
-  public_url       = "${module.alb_test.alb_dns_name}"
 
-  db_admin_password = "${var.db_admin_password}"
+  # // container def
+  container_definitions = <<EOF
+  [
+    {
+    "name": "datacube-wms",
+    "image": "geoscienceaustralia/datacube-wms:latest",
+    "memory": 1024,
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": ${var.container_port}
+      }
+    ],
+    "mountPoints": [
+      {
+        "containerPath": "/opt/data",
+        "sourceVolume": "volume-0"
+      }
+    ],
+    "environment": [
+      { "name": "DB_USERNAME", "value": "${var.db_admin_username}" },
+      { "name": "DB_PASSWORD", "value": "${var.db_admin_password}" },
+      { "name": "DB_DATABASE", "value": "datacube" },
+      { "name": "DB_HOSTNAME", "value": "${var.db_zone}.${var.db_dns_name}" },
+      { "name": "DB_PORT"    , "value": "5432" },
+      { "name": "PUBLIC_URL" , "value": "${module.alb_test.alb_dns_name}"}
+    ]
+  }
+]
+EOF
+
 }
 
 module "test_service" {
@@ -50,9 +81,36 @@ module "test_service" {
 
   task_role_arn    = "${module.ecs_policy.role_arn}"
   target_group_arn = "${module.alb_test_2.alb_target_group}"
-  public_url       = "${module.alb_test_2.alb_dns_name}"
-
-  db_admin_password = "${var.db_admin_password}"
+  
+  container_definitions = <<EOF
+  [
+    {
+    "name": "datacube-wms",
+    "image": "geoscienceaustralia/datacube-wms:latest",
+    "memory": 1024,
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": ${var.container_port}
+      }
+    ],
+    "mountPoints": [
+      {
+        "containerPath": "/opt/data",
+        "sourceVolume": "volume-0"
+      }
+    ],
+    "environment": [
+      { "name": "DB_USERNAME", "value": "${var.db_admin_username}" },
+      { "name": "DB_PASSWORD", "value": "${var.db_admin_password}" },
+      { "name": "DB_DATABASE", "value": "datacube" },
+      { "name": "DB_HOSTNAME", "value": "${var.db_zone}.${var.db_dns_name}" },
+      { "name": "DB_PORT"    , "value": "5432" },
+      { "name": "PUBLIC_URL" , "value": "${module.alb_test.alb_dns_name}"}
+    ]
+  }
+]
+EOF
 }
 
 # ==============

@@ -58,6 +58,11 @@ variable "container_port" {
   default = 80
 }
 
+# variable "container" {
+#   type = "string"
+#   default = "geoscienceaustralia/datacube-wms:latest"
+#   description = "Docker container address. e.g. geoscienceaustralia/datacube:latest"
+# }
 
 # ==================
 # Services and Tasks
