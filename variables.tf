@@ -1,22 +1,5 @@
-variable "db_admin_password" {
-  description = <<EOF
-The password for our database, 
-to hide this prompt create an environment variable with the name:
-
-TF_VAR_db_admin_password
-  EOF
-}
-
-variable "bootstrap_task_name" {
-  default = "bootstrap-data"
-}
-
 variable "cluster" {
   default = "datacube"
-}
-
-variable "bootstrap_compose" {
-  default = "docker-compose-bootstrap.yml"
 }
 
 variable "aws_region" {
@@ -73,4 +56,44 @@ variable "enable_jumpbox" {
 # Containers
 variable "container_port" {
   default = 80
+}
+
+
+# ==================
+# Services and Tasks
+variable "task_desired_count" {
+  default = 3
+}
+
+# ==================
+# database
+variable "db_admin_password" {
+  description = <<EOF
+The password for our database, 
+to hide this prompt create an environment variable with the name:
+
+TF_VAR_db_admin_password
+  EOF
+}
+
+variable "db_admin_username" {
+  type = "string"
+  description = "admin username for RDS instance"
+  default = "master"
+}
+
+variable "db_dns_name" {
+  type = "string"
+  default = "local"
+}
+
+variable "db_zone" {
+  type = "string"
+  default = "database"
+}
+
+variable "db_name" {
+  type = "string"
+  default = "datacube"
+  description = "name of first database in RDS"
 }

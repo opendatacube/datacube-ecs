@@ -21,6 +21,74 @@ terraform {
   # }
 }
 
+# ===============
+# services
+module "prod_service" {
+  source = "../terraform-ecs/modules/ecs"
+
+  name    = "datacube-wms"
+  cluster = "${var.cluster}"
+  family  = "datacube-wms-service-task"
+
+  desired_count = "${var.task_desired_count}"
+
+  task_role_arn    = "${module.ecs_policy.role_arn}"
+  target_group_arn = "${module.alb_test.alb_target_group}"
+  public_url       = "${module.alb_test.alb_dns_name}"
+
+  db_admin_password = "${var.db_admin_password}"
+}
+
+module "test_service" {
+  source = "../terraform-ecs/modules/ecs"
+
+  name    = "datacube-wms-2"
+  cluster = "${var.cluster}"
+  family  = "datacube-wms-service-task-2"
+
+  desired_count = "${var.task_desired_count}"
+
+  task_role_arn    = "${module.ecs_policy.role_arn}"
+  target_group_arn = "${module.alb_test_2.alb_target_group}"
+  public_url       = "${module.alb_test_2.alb_dns_name}"
+
+  db_admin_password = "${var.db_admin_password}"
+}
+
+# ==============
+# Load balancers
+
+module "alb_test" {
+  source = "../terraform-ecs/modules/load_balancer"
+
+  workspace         = "${var.workspace}"
+  cluster           = "${var.cluster}"
+  owner             = "${var.owner}"
+  service_name      = "datacube-wms"
+  vpc_id            = "${module.vpc.id}"
+  public_subnet_ids = "${module.public.public_subnet_ids}"
+  alb_name          = "alb-test-1"
+  container_port    = "${var.container_port}"
+  health_check_path = "/health"
+}
+
+module "alb_test_2" {
+  source = "../terraform-ecs/modules/load_balancer"
+
+  workspace         = "${var.workspace}"
+  cluster           = "${var.cluster}"
+  owner             = "${var.owner}"
+  service_name      = "datacube-wms-2"
+  vpc_id            = "${module.vpc.id}"
+  public_subnet_ids = "${module.public.public_subnet_ids}"
+  alb_name          = "alb-test-2"
+  container_port    = "${var.container_port}"
+  health_check_path = "/health"
+}
+
+# ==============
+# Ancilliary
+
 provider "aws" {
   region = "us-east-2"
 }
@@ -73,11 +141,11 @@ module "database" {
   database_subnet_cidrs = "${var.database_subnet_cidrs}"
 
   # DB params
-  db_admin_username = "master"
+  db_admin_username = "${var.db_admin_username}"
   db_admin_password = "${var.db_admin_password}"
-  dns_name = "local"
-  zone = "database"
-  db_name = "datacube"
+  dns_name          = "${var.db_dns_name}"
+  zone              = "${var.db_zone}"
+  db_name           = "${var.db_name}"
 
   # Tags
   owner     = "${var.owner}"
@@ -131,103 +199,3 @@ module "ecs_policy" {
   cluster   = "${var.cluster}"
   workspace = "${var.workspace}"
 }
-
-module "prod_service" {
-  source = "../terraform-ecs/modules/ecs"
-
-  name    = "datacube-wms"
-  cluster = "${var.cluster}"
-  family  = "datacube-wms-service-task"
-
-  desired_count = 3
-
-  task_role_arn    = "${module.ecs_policy.role_arn}"
-  target_group_arn = "${module.alb_test.alb_target_group}"
-  public_url       = "${module.alb_test.alb_dns_name}"
-
-  db_admin_password = "${var.db_admin_password}"
-}
-
-module "test_service" {
-  source = "../terraform-ecs/modules/ecs"
-
-  name    = "datacube-wms-2"
-  cluster = "${var.cluster}"
-  family  = "datacube-wms-service-task-2"
-
-  desired_count = 3
-
-  task_role_arn    = "${module.ecs_policy.role_arn}"
-  target_group_arn = "${module.alb_test_2.alb_target_group}"
-  public_url       = "${module.alb_test_2.alb_dns_name}"
-
-  db_admin_password = "${var.db_admin_password}"
-}
-
-module "alb_test" {
-  source = "../terraform-ecs/modules/load_balancer"
-
-  workspace         = "${var.workspace}"
-  cluster           = "${var.cluster}"
-  owner             = "${var.owner}"
-  service_name      = "datacube-wms"
-  vpc_id            = "${module.vpc.id}"
-  public_subnet_ids = "${module.public.public_subnet_ids}"
-  alb_name          = "alb-test-1"
-  container_port    = "${var.container_port}"
-  health_check_path = "/health"
-}
-
-module "alb_test_2" {
-  source = "../terraform-ecs/modules/load_balancer"
-
-  workspace         = "${var.workspace}"
-  cluster           = "${var.cluster}"
-  owner             = "${var.owner}"
-  service_name      = "datacube-wms-2"
-  vpc_id            = "${module.vpc.id}"
-  public_subnet_ids = "${module.public.public_subnet_ids}"
-  alb_name          = "alb-test-2"
-  container_port    = "${var.container_port}"
-  health_check_path = "/health"
-}
-
-data "aws_ami" "node_ami" {
-  most_recent = true
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  filter {
-    name   = "name"
-    values = ["amzn-ami-*-amazon-ecs-optimized"]
-  }
-
-  owners = ["amazon"]
-}
-
-data "aws_ami" "jumpbox_ami" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
-}
-
-#--------------------------------------------------------------
-# Account ID
-#--------------------------------------------------------------
-
-# Get the AWS account ID so we can use it in IAM policies
-
-data "aws_caller_identity" "current" {}
