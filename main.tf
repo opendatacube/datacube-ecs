@@ -1,24 +1,24 @@
 terraform {
   required_version = ">= 0.10.0"
 
-  # backend "s3" {
-  #   # This is an s3bucket you will need to create in your aws
-  #   # space
-  #   bucket = "dea-devs-tfstate"
+  backend "s3" {
+    # This is an s3bucket you will need to create in your aws
+    # space
+    bucket = "dea-devs-tfstate"
 
-  #   # The key should be unique to each stack, because we want to
-  #   # have multiple enviornments alongside each other we set
-  #   # this dynamically in the bitbucket-pipelines.yml with the
-  #   # --backend
-  #   key = "ecs-test-stack-southeast-1/"
+    # The key should be unique to each stack, because we want to
+    # have multiple enviornments alongside each other we set
+    # this dynamically in the bitbucket-pipelines.yml with the
+    # --backend
+    key = "ecs-test-stack-southeast-1/"
 
-  #   encrypt = true
+    encrypt = true
 
-  #   region = "ap-southeast-1"
+    region = "ap-southeast-1"
 
-  #   # This is a DynamoDB table with the Primary Key set to LockID
-  #   dynamodb_table = "terraform"
-  # }
+    # This is a DynamoDB table with the Primary Key set to LockID
+    dynamodb_table = "terraform"
+  }
 }
 
 # ===============
@@ -60,7 +60,7 @@ module "prod_service" {
       { "name": "DB_USERNAME", "value": "${var.db_admin_username}" },
       { "name": "DB_PASSWORD", "value": "${var.db_admin_password}" },
       { "name": "DB_DATABASE", "value": "datacube" },
-      { "name": "DB_HOSTNAME", "value": "${var.db_zone}.${var.db_dns_name}" },
+      { "name": "DB_HOSTNAME", "value": "${var.db_dns_name}.${var.db_zone}" },
       { "name": "DB_PORT"    , "value": "5432" },
       { "name": "PUBLIC_URL" , "value": "${module.alb_test.alb_dns_name}"}
     ]
@@ -86,7 +86,7 @@ module "test_service" {
   [
     {
     "name": "datacube-wms",
-    "image": "geoscienceaustralia/datacube-wms:latest",
+    "image": "geoscienceaustralia/datacube-wms:fc_test",
     "memory": 1024,
     "essential": true,
     "portMappings": [
@@ -104,7 +104,7 @@ module "test_service" {
       { "name": "DB_USERNAME", "value": "${var.db_admin_username}" },
       { "name": "DB_PASSWORD", "value": "${var.db_admin_password}" },
       { "name": "DB_DATABASE", "value": "datacube" },
-      { "name": "DB_HOSTNAME", "value": "${var.db_zone}.${var.db_dns_name}" },
+      { "name": "DB_HOSTNAME", "value": "${var.db_dns_name}.${var.db_zone}" },
       { "name": "DB_PORT"    , "value": "5432" },
       { "name": "PUBLIC_URL" , "value": "${module.alb_test.alb_dns_name}"}
     ]
@@ -148,7 +148,7 @@ module "alb_test_2" {
 # Ancilliary
 
 provider "aws" {
-  region = "us-east-2"
+  region = "ap-southeast-2"
 }
 
 resource "aws_ecs_cluster" "cluster" {
@@ -180,7 +180,7 @@ module "public" {
   ssh_ip_address = "${var.ssh_ip_address}"
   key_name       = "${var.key_name}"
   jumpbox_ami    = "${data.aws_ami.jumpbox_ami.image_id}"
-  enable_jumpbox = "${var.enable_jumpbox}"
+  enable_jumpbox = true
 
   # Tags
   owner     = "${var.owner}"

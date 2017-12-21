@@ -3,11 +3,11 @@ variable "cluster" {
 }
 
 variable "aws_region" {
-  default = "us-east-2"
+  default = "ap-southeast-2"
 }
 
 variable "workspace" {
-  default = "dev-us-east"
+  default = "dev"
 }
 
 variable "owner" {
@@ -18,12 +18,12 @@ variable "owner" {
 # Networking
 variable "availability_zones" {
   type = "list"
-  default = ["us-east-2a", "us-east-2b"]
+  default = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
 }
 
 variable "public_subnet_cidrs" {
   type = "list"
-  default = ["10.0.0.0/24", "10.0.1.0/24"]
+  default = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24"]
 }
 
 variable "vpc_cidr" {
@@ -31,11 +31,11 @@ variable "vpc_cidr" {
 }
 
 variable "private_subnet_cidrs" {
-  default = ["10.0.10.0/24", "10.0.11.0/24"]
+  default = ["10.0.10.0/24", "10.0.11.0/24", "10.0.12.0/24"]
 }
 
 variable "database_subnet_cidrs" {
-  default = ["10.0.20.0/24", "10.0.21.0/24"]
+  default = ["10.0.20.0/24", "10.0.21.0/24", "10.0.22.0/24"]
 }
 
 variable "ssh_ip_address" {
