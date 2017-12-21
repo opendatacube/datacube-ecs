@@ -10,11 +10,11 @@ terraform {
     # have multiple enviornments alongside each other we set
     # this dynamically in the bitbucket-pipelines.yml with the
     # --backend
-    key = "ecs-test-stack-southeast-1/"
+    key = "ecs-test-stack-southeast-2/"
 
     encrypt = true
 
-    region = "ap-southeast-1"
+    region = "ap-southeast-2"
 
     # This is a DynamoDB table with the Primary Key set to LockID
     dynamodb_table = "terraform"
