@@ -1,5 +1,5 @@
 variable "cluster" {
-  default = "datacube"
+  default = "datacube-wms"
 }
 
 variable "aws_region" {
@@ -11,7 +11,7 @@ variable "workspace" {
 }
 
 variable "owner" {
-  default = "TERRAFORM"
+  default = "DEA"
 }
 
 # =============================

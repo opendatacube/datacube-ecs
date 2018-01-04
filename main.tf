@@ -21,6 +21,22 @@ terraform {
   }
 }
 
+
+# ===============
+# containers
+data "docker_registry_image" "fc_test" {
+  name = "geoscienceaustralia/datacube-wms:fc_test"
+}
+
+locals {
+  split_list = "${split(":", data.docker_registry_image.fc_test.name)}"
+  image_name = "${element(local.split_list, 0)}"
+  # sha_list   = "${split(":", data.docker_registry_image.fc_test.sha256_digest)}"
+  # clean_sha  = "${element(local.sha_list, 1)}"
+  image_name_digest = "${list(local.image_name, data.docker_registry_image.fc_test.sha256_digest)}"
+  final_name = "${join("@", local.image_name_digest)}"
+}
+
 # ===============
 # services
 
@@ -72,10 +88,11 @@ EOF
 
 module "test_service" {
   source = "../terraform-ecs/modules/ecs"
+  # depends_on = "${data.docker_registry_image.fc_test.sha256_digest}"
 
-  name    = "datacube-wms-2"
+  name    = "datacube-wms-fc-merge"
   cluster = "${var.cluster}"
-  family  = "datacube-wms-service-task-2"
+  family  = "datacube-wms-service-task-fc-merge"
 
   desired_count = "${var.task_desired_count}"
 
@@ -86,7 +103,7 @@ module "test_service" {
   [
     {
     "name": "datacube-wms",
-    "image": "geoscienceaustralia/datacube-wms:fc_test",
+    "image": "${local.final_name}",
     "memory": 1024,
     "essential": true,
     "portMappings": [
