@@ -3,6 +3,24 @@ Datacube WMS on AWS ECS
 
 The Datacube WMS ECS repository uses https://github.com/GeoscienceAustralia/terraform-ecs repository as modules for constructing and defining the AWS infrastructure.
 
+Requirements
+------------
+SSH Keypair
+~~~~~~~~~~~
+If you are planning to access the EC2 instances an AWS EC2 keypair must be created.
+
+How-to
+------
+
+- In :code:`variables.tf` modify the :code:`cluster` and :code:`workspace` variables to new values that define the project or service that you are working on.
+- If SSH will be used, modify the :code:`key_name` variable to the name of EC2 Key Pair that will be used.
+- Update the "docker_image_registry" "latest" resource with the name of the Docker hub repo you want to run in ECS.
+- Either use an existing "prod_service" "ecs" or define a new "ecs" module.
+- Run :code:`terraform init`.
+- If needed, import a KMS key for Chamber (see below for more details)
+- Run :code:`terraform plan -out datacube-wms.plan`. This should produce a terraform plan file that can be executed.
+- Run :code:`terraform apply datacube-wms.plan`. This may take some time.
+
 Using Chamber
 -------------
 This project recommends using chamber https://github.com/segmentio/chamber to manage secrets. Chamber can be easily built by installing :code:`golang` and running :code:`go get github.com/segmentio/chamber` also useful is AWS Vault https://github.com/99designs/aws-vault which can manage AWS authentication on your local development machine.
@@ -13,7 +31,7 @@ By default Chamber uses a KMS key with the alias :code:`parameter_store_key` to 
 
 Adding database password to secrets
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In order to add or change the database password in SSM we can use chamber on the command line using the :code:`chamber write` command. For example :code:`chamber write datacube-wms db_password Password1` will write the secret `Password1` with the key `db_password` into the store for the service `datacube-wms`. If `db_password` already existed, it will be updated. We can check the secrets using :code:`chamber list -e service`.
+In order to add or change the database password in SSM we can use chamber on the command line using the :code:`chamber write` command. For example :code:`chamber write datacube-wms db_password Password1` will write the secret `Password1` with the key `db_password` into the store for the service `datacube-wms`. If `db_password` already existed, it will be updated. We can check the secrets using :code:`chamber list -e service`.l
 
 Docker container setup
 ~~~~~~~~~~~~~~~~~~~~~~
