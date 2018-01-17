@@ -24,23 +24,28 @@ terraform {
 
 # ===============
 # containers
-data "docker_registry_image" "fc_test" {
-  name = "geoscienceaustralia/datacube-wms:fc_test"
+# ===============
+# docker containers used in the WMS
+# given in the format name:tag
+# code will extract the SHA256 hash to allow Terraform
+# to update a task definition to an exact version
+# This means that running Terraform after a docker image
+# changes, the task will be updated.
+data "docker_registry_image" "latest" {
+  name = "geoscienceaustralia/datacube-wms:latest"
 }
 
 locals {
-  split_list = "${split(":", data.docker_registry_image.fc_test.name)}"
-  image_name = "${element(local.split_list, 0)}"
-  # sha_list   = "${split(":", data.docker_registry_image.fc_test.sha256_digest)}"
-  # clean_sha  = "${element(local.sha_list, 1)}"
-  image_name_digest = "${list(local.image_name, data.docker_registry_image.fc_test.sha256_digest)}"
-  final_name = "${join("@", local.image_name_digest)}"
+  latest_split_list = "${split(":", data.docker_registry_image.latest.name)}"
+  latest_image_name = "${element(local.latest_split_list, 0)}"
+  latest_image_name_digest = "${list(local.latest_image_name, data.docker_registry_image.latest.sha256_digest)}"
+  latest_final_name = "${join("@", local.latest_image_name_digest)}"
 }
 
 # ===============
 # services
-
-
+# ===============
+# 
 module "prod_service" {
   source = "../terraform-ecs/modules/ecs"
 
@@ -58,7 +63,7 @@ module "prod_service" {
   [
     {
     "name": "datacube-wms",
-    "image": "geoscienceaustralia/datacube-wms:latest",
+    "image": "${local.latest_final_name}",
     "memory": 1024,
     "essential": true,
     "portMappings": [
@@ -74,7 +79,6 @@ module "prod_service" {
     ],
     "environment": [
       { "name": "DB_USERNAME", "value": "${var.db_admin_username}" },
-      { "name": "DB_PASSWORD", "value": "${var.db_admin_password}" },
       { "name": "DB_DATABASE", "value": "datacube" },
       { "name": "DB_HOSTNAME", "value": "${var.db_dns_name}.${var.db_zone}" },
       { "name": "DB_PORT"    , "value": "5432" },
@@ -86,24 +90,23 @@ EOF
 
 }
 
-module "test_service" {
+module "profile_service" {
   source = "../terraform-ecs/modules/ecs"
-  # depends_on = "${data.docker_registry_image.fc_test.sha256_digest}"
 
-  name    = "datacube-wms-fc-merge"
+  name    = "datacube-wms-fc-profile"
   cluster = "${var.cluster}"
-  family  = "datacube-wms-service-task-fc-merge"
+  family  = "datacube-wms-service-task-fc-profile"
 
-  desired_count = "${var.task_desired_count}"
+  desired_count = "1"
 
   task_role_arn    = "${module.ecs_policy.role_arn}"
-  target_group_arn = "${module.alb_test_2.alb_target_group}"
+  target_group_arn = "${module.alb_test_3.alb_target_group}"
   
   container_definitions = <<EOF
   [
     {
     "name": "datacube-wms",
-    "image": "${local.final_name}",
+    "image": "${local.latest_final_name}",
     "memory": 1024,
     "essential": true,
     "portMappings": [
@@ -119,12 +122,16 @@ module "test_service" {
     ],
     "environment": [
       { "name": "DB_USERNAME", "value": "${var.db_admin_username}" },
-      { "name": "DB_PASSWORD", "value": "${var.db_admin_password}" },
       { "name": "DB_DATABASE", "value": "datacube" },
       { "name": "DB_HOSTNAME", "value": "${var.db_dns_name}.${var.db_zone}" },
       { "name": "DB_PORT"    , "value": "5432" },
       { "name": "PUBLIC_URL" , "value": "${module.alb_test.alb_dns_name}"}
-    ]
+    ],
+    "linuxParameters": {
+      "capabilities": {
+        "add": ["SYS_PTRACE"]
+      }
+    }
   }
 ]
 EOF
@@ -147,16 +154,16 @@ module "alb_test" {
   health_check_path = "/health"
 }
 
-module "alb_test_2" {
+module "alb_test_3" {
   source = "../terraform-ecs/modules/load_balancer"
 
   workspace         = "${var.workspace}"
   cluster           = "${var.cluster}"
   owner             = "${var.owner}"
-  service_name      = "datacube-wms-2"
+  service_name      = "datacube-wms-3"
   vpc_id            = "${module.vpc.id}"
   public_subnet_ids = "${module.public.public_subnet_ids}"
-  alb_name          = "alb-test-2"
+  alb_name          = "alb-test-3"
   container_port    = "${var.container_port}"
   health_check_path = "/health"
 }
@@ -233,10 +240,10 @@ module "ec2_instances" {
 
   # EC2 Parameters
   instance_group    = "datacubewms"
-  instance_type     = "m4.xlarge"
-  max_size          = "2"
-  min_size          = "1"
-  desired_capacity  = "1"
+  instance_type     = "c4.2xlarge"
+  max_size          = "4"
+  min_size          = "4"
+  desired_capacity  = "4"
   aws_ami           = "${data.aws_ami.node_ami.image_id}"
 
   # Networking
@@ -247,7 +254,7 @@ module "ec2_instances" {
   availability_zones    = "${var.availability_zones}"
   private_subnet_cidrs  = "${var.private_subnet_cidrs}"
   container_port        = "${var.container_port}"
-  alb_security_group_id = "${list(module.alb_test.alb_security_group_id, module.alb_test_2.alb_security_group_id)}"
+  alb_security_group_id = "${list(module.alb_test.alb_security_group_id, module.alb_test_3.alb_security_group_id)}"
 
   # Force dependency wait
   depends_id = "${module.public.nat_complete}"

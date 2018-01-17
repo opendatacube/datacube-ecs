@@ -67,7 +67,7 @@ variable "container_port" {
 # ==================
 # Services and Tasks
 variable "task_desired_count" {
-  default = 3
+  default = 35
 }
 
 # ==================
