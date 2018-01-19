@@ -90,53 +90,6 @@ EOF
 
 }
 
-module "profile_service" {
-  source = "../terraform-ecs/modules/ecs"
-
-  name    = "datacube-wms-fc-profile"
-  cluster = "${var.cluster}"
-  family  = "datacube-wms-service-task-fc-profile"
-
-  desired_count = "1"
-
-  task_role_arn    = "${module.ecs_policy.role_arn}"
-  target_group_arn = "${module.alb_test_3.alb_target_group}"
-  
-  container_definitions = <<EOF
-  [
-    {
-    "name": "datacube-wms",
-    "image": "${local.latest_final_name}",
-    "memory": 1024,
-    "essential": true,
-    "portMappings": [
-      {
-        "containerPort": ${var.container_port}
-      }
-    ],
-    "mountPoints": [
-      {
-        "containerPath": "/opt/data",
-        "sourceVolume": "volume-0"
-      }
-    ],
-    "environment": [
-      { "name": "DB_USERNAME", "value": "${var.db_admin_username}" },
-      { "name": "DB_DATABASE", "value": "datacube" },
-      { "name": "DB_HOSTNAME", "value": "${var.db_dns_name}.${var.db_zone}" },
-      { "name": "DB_PORT"    , "value": "5432" },
-      { "name": "PUBLIC_URL" , "value": "${module.alb_test.alb_dns_name}"}
-    ],
-    "linuxParameters": {
-      "capabilities": {
-        "add": ["SYS_PTRACE"]
-      }
-    }
-  }
-]
-EOF
-}
-
 # ==============
 # Load balancers
 
@@ -150,20 +103,6 @@ module "alb_test" {
   vpc_id            = "${module.vpc.id}"
   public_subnet_ids = "${module.public.public_subnet_ids}"
   alb_name          = "alb-test-1"
-  container_port    = "${var.container_port}"
-  health_check_path = "/health"
-}
-
-module "alb_test_3" {
-  source = "../terraform-ecs/modules/load_balancer"
-
-  workspace         = "${var.workspace}"
-  cluster           = "${var.cluster}"
-  owner             = "${var.owner}"
-  service_name      = "datacube-wms-3"
-  vpc_id            = "${module.vpc.id}"
-  public_subnet_ids = "${module.public.public_subnet_ids}"
-  alb_name          = "alb-test-3"
   container_port    = "${var.container_port}"
   health_check_path = "/health"
 }
@@ -254,7 +193,7 @@ module "ec2_instances" {
   availability_zones    = "${var.availability_zones}"
   private_subnet_cidrs  = "${var.private_subnet_cidrs}"
   container_port        = "${var.container_port}"
-  alb_security_group_id = "${list(module.alb_test.alb_security_group_id, module.alb_test_3.alb_security_group_id)}"
+  alb_security_group_id = "${list(module.alb_test.alb_security_group_id)}"
 
   # Force dependency wait
   depends_id = "${module.public.nat_complete}"
@@ -276,6 +215,19 @@ module "ecs_policy" {
   aws_region         = "${var.aws_region}"
   ec2_security_group = "${module.ec2_instances.ecs_instance_security_group_id}"
 
+  # Tags
+  owner     = "${var.owner}"
+  cluster   = "${var.cluster}"
+  workspace = "${var.workspace}"
+}
+
+module "efs" {
+  source = "../terraform-ecs/modules/efs"
+
+  vpc_id                = "${module.vpc.id}"
+  availability_zones    = "${var.availability_zones}"
+  private_subnet_ids = "${module.ec2_instances.private_subnet_ids}"
+  ecs_instance_security_group_id = "${module.ec2_instances.ecs_instance_security_group_id}"
   # Tags
   owner     = "${var.owner}"
   cluster   = "${var.cluster}"
