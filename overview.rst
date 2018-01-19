@@ -5,6 +5,12 @@ The Datacube WMS ECS repository uses https://github.com/GeoscienceAustralia/terr
 
 Requirements
 ------------
+
+AWS Authentication
+~~~~~~~~~~~~~~~~~~
+In order to run the datacube-wms terraform scripts you must be able to authenticate with AWS. This can be done in a number of different ways please see here: https://www.terraform.io/docs/providers/aws/
+
+
 SSH Keypair
 ~~~~~~~~~~~
 If you are planning to access the EC2 instances an AWS EC2 keypair must be created.
@@ -12,6 +18,7 @@ If you are planning to access the EC2 instances an AWS EC2 keypair must be creat
 How-to
 ------
 
+- In :code:`main.tf` modify the :code:`key` variable instead the :code:`terraform` :code:`backend "s3"` section. This should be unique to your project.
 - In :code:`variables.tf` modify the :code:`cluster` and :code:`workspace` variables to new values that define the project or service that you are working on.
 - If SSH will be used, modify the :code:`key_name` variable to the name of EC2 Key Pair that will be used.
 - Update the "docker_image_registry" "latest" resource with the name of the Docker hub repo you want to run in ECS.
@@ -20,6 +27,11 @@ How-to
 - If needed, import a KMS key for Chamber (see below for more details)
 - Run :code:`terraform plan -out datacube-wms.plan`. This should produce a terraform plan file that can be executed.
 - Run :code:`terraform apply datacube-wms.plan`. This may take some time.
+
+Destroying Infrastructure
+-------------------------
+
+- WARNING: If using a a common KMS key for Chamber you must remove it from Terraform state or back up all data encrypted with the key before destroying with Terraform. If you do not it will be scheduled for deletion and you risk losing all data encrypted with the key. To remove from Terraform state run :code:`terraform state rm module.ecs_policy.aws_kms_key.parameter_store_key`
 
 Using Chamber
 -------------
