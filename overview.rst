@@ -17,7 +17,7 @@ If you are planning to access the EC2 instances an AWS EC2 keypair must be creat
 
 Docker
 ~~~~~~
-
+A running Docker daemon is required for the docker images referenced by the ECS to be terraformed correctly.
 
 How-to
 ------
@@ -31,6 +31,10 @@ How-to
 - If needed, import a KMS key for Chamber (see below for more details)
 - Run :code:`terraform plan -out datacube-wms.plan`. This should produce a terraform plan file that can be executed.
 - Run :code:`terraform apply datacube-wms.plan`. This may take some time.
+
+CloudWatch Logging
+------------------
+There are 2 options with CloudWatch logging to allow multiple terraform administered services to use CloudWatch. First is using a CloudWatch prefix which is supplied to the :code:`ec2_instances` module with the :code:`cloudwatch_prefix` variable. Second is importing the existing CloudWatch groups, for example :code:`terraform import module.ec2_instances.aws_cloudwatch_log_group.dmesg /var/log/dmesg`.
 
 Destroying Infrastructure
 -------------------------
