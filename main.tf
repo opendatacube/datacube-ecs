@@ -194,6 +194,8 @@ module "ec2_instances" {
   private_subnet_cidrs  = "${var.private_subnet_cidrs}"
   container_port        = "${var.container_port}"
   alb_security_group_id = "${list(module.alb_test.alb_security_group_id)}"
+  use_efs               = true
+  efs_id                = "${module.efs.efs_id}"
 
   # Force dependency wait
   depends_id = "${module.public.nat_complete}"
@@ -232,4 +234,12 @@ module "efs" {
   owner     = "${var.owner}"
   cluster   = "${var.cluster}"
   workspace = "${var.workspace}"
+}
+
+module "cloudfront" {
+  source = "../terraform-ecs/modules/cloudfront"
+
+  origin_domain = "${module.alb_test.alb_dns_name}"
+  origin_id     = "default_lb_origin"
+  aliases       = ["wms.datacube.org.au"]
 }
