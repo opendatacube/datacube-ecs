@@ -9,16 +9,22 @@ ARG PYTHON_VERSION=3.6
 # Upgrade and install dependencies
 # Postgres is installed and configured in order to run integration tests
 RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install --no-install-recommends -y curl wget bzip2 git ca-certificates locales \
-    && apt-get clean
+    && apt-get install --no-install-recommends -y bzip2 git ca-certificates locales \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN locale-gen en_US.UTF-8 en_US
 
 # Install miniconda to /miniconda
-RUN curl -LO http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh \
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y curl \
+    && curl -LO http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh \
     && bash Miniconda-latest-Linux-x86_64.sh -p /miniconda -b \
-    && rm Miniconda-latest-Linux-x86_64.sh
+    && rm Miniconda-latest-Linux-x86_64.sh \
+    && apt-get -y remove curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV PATH=/miniconda/bin:${PATH}
 ENV LC_ALL=en_US.UTF-8
 ENV LANG=en_US.UTF-8
