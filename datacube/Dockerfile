@@ -1,5 +1,7 @@
 FROM ubuntu:xenial
 
+SHELL ["/bin/bash", "-c"]
+
 ARG DATACUBE_REPO=https://github.com/opendatacube/datacube-core
 ARG DATACUBE_TAG=datacube-1.5.3
 ARG PYTHON_VERSION=3.6
@@ -8,7 +10,7 @@ ARG PYTHON_VERSION=3.6
 # Postgres is installed and configured in order to run integration tests
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install --no-install-recommends -y wget bzip2 git postgresql gcc g++ ca-certificates \
+    && apt-get install --no-install-recommends -y curl wget bzip2 git ca-certificates locales \
     && apt-get clean
 
 RUN locale-gen en_US.UTF-8 en_US
@@ -26,15 +28,20 @@ ADD ./environment.yaml /tmp/environment.yaml
 
 # Create conda environment
 RUN conda config --set always_yes yes --set changeps1 no \
-    && conda config --prepend channels conda-forge \
+    && conda config --add channels conda-forge \
     && conda update --all \
     && conda create -n agdc python=$PYTHON_VERSION \
     && conda env update -n agdc --file /tmp/environment.yaml \
     && conda clean --all --yes
 
 # Install datacube
+COPY bashrc /root/.bashrc
+COPY bashrc /root/.profile
+
 RUN git clone --depth 1 -b $DATACUBE_TAG $DATACUBE_REPO datacube-core \
     && cd datacube-core \
     && source activate agdc \
     && pip install . --no-deps --upgrade \
     && conda clean --all --yes
+
+
