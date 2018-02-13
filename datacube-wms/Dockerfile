@@ -1,4 +1,6 @@
-FROM geoscienceaustralia/datacube:latest
+FROM geoscienceaustralia/datacube:test_build
+
+SHELL ["/bin/bash", "-c"]
 
 EXPOSE 80
 
@@ -6,9 +8,15 @@ COPY wsgi_profiler_conf.py /wsgi_profiler_conf.py
 
 COPY chamber /chamber
 
-ADD install.sh /install.sh
+RUN conda install -n agdc scikit-image flask gunicorn \
+    && conda clean --all --yes
 
-RUN /install.sh
+RUN cd $HOME \
+    && git clone https://github.com/roarmstrong/datacube-wms.git \
+    && cd $HOME/datacube-wms \
+    && git checkout fractional_cover \
+    && source activate agdc \
+    && pip install -e $HOME/datacube-wms --no-deps
 
 ADD configure.sh /configure.sh
 ADD run.sh /run.sh
