@@ -1,5 +1,5 @@
 variable "cluster" {
-  default = "datacube-wms"
+  default = "route"
 }
 
 variable "aws_region" {
@@ -7,7 +7,7 @@ variable "aws_region" {
 }
 
 variable "workspace" {
-  default = "dev"
+  default = "test"
 }
 
 variable "owner" {
@@ -45,11 +45,11 @@ variable "ssh_ip_address" {
 
 variable "key_name" {
   type = "string"
-  default = "ra-tf-dev"
+  default = "ra-tf-dev-2"
 }
 
 variable "enable_jumpbox" {
-  default = false
+  default = true
 }
 
 # ==================
@@ -67,7 +67,16 @@ variable "container_port" {
 # ==================
 # Services and Tasks
 variable "task_desired_count" {
-  default = 35
+  default = 1
+}
+
+variable "parameter_store_key_arn" {
+  description = <<EOF
+The ARN of the KMS key aliased "parameter_store_key"
+to hide this prompt create an environment variable with the name:
+
+TF_VAR_parameter_store_key_arn
+EOF
 }
 
 # ==================

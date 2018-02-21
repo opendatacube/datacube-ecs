@@ -10,7 +10,7 @@ terraform {
     # have multiple enviornments alongside each other we set
     # this dynamically in the bitbucket-pipelines.yml with the
     # --backend
-    key = "ecs-test-stack-southeast-2/"
+    key = "docker-build-test-stack-southeast-2/"
 
     encrypt = true
 
@@ -179,10 +179,10 @@ module "ec2_instances" {
 
   # EC2 Parameters
   instance_group    = "datacubewms"
-  instance_type     = "c4.2xlarge"
-  max_size          = "4"
-  min_size          = "4"
-  desired_capacity  = "4"
+  instance_type     = "m5.large"
+  max_size          = "2"
+  min_size          = "1"
+  desired_capacity  = "1"
   aws_ami           = "${data.aws_ami.node_ami.image_id}"
 
   # Networking
@@ -221,6 +221,21 @@ module "ecs_policy" {
   owner     = "${var.owner}"
   cluster   = "${var.cluster}"
   workspace = "${var.workspace}"
+
+  depends_on = ["null_resource.import_parameter_store_key"]
+}
+
+resource "null_resource" "import_parameter_store_key" {
+  provisioner "local-exec" {
+    command = "terraform import module.ecs_policy.aws_kms_key.parameter_store_key ${var.parameter_store_key_arn}"
+  }
+
+  # Parameter store key is likely used by other apps
+  # forget about it so we don't issue a delete request
+  provisioner "local-exec" {
+    command = "terraform state rm modules.ecs_policy.aws_kms_key.parameter_store_key"
+    when = "destroy"
+  }
 }
 
 module "efs" {
@@ -236,10 +251,19 @@ module "efs" {
   workspace = "${var.workspace}"
 }
 
+module "route53" {
+  source = "../terraform-ecs/modules/route53"
+
+  zone_domain_name = "opendatacubes.com"
+  domain_name = "wms2.opendatacubes.com"
+  target_dns_name    = "${module.cloudfront.domain_name}"
+  target_dns_zone_id = "${module.cloudfront.hosted_zone_id}"
+}
+
 module "cloudfront" {
   source = "../terraform-ecs/modules/cloudfront"
 
   origin_domain = "${module.alb_test.alb_dns_name}"
   origin_id     = "default_lb_origin"
-  aliases       = ["wms.datacube.org.au"]
+  aliases       = ["wms2.opendatacubes.com"]
 }

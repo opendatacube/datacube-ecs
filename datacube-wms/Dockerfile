@@ -11,10 +11,13 @@ COPY chamber /chamber
 RUN conda install -n agdc scikit-image flask gunicorn \
     && conda clean --all --yes
 
+# Workaround to stop git clone cache
+# https://stackoverflow.com/a/39278224
+ADD https://api.github.com/repos/roarmstrong/datacube-wms/git/refs/heads/master version.json
 RUN cd $HOME \
-    && git clone https://github.com/roarmstrong/datacube-wms.git \
+    && git clone -bmaster https://github.com/roarmstrong/datacube-wms.git \
     && cd $HOME/datacube-wms \
-    && git checkout fractional_cover \
+    && git checkout master \
     && source activate agdc \
     && pip install -e $HOME/datacube-wms --no-deps
 
