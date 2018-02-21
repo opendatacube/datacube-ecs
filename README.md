@@ -4,9 +4,8 @@ EC2 Container Service for Datacube
 Installation
 Requires software:
 `docker`
-`docker-compose`
-
-
+`terraform`
+`golang`
 
 ## Docker Containers
 ### `docker-compose.yml`
@@ -20,7 +19,6 @@ This means you will not be able to run `docker-compose` in daemon mode.
 
 ### `datacube-wms`
 #### Pre docker build steps
- * Install `golang` tools
  * `go get github.com/segmentio/chamber'
  * `export GOOS=linux; export GOARCH=amd64; go build github.com/segmentio/chamber`
  * Move the created `chamber` binary to the `datacube-wms` folder
@@ -32,7 +30,6 @@ This means you will not be able to run `docker-compose` in daemon mode.
 ## Main Terraform
 
 ### Pre-Terraform Steps
- * Install `golang` tools
  * `go get github.com/segmentio/chamber`
  * `chamber write datacube-wms db_password $DB_PASSWORD` Only required if not previously set, or has changed
 

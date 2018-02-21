@@ -43,6 +43,24 @@ locals {
 }
 
 # ===============
+# public address
+# ===============
+# set the public URL information here
+
+locals {
+  # base url that corresponds to the Route53 zone
+  base_url = "opendatacubes.com"
+  # url that points to the service
+  public_url = "wms.opendatacubes.com"
+}
+
+enable_jumpbox = true
+ssh_ip_address = "192.104.44.129/32"
+key_name = "ra-tf-dev-2"
+cluster = "route"
+workspace = "dev"
+
+# ===============
 # services
 # ===============
 # 
@@ -82,7 +100,7 @@ module "prod_service" {
       { "name": "DB_DATABASE", "value": "datacube" },
       { "name": "DB_HOSTNAME", "value": "${var.db_dns_name}.${var.db_zone}" },
       { "name": "DB_PORT"    , "value": "5432" },
-      { "name": "PUBLIC_URL" , "value": "${module.alb_test.alb_dns_name}"}
+      { "name": "PUBLIC_URL" , "value": "${local.public_url}"}
     ]
   }
 ]
@@ -102,7 +120,7 @@ module "alb_test" {
   service_name      = "datacube-wms"
   vpc_id            = "${module.vpc.id}"
   public_subnet_ids = "${module.public.public_subnet_ids}"
-  alb_name          = "alb-test-1"
+  alb_name          = "wms-loadbalancer"
   container_port    = "${var.container_port}"
   health_check_path = "/health"
 }
@@ -143,7 +161,7 @@ module "public" {
   ssh_ip_address = "${var.ssh_ip_address}"
   key_name       = "${var.key_name}"
   jumpbox_ami    = "${data.aws_ami.jumpbox_ami.image_id}"
-  enable_jumpbox = true
+  enable_jumpbox = "${var.enable_jumpbox}"
 
   # Tags
   owner     = "${var.owner}"
@@ -254,8 +272,8 @@ module "efs" {
 module "route53" {
   source = "../terraform-ecs/modules/route53"
 
-  zone_domain_name = "opendatacubes.com"
-  domain_name = "wms2.opendatacubes.com"
+  zone_domain_name = "${local.base_url}"
+  domain_name = "${local.public_url}"
   target_dns_name    = "${module.cloudfront.domain_name}"
   target_dns_zone_id = "${module.cloudfront.hosted_zone_id}"
 }
@@ -265,5 +283,5 @@ module "cloudfront" {
 
   origin_domain = "${module.alb_test.alb_dns_name}"
   origin_id     = "default_lb_origin"
-  aliases       = ["wms2.opendatacubes.com"]
+  aliases       = ["${local.public_url}"]
 }

@@ -1,5 +1,5 @@
 variable "cluster" {
-  default = "route"
+  default = "datacube-wms"
 }
 
 variable "aws_region" {
@@ -7,7 +7,7 @@ variable "aws_region" {
 }
 
 variable "workspace" {
-  default = "test"
+  default = "dev"
 }
 
 variable "owner" {
@@ -40,12 +40,12 @@ variable "database_subnet_cidrs" {
 
 variable "ssh_ip_address" {
   type = "string"
-  default = "192.104.44.129/32"
+  default = "127.0.0.1"
 }
 
 variable "key_name" {
   type = "string"
-  default = "ra-tf-dev-2"
+  default = ""
 }
 
 variable "enable_jumpbox" {
