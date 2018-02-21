@@ -37,14 +37,14 @@ This means you will not be able to run `docker-compose` in daemon mode.
 #### Creating
  * `terraform init`
  * Existing Cloudwatch Log Groups to use?
-  * `terraform-ecs/scripts/manage_cloudwatch.sh import ec2_instances`
+    * `terraform-ecs/scripts/manage_cloudwatch.sh import ec2_instances`
  * `export TF_VAR_db_admin_password=$DB_PASSWORD`
  * `export TF_VAR_parameter_store_key_arn=$ARN`
  * terraform plan -out wms.plan`
  * `terraform apply wms.plan`
 #### Destroying
  * Need to keep Cloudwatch Log Groups?
-  * `terraform-ecs/scripts/manage_cloudwatch.sh rm ec2_instances`
+    * `terraform-ecs/scripts/manage_cloudwatch.sh rm ec2_instances`
  * `terraform destroy`
 
 
