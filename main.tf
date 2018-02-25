@@ -233,7 +233,7 @@ resource "null_resource" "import_parameter_store_key" {
   # Parameter store key is likely used by other apps
   # forget about it so we don't issue a delete request
   provisioner "local-exec" {
-    command = "terraform state rm modules.ecs_policy.aws_kms_key.parameter_store_key"
+    command = "terraform state rm module.ecs_policy.aws_kms_key.parameter_store_key"
     when = "destroy"
   }
 }
