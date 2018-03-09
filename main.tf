@@ -10,7 +10,7 @@ terraform {
     # have multiple enviornments alongside each other we set
     # this dynamically in the bitbucket-pipelines.yml with the
     # --backend
-    key = "docker-build-test-stack-southeast-2/"
+    key = "s2-indexing-test-stack-southeast-2/"
 
     encrypt = true
 
@@ -32,14 +32,14 @@ terraform {
 # This means that running Terraform after a docker image
 # changes, the task will be updated.
 data "docker_registry_image" "latest" {
-  name = "geoscienceaustralia/datacube-wms:latest"
+  name = "geoscienceaustralia/datacube-wms:s2_only"
 }
 
-locals {
-  latest_split_list = "${split(":", data.docker_registry_image.latest.name)}"
-  latest_image_name = "${element(local.latest_split_list, 0)}"
-  latest_image_name_digest = "${list(local.latest_image_name, data.docker_registry_image.latest.sha256_digest)}"
-  latest_final_name = "${join("@", local.latest_image_name_digest)}"
+module "docker_help" {
+  source = "../terraform-ecs/modules/docker"
+
+  image_name   = "${data.docker_registry_image.latest.name}"
+  image_digest = "${data.docker_registry_image.latest.sha256_digest}"
 }
 
 # ===============
@@ -51,60 +51,35 @@ locals {
   # base url that corresponds to the Route53 zone
   base_url = "opendatacubes.com"
   # url that points to the service
-  public_url = "wms.opendatacubes.com"
+  public_url = "s2-wms.${local.base_url}"
 }
 
-enable_jumpbox = true
-ssh_ip_address = "192.104.44.129/32"
-key_name = "ra-tf-dev-2"
-cluster = "route"
-workspace = "dev"
+module "ecs_main" {
+  source = "modules/ecs"
 
-# ===============
-# services
-# ===============
-# 
-module "prod_service" {
-  source = "../terraform-ecs/modules/ecs"
+  name         = "datacube-wms"
+  docker_image = "${module.docker_help.name_and_digest_ecs}"
 
-  name    = "datacube-wms"
-  cluster = "${var.cluster}"
-  family  = "datacube-wms-service-task"
+  memory         = "768"
+  container_port = "${var.container_port}"
 
-  desired_count = "${var.task_desired_count}"
+  db_name     = "${var.db_dns_name}"
+  db_zone     = "${var.db_zone}"
+  db_username = "${var.db_admin_username}"
+  database    = "datacube"
+  
+  task_desired_count = "${var.task_desired_count}"
+  target_group       = "${module.alb_test.alb_target_group}"
+  ec2_security_group = "${module.ec2_instances.ecs_instance_security_group_id}"
 
-  task_role_arn    = "${module.ecs_policy.role_arn}"
-  target_group_arn = "${module.alb_test.alb_target_group}"
+  public_url = "${local.public_url}"
+  aws_region = "${var.aws_region}"
 
-  # // container def
-  container_definitions = <<EOF
-  [
-    {
-    "name": "datacube-wms",
-    "image": "${local.latest_final_name}",
-    "memory": 1024,
-    "essential": true,
-    "portMappings": [
-      {
-        "containerPort": ${var.container_port}
-      }
-    ],
-    "mountPoints": [
-      {
-        "containerPath": "/opt/data",
-        "sourceVolume": "volume-0"
-      }
-    ],
-    "environment": [
-      { "name": "DB_USERNAME", "value": "${var.db_admin_username}" },
-      { "name": "DB_DATABASE", "value": "datacube" },
-      { "name": "DB_HOSTNAME", "value": "${var.db_dns_name}.${var.db_zone}" },
-      { "name": "DB_PORT"    , "value": "5432" },
-      { "name": "PUBLIC_URL" , "value": "${local.public_url}"}
-    ]
-  }
-]
-EOF
+
+  # Tags
+  owner     = "${var.owner}"
+  cluster   = "${var.cluster}"
+  workspace = "${var.workspace}"
 
 }
 
@@ -123,6 +98,7 @@ module "alb_test" {
   alb_name          = "wms-loadbalancer"
   container_port    = "${var.container_port}"
   health_check_path = "/health"
+  enable_ssh        = true
 }
 
 # ==============
@@ -197,10 +173,10 @@ module "ec2_instances" {
 
   # EC2 Parameters
   instance_group    = "datacubewms"
-  instance_type     = "m5.large"
+  instance_type     = "m5.xlarge"
   max_size          = "2"
   min_size          = "1"
-  desired_capacity  = "1"
+  desired_capacity  = "2"
   aws_ami           = "${data.aws_ami.node_ami.image_id}"
 
   # Networking
@@ -212,8 +188,8 @@ module "ec2_instances" {
   private_subnet_cidrs  = "${var.private_subnet_cidrs}"
   container_port        = "${var.container_port}"
   alb_security_group_id = "${list(module.alb_test.alb_security_group_id)}"
-  use_efs               = true
-  efs_id                = "${module.efs.efs_id}"
+  use_efs               = false
+  # efs_id                = "${module.efs.efs_id}"
 
   # Force dependency wait
   depends_id = "${module.public.nat_complete}"
@@ -226,62 +202,32 @@ module "ec2_instances" {
   aws_region = "${var.aws_region}"
 }
 
-module "ecs_policy" {
-  source = "../terraform-ecs/modules/ecs_policy"
+# module "efs" {
+#   source = "../terraform-ecs/modules/efs"
 
-  task_role_name = "datacube-wms-role"
-
-  account_id         = "${data.aws_caller_identity.current.account_id}"
-  aws_region         = "${var.aws_region}"
-  ec2_security_group = "${module.ec2_instances.ecs_instance_security_group_id}"
-
-  # Tags
-  owner     = "${var.owner}"
-  cluster   = "${var.cluster}"
-  workspace = "${var.workspace}"
-
-  depends_on = ["null_resource.import_parameter_store_key"]
-}
-
-resource "null_resource" "import_parameter_store_key" {
-  provisioner "local-exec" {
-    command = "terraform import module.ecs_policy.aws_kms_key.parameter_store_key ${var.parameter_store_key_arn}"
-  }
-
-  # Parameter store key is likely used by other apps
-  # forget about it so we don't issue a delete request
-  provisioner "local-exec" {
-    command = "terraform state rm module.ecs_policy.aws_kms_key.parameter_store_key"
-    when = "destroy"
-  }
-}
-
-module "efs" {
-  source = "../terraform-ecs/modules/efs"
-
-  vpc_id                = "${module.vpc.id}"
-  availability_zones    = "${var.availability_zones}"
-  private_subnet_ids = "${module.ec2_instances.private_subnet_ids}"
-  ecs_instance_security_group_id = "${module.ec2_instances.ecs_instance_security_group_id}"
-  # Tags
-  owner     = "${var.owner}"
-  cluster   = "${var.cluster}"
-  workspace = "${var.workspace}"
-}
+#   vpc_id                = "${module.vpc.id}"
+#   availability_zones    = "${var.availability_zones}"
+#   private_subnet_ids = "${module.ec2_instances.private_subnet_ids}"
+#   ecs_instance_security_group_id = "${module.ec2_instances.ecs_instance_security_group_id}"
+#   # Tags
+#   owner     = "${var.owner}"
+#   cluster   = "${var.cluster}"
+#   workspace = "${var.workspace}"
+# }
 
 module "route53" {
   source = "../terraform-ecs/modules/route53"
 
   zone_domain_name = "${local.base_url}"
   domain_name = "${local.public_url}"
-  target_dns_name    = "${module.cloudfront.domain_name}"
-  target_dns_zone_id = "${module.cloudfront.hosted_zone_id}"
+  target_dns_name    = "${module.alb_test.alb_dns_name}"
+  target_dns_zone_id = "${module.alb_test.alb_dns_zone_id }"
 }
 
-module "cloudfront" {
-  source = "../terraform-ecs/modules/cloudfront"
+# module "cloudfront" {
+#   source = "../terraform-ecs/modules/cloudfront"
 
-  origin_domain = "${module.alb_test.alb_dns_name}"
-  origin_id     = "default_lb_origin"
-  aliases       = ["${local.public_url}"]
-}
+#   origin_domain = "${module.alb_test.alb_dns_name}"
+#   origin_id     = "default_lb_origin"
+#   aliases       = ["${local.public_url}"]
+# }
