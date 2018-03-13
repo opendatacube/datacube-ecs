@@ -187,6 +187,13 @@ module "ec2_instances" {
   aws_region = "${var.aws_region}"
 }
 
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id          = "${module.vpc.id}"
+  service_name    = "com.amazonaws.ap-southeast-2.s3"
+  route_table_ids = [ "${module.ec2_instances.private_subnet_route_table_ids}" ]
+}
+
+
 # module "efs" {
 #   source = "../terraform-ecs/modules/efs"
 
