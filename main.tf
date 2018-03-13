@@ -63,15 +63,18 @@ module "ecs_main" {
   memory         = "768"
   container_port = "${var.container_port}"
 
+  vpc_id            = "${module.vpc.id}"
+  public_subnet_ids = "${module.public.public_subnet_ids}"
+
   db_name     = "${var.db_dns_name}"
   db_zone     = "${var.db_zone}"
   db_username = "${var.db_admin_username}"
   database    = "datacube"
   
   task_desired_count = "${var.task_desired_count}"
-  target_group       = "${module.alb_test.alb_target_group}"
   ec2_security_group = "${module.ec2_instances.ecs_instance_security_group_id}"
 
+  zone_url  = "${local.base_url}"
   public_url = "${local.public_url}"
   aws_region = "${var.aws_region}"
 
@@ -81,24 +84,6 @@ module "ecs_main" {
   cluster   = "${var.cluster}"
   workspace = "${var.workspace}"
 
-}
-
-# ==============
-# Load balancers
-
-module "alb_test" {
-  source = "../terraform-ecs/modules/load_balancer"
-
-  workspace         = "${var.workspace}"
-  cluster           = "${var.cluster}"
-  owner             = "${var.owner}"
-  service_name      = "datacube-wms"
-  vpc_id            = "${module.vpc.id}"
-  public_subnet_ids = "${module.public.public_subnet_ids}"
-  alb_name          = "wms-loadbalancer"
-  container_port    = "${var.container_port}"
-  health_check_path = "/health"
-  enable_ssh        = true
 }
 
 # ==============
@@ -173,7 +158,7 @@ module "ec2_instances" {
 
   # EC2 Parameters
   instance_group    = "datacubewms"
-  instance_type     = "m5.xlarge"
+  instance_type     = "t2.medium"
   max_size          = "2"
   min_size          = "1"
   desired_capacity  = "2"
@@ -187,7 +172,7 @@ module "ec2_instances" {
   availability_zones    = "${var.availability_zones}"
   private_subnet_cidrs  = "${var.private_subnet_cidrs}"
   container_port        = "${var.container_port}"
-  alb_security_group_id = "${list(module.alb_test.alb_security_group_id)}"
+  alb_security_group_id = "${list(module.ecs_main.alb_security_group_id)}"
   use_efs               = false
   # efs_id                = "${module.efs.efs_id}"
 
@@ -215,14 +200,6 @@ module "ec2_instances" {
 #   workspace = "${var.workspace}"
 # }
 
-module "route53" {
-  source = "../terraform-ecs/modules/route53"
-
-  zone_domain_name = "${local.base_url}"
-  domain_name = "${local.public_url}"
-  target_dns_name    = "${module.alb_test.alb_dns_name}"
-  target_dns_zone_id = "${module.alb_test.alb_dns_zone_id }"
-}
 
 # module "cloudfront" {
 #   source = "../terraform-ecs/modules/cloudfront"

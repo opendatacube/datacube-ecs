@@ -8,9 +8,9 @@ variable "docker_image" {
   description = "docker image to run"
 }
 
-variable "target_group" {
+variable "zone_url" {
   type = "string"
-  description = "ARN of the target group"
+  description = "Zone URL"
 }
 
 variable "public_url" {
@@ -60,6 +60,17 @@ variable "ec2_security_group" {
 variable "task_desired_count" {
   default = 1
   description = "Desired count of the ecs task"
+}
+
+## ALB required vars
+variable "vpc_id" {
+  type = "string"
+  description = "ID of the VPC this ALB is contained in"
+}
+
+variable "public_subnet_ids" {
+  type = "list"
+  description = "IDs of the public subnets that this ALB will use"
 }
 
 #######

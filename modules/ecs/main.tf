@@ -1,4 +1,31 @@
 
+
+# Route 53 address for this cluster
+module "route53" {
+  source = "../../../terraform-ecs/modules/route53"
+
+  zone_domain_name   = "${var.zone_url}"
+  domain_name        = "${var.public_url}"
+  target_dns_name    = "${module.alb.alb_dns_name}"
+  target_dns_zone_id = "${module.alb.alb_dns_zone_id }"
+}
+
+# The ALB for the cluster
+module "alb" {
+  source = "../../../terraform-ecs/modules/load_balancer"
+
+  workspace         = "${var.workspace}"
+  cluster           = "${var.cluster}"
+  owner             = "${var.owner}"
+  service_name      = "${var.name}"
+  vpc_id            = "${var.vpc_id}"
+  public_subnet_ids = "${var.public_subnet_ids}"
+  alb_name          = "${var.name}-loadbalancer"
+  container_port    = "${var.container_port}"
+  health_check_path = "/health"
+}
+
+
 # The ECS Service module
 module "ecs_service" {
   source = "../../../terraform-ecs/modules/ecs"
@@ -10,7 +37,7 @@ module "ecs_service" {
   desired_count = "${var.task_desired_count}"
 
   task_role_arn    = "${module.ecs_policy.role_arn}"
-  target_group_arn = "${var.target_group}"
+  target_group_arn = "${module.alb.alb_target_group}"
 
   # // container def
   container_definitions = <<EOF
