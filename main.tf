@@ -32,7 +32,7 @@ terraform {
 # This means that running Terraform after a docker image
 # changes, the task will be updated.
 data "docker_registry_image" "latest" {
-  name = "geoscienceaustralia/datacube-wms:s2_only"
+  name = "geoscienceaustralia/datacube-wms:crcsi"
 }
 
 module "docker_help" {
@@ -112,17 +112,21 @@ module "public" {
   source = "../terraform-ecs/modules/public_layer"
 
   # Networking
-  vpc_id              = "${module.vpc.id}"
-  vpc_igw_id          = "${module.vpc.igw_id}"
-  availability_zones  = "${var.availability_zones}"
-  public_subnet_cidrs = "${var.public_subnet_cidrs}"
-  public_subnet_count = "${length(var.public_subnet_cidrs)}"
+  vpc_id               = "${module.vpc.id}"
+  vpc_igw_id           = "${module.vpc.igw_id}"
+  availability_zones   = "${var.availability_zones}"
+  public_subnet_cidrs  = "${var.public_subnet_cidrs}"
+  private_subnet_cidrs = "${var.private_subnet_cidrs}"
 
   # Jumpbox
   ssh_ip_address = "${var.ssh_ip_address}"
   key_name       = "${var.key_name}"
   jumpbox_ami    = "${data.aws_ami.jumpbox_ami.image_id}"
   enable_jumpbox = "${var.enable_jumpbox}"
+
+  # NAT
+  enable_nat      = "${var.enable_nat}"
+  enable_gateways = "${var.enable_gateways}" 
 
   # Tags
   owner     = "${var.owner}"
@@ -173,8 +177,12 @@ module "ec2_instances" {
   private_subnet_cidrs  = "${var.private_subnet_cidrs}"
   container_port        = "${var.container_port}"
   alb_security_group_id = "${list(module.ecs_main.alb_security_group_id)}"
+  # If EFS is being used create the module and uncomment the efs_id
   use_efs               = false
   # efs_id                = "${module.efs.efs_id}"
+
+  # NAT
+  enable_nat     = "${var.enable_nat}"
 
   # Force dependency wait
   depends_id = "${module.public.nat_complete}"

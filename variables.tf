@@ -52,6 +52,14 @@ variable "enable_jumpbox" {
   default = true
 }
 
+variable "enable_nat" {
+  default = false
+}
+
+variable "enable_gateways" {
+  default = false
+}
+
 # ==================
 # Containers
 variable "container_port" {
