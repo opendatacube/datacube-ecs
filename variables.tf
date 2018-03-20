@@ -40,7 +40,7 @@ variable "database_subnet_cidrs" {
 
 variable "ssh_ip_address" {
   type = "string"
-  default = "127.0.0.1"
+  default = "127.0.0.1/32"
 }
 
 variable "key_name" {
