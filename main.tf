@@ -173,6 +173,7 @@ module "ec2_instances" {
   key_name              = "${var.key_name}"
   jump_ssh_sg_id        = "${module.public.jump_ssh_sg_id}"
   nat_ids               = "${module.public.nat_ids}"
+  nat_instance_ids      = "${module.public.nat_instance_ids}"
   availability_zones    = "${var.availability_zones}"
   private_subnet_cidrs  = "${var.private_subnet_cidrs}"
   container_port        = "${var.container_port}"
