@@ -196,24 +196,20 @@ module "ec2_instances" {
   aws_region = "${var.aws_region}"
 }
 
-# module "efs" {
-#   source = "../terraform-ecs/modules/efs"
+# Cloudfront distribution
+module "cloudfront" {
+  source = "../../../terraform-ecs/modules/cloudfront"
 
-#   vpc_id                = "${module.vpc.id}"
-#   availability_zones    = "${var.availability_zones}"
-#   private_subnet_ids = "${module.ec2_instances.private_subnet_ids}"
-#   ecs_instance_security_group_id = "${module.ec2_instances.ecs_instance_security_group_id}"
-#   # Tags
-#   owner     = "${var.owner}"
-#   cluster   = "${var.cluster}"
-#   workspace = "${var.workspace}"
-# }
+  origin_domain = "${module.ecs_main.alb_dns_name}"
+  origin_id     = "default_lb_origin"
+}
 
+# Route 53 address for this cluster
+module "route53" {
+  source = "../../../terraform-ecs/modules/route53"
 
-# module "cloudfront" {
-#   source = "../terraform-ecs/modules/cloudfront"
-
-#   origin_domain = "${module.alb_test.alb_dns_name}"
-#   origin_id     = "default_lb_origin"
-#   aliases       = ["${local.public_url}"]
-# }
+  zone_domain_name   = "${local.zone_url}"
+  domain_name        = "${local.public_url}"
+  target_dns_name    = "${module.cloudfront.domain_name}"
+  target_dns_zone_id = "${module.cloudfront.hosted_zone_id }"
+}

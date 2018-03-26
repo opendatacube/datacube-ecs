@@ -1,15 +1,4 @@
 
-
-# Route 53 address for this cluster
-module "route53" {
-  source = "../../../terraform-ecs/modules/route53"
-
-  zone_domain_name   = "${var.zone_url}"
-  domain_name        = "${var.public_url}"
-  target_dns_name    = "${module.alb.alb_dns_name}"
-  target_dns_zone_id = "${module.alb.alb_dns_zone_id }"
-}
-
 # The ALB for the cluster
 module "alb" {
   source = "../../../terraform-ecs/modules/load_balancer"
