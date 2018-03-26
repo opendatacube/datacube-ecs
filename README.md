@@ -36,14 +36,14 @@ This means you will not be able to run `docker-compose` in daemon mode.
 ### `main.tf`
 
 #### Change
- * At top level add:
+ * In `cluster.tfvars`
     * `cluster = $clustername` Should be a descriptive name for the cluster
     * `workspace = $workspacename` Name for the workspace
-    * `key_name` AWS EC2 SSH key for accessing instances
     * `task_desired_count = $taskcount` Number of ECS tasks to run
- * Optional if SSH access required:
+ * In `jumpbox.tfvars`
+    * `key_name` AWS EC2 SSH key for accessing instances
     * `ssh_ip_address = $youripaddress` IP addresses that jumpbox will allow connections from
-    * `enable_jumpbox = true` Enables jumpbox
+    * `enable_jumpbox = true/false` Enables or disables jumpbox jumpbox
  * `docker_registry_image`
     * Change `name` to `$username/datacube-wms:$tag` as set above.
 
@@ -51,14 +51,19 @@ This means you will not be able to run `docker-compose` in daemon mode.
  * `terraform init`
  * Existing Cloudwatch Log Groups to use?
     * `terraform-ecs/scripts/manage_cloudwatch.sh import ec2_instances`
- * `export TF_VAR_db_admin_password=\`chamber read datacube-wms db_password\``
- * `export TF_VAR_parameter_store_key_arn=$ARN`
- * `terraform plan -out wms.plan`
+ * Import Parameter store key
+    * `terraform import module.ecs_main.module.ecs_policy.aws_kms_key.parameter_store_key $ARN`
+ * Import DB Password
+    * `chamber read datacube-wms db_password`
+    * Copy `Value` field into var `export TF_VAR_db_admin_password=$VALUE`
+ * `terraform plan -var-file=cluster.tfvars -var-file=jumpbox.tfvars -out wms.plan`
  * `terraform apply wms.plan`
 
 #### Destroying
  * Need to keep Cloudwatch Log Groups?
     * `terraform-ecs/scripts/manage_cloudwatch.sh rm ec2_instances`
- * `terraform destroy`
+ * Don't try and delete Parameter store key
+    * terraform state rm module.ecs_policy.aws_kms_key.parameter_store_key
+ * `terraform destroy -var-file=cluster.tfvars -var-file=jumpbox.tfvars`
 
 

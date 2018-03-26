@@ -6,7 +6,11 @@ EXPOSE 80
 
 COPY wsgi_profiler_conf.py /wsgi_profiler_conf.py
 
-COPY chamber /chamber
+RUN apt-get update \
+    && apt-get install -y golang \
+    && export GOPATH=$HOME/go \
+    && go get github.com/segmentio/chamber \
+    && cp $GOPATH/bin/chamber /chamber
 
 RUN conda install -n agdc scikit-image flask gunicorn \
     && conda clean --all --yes
