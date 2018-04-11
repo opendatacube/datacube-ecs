@@ -9,7 +9,7 @@ module "alb" {
   service_name      = "${var.name}"
   vpc_id            = "${var.vpc_id}"
   public_subnet_ids = "${var.public_subnet_ids}"
-  alb_name          = "${var.name}-loadbalancer"
+  alb_name          = "${var.cluster}-${var.name}-loadbalancer"
   container_port    = "${var.container_port}"
   health_check_path = "/health"
 }
