@@ -63,6 +63,12 @@ variable "task_desired_count" {
 }
 
 ## ALB required vars
+
+variable "alb_name" {
+  type = "string"
+  description = "unique name for the alb"
+}
+
 variable "vpc_id" {
   type = "string"
   description = "ID of the VPC this ALB is contained in"

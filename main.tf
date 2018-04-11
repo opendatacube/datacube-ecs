@@ -63,6 +63,7 @@ module "ecs_main" {
   memory         = "768"
   container_port = "${var.container_port}"
 
+  alb_name          = "datacube-wms-loadbalancer"
   vpc_id            = "${module.vpc.id}"
   public_subnet_ids = "${module.public.public_subnet_ids}"
 
