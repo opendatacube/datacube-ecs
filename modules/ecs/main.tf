@@ -65,6 +65,8 @@ module "ecs_policy" {
 
   task_role_name = "${var.name}-role"
 
+  name = "${var.name}"
+
   account_id         = "${data.aws_caller_identity.current.account_id}"
   aws_region         = "${var.aws_region}"
   ec2_security_group = "${var.ec2_security_group}"
