@@ -63,28 +63,6 @@ module "ecs_main" {
 
 }
 
-# ==============
-# Ancilliary
-
-provider "aws" {
-  region = "ap-southeast-2"
-}
-
-resource "aws_ecs_cluster" "cluster" {
-  name = "${var.cluster}"
-}
-
-module "vpc" {
-  source = "../terraform-ecs/modules/vpc"
-
-  cidr = "${var.vpc_cidr}"
-
-  # Tags
-  workspace = "${var.workspace}"
-  owner     = "${var.owner}"
-  cluster   = "${var.cluster}"
-}
-
 module "public" {
   source = "../terraform-ecs/modules/public_layer"
 
