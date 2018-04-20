@@ -25,9 +25,9 @@ module "docker_help" {
 
 locals {
   # base url that corresponds to the Route53 zone
-  base_url = "opendatacubes.com"
+  base_url = "dea.gadevs.ga"
   # url that points to the service
-  public_url = "s2-wms.${local.base_url}"
+  public_url = "datacube-wms.${local.base_url}"
 }
 
 module "ecs_main" {
