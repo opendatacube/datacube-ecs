@@ -6,8 +6,17 @@ services:
       - 5432:5432
     env_file:
       - datacube.config
+    environment:
+      - POSTGRES_USER=datacube
+      - POSTGRES_PASSWORD=KJZSUHtnIOASfhb4
+      - POSTGRES_DB=datacube
+    networks:
+      default:
+        aliases:
+          - database.local
   datacube-jupyter:
-    image: geoscienceaustralia/datacube-jupyter:latest
+    #image: geoscienceaustralia/datacube-jupyter:latest
+    build: datacube-jupyter
     ports: 
       - 80:80
     env_file:

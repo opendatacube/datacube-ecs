@@ -1,17 +1,53 @@
 FROM ubuntu:xenial
 
-ARG DC_TAG=datacube-1.5.3
+SHELL ["/bin/bash", "-c"]
+
+ARG DATACUBE_REPO=https://github.com/opendatacube/datacube-core
+ARG DATACUBE_TAG=datacube-1.5.3
+ARG PYTHON_VERSION=3.6
 
 # Upgrade and install dependencies
 # Postgres is installed and configured in order to run integration tests
 RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install --no-install-recommends -y wget bzip2 git postgresql gcc g++ ca-certificates \
-    && apt-get clean
+    && apt-get install --no-install-recommends -y bzip2 git ca-certificates locales \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN locale-gen en_US.UTF-8 en_US
 
-# Run datacube script
-ADD ./datacube_setup.sh /tmp/datacube_setup.sh
+# Install miniconda to /miniconda
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y curl \
+    && curl -LO http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh \
+    && bash Miniconda-latest-Linux-x86_64.sh -p /miniconda -b \
+    && rm Miniconda-latest-Linux-x86_64.sh \
+    && apt-get -y remove curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PATH=/miniconda/bin:${PATH}
+ENV LC_ALL=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+
+# Packages to install with conda
 ADD ./environment.yaml /tmp/environment.yaml
-RUN /tmp/datacube_setup.sh $DC_TAG
+
+# Create conda environment
+RUN conda config --set always_yes yes --set changeps1 no \
+    && conda config --add channels conda-forge \
+    && conda update --all \
+    && conda create -n agdc python=$PYTHON_VERSION \
+    && conda env update -n agdc --file /tmp/environment.yaml \
+    && conda clean --all --yes
+
+# Install datacube
+COPY bashrc /root/.bashrc
+COPY bashrc /root/.profile
+
+RUN git clone --depth 1 -b $DATACUBE_TAG $DATACUBE_REPO datacube-core \
+    && cd datacube-core \
+    && source activate agdc \
+    && pip install . --no-deps --upgrade \
+    && conda clean --all --yes
+
+

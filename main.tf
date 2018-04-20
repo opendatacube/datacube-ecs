@@ -10,7 +10,7 @@ terraform {
     # have multiple enviornments alongside each other we set
     # this dynamically in the bitbucket-pipelines.yml with the
     # --backend
-    key = "ecs-test-stack/"
+    key = "s2-indexing-test-stack-southeast-2/"
 
     encrypt = true
 
@@ -21,99 +21,196 @@ terraform {
   }
 }
 
+
+# ===============
+# containers
+# ===============
+# docker containers used in the WMS
+# given in the format name:tag
+# code will extract the SHA256 hash to allow Terraform
+# to update a task definition to an exact version
+# This means that running Terraform after a docker image
+# changes, the task will be updated.
+data "docker_registry_image" "latest" {
+  name = "geoscienceaustralia/datacube-wms:crcsi"
+}
+
+module "docker_help" {
+  source = "../terraform-ecs/modules/docker"
+
+  image_name   = "${data.docker_registry_image.latest.name}"
+  image_digest = "${data.docker_registry_image.latest.sha256_digest}"
+}
+
+# ===============
+# public address
+# ===============
+# set the public URL information here
+
+locals {
+  # base url that corresponds to the Route53 zone
+  base_url = "opendatacubes.com"
+  # url that points to the service
+  public_url = "s2-wms.${local.base_url}"
+}
+
+module "ecs_main" {
+  source = "modules/ecs"
+
+  name         = "datacube-wms"
+  docker_image = "${module.docker_help.name_and_digest_ecs}"
+
+  memory         = "768"
+  container_port = "${var.container_port}"
+
+  alb_name          = "datacube-wms-loadbalancer"
+  vpc_id            = "${module.vpc.id}"
+  public_subnet_ids = "${module.public.public_subnet_ids}"
+
+  db_name     = "${var.db_dns_name}"
+  db_zone     = "${var.db_zone}"
+  db_username = "${var.db_admin_username}"
+  database    = "datacube"
+  
+  task_desired_count = "${var.task_desired_count}"
+  ec2_security_group = "${module.ec2_instances.ecs_instance_security_group_id}"
+
+  zone_url  = "${local.base_url}"
+  public_url = "${local.public_url}"
+  aws_region = "${var.aws_region}"
+
+
+  # Tags
+  owner     = "${var.owner}"
+  cluster   = "${var.cluster}"
+  workspace = "${var.workspace}"
+
+}
+
+# ==============
+# Ancilliary
+
 provider "aws" {
   region = "ap-southeast-2"
 }
 
-variable "db_admin_password" {
-  description = <<EOF
-The password for our database, 
-to hide this prompt create an environment variable with the name:
-
-TF_VAR_db_admin_password
-  EOF
+resource "aws_ecs_cluster" "cluster" {
+  name = "${var.cluster}"
 }
 
-variable "bootstrap_task_name" {
-  default = "bootstrap-data"
-}
+module "vpc" {
+  source = "../terraform-ecs/modules/vpc"
 
-variable "cluster" {
-  default = "datacube"
-}
+  cidr = "${var.vpc_cidr}"
 
-variable "bootstrap_compose" {
-  default = "docker-compose-bootstrap.yml"
-}
-
-module "ecs" {
-  source = "github.com/GeoscienceAustralia/terraform-ecs?ref=v0.1.0"
-
-  # Tags to apply to the resources
+  # Tags
+  workspace = "${var.workspace}"
+  owner     = "${var.owner}"
   cluster   = "${var.cluster}"
-  workspace = "dev"
-  owner     = "YOUR EMAIL HERE"
+}
 
-  timeout = 6
+module "public" {
+  source = "../terraform-ecs/modules/public_layer"
 
-  # Network Configuration
-  vpc_cidr              = "10.0.0.0/16"
-  public_subnet_cidrs   = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24"]
-  private_subnet_cidrs  = ["10.0.10.0/24", "10.0.11.0/24", "10.0.12.0/24"]
-  database_subnet_cidrs = ["10.0.20.0/24", "10.0.21.0/24", "10.0.22.0/24"]
-  availability_zones    = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
-  ssh_ip_address        = "0.0.0.0/0"
+  # Networking
+  vpc_id               = "${module.vpc.id}"
+  vpc_igw_id           = "${module.vpc.igw_id}"
+  availability_zones   = "${var.availability_zones}"
+  public_subnet_cidrs  = "${var.public_subnet_cidrs}"
+  private_subnet_cidrs = "${var.private_subnet_cidrs}"
 
-  # Server Configuration
-  max_size         = 3
-  min_size         = 1
-  desired_capacity = 2
-  instance_type    = "t2.small"
-  ecs_aws_ami      = "ami-c1a6bda2"
-  enable_jumpbox   = false
+  # Jumpbox
+  ssh_ip_address = "${var.ssh_ip_address}"
+  key_name       = "${var.key_name}"
+  jumpbox_ami    = "${data.aws_ami.jumpbox_ami.image_id}"
+  enable_jumpbox = "${var.enable_jumpbox}"
 
-  # create a new ec2-key pair and add it here
-  key_name = "lambda packaging dev"
+  # NAT
+  enable_nat      = "${var.enable_nat}"
+  enable_gateways = "${var.enable_gateways}" 
 
-  # Database Configuration
-  db_admin_username = "master"
+  # Tags
+  owner     = "${var.owner}"
+  cluster   = "${var.cluster}"
+  workspace = "${var.workspace}"
+}
+
+module "database" {
+  source = "../terraform-ecs/modules/database_layer"
+
+  # Networking
+  vpc_id                = "${module.vpc.id}"
+  availability_zones    = "${var.availability_zones}"
+  ecs_instance_sg_id    = "${module.ec2_instances.ecs_instance_security_group_id}"
+  jump_ssh_sg_id        = "${module.public.jump_ssh_sg_id}"
+  database_subnet_cidrs = "${var.database_subnet_cidrs}"
+
+  # DB params
+  db_admin_username = "${var.db_admin_username}"
   db_admin_password = "${var.db_admin_password}"
-  db_dns_name       = "database"
-  db_zone           = "local"
+  dns_name          = "${var.db_dns_name}"
+  zone              = "${var.db_zone}"
+  db_name           = "${var.db_name}"
 
-  # Service Configuration
-  service_entrypoint = "datacube-wms"
-  service_compose    = "docker-compose-aws.yml"
-
-  # custom_script = "export PUBLIC_URL=$${module.load_balancer.alb_dns_name}"
-  health_check_path = "/health"
+  # Tags
+  owner     = "${var.owner}"
+  cluster   = "${var.cluster}"
+  workspace = "${var.workspace}"
 }
 
-resource "null_resource" "bootstrap" {
-  # automatically set off a deploy
-  # after this has run once, you can deploy manually by running
-  # ecs-cli compose --project-name datacube service up
-  triggers {
-    project-name = "${var.bootstrap_task_name}"
-    cluster      = "${var.cluster}"
-    compose-file = "${md5(file(var.bootstrap_compose))}"
+module "ec2_instances" {
+  source = "../terraform-ecs/modules/ec2_instances"
 
-    #enable for debugging
-    #timestamp = "${timestamp()}"
-  }
+  # EC2 Parameters
+  instance_group    = "datacubewms"
+  instance_type     = "t2.medium"
+  max_size          = "2"
+  min_size          = "1"
+  desired_capacity  = "2"
+  aws_ami           = "${data.aws_ami.node_ami.image_id}"
 
-  provisioner "local-exec" {
-    # create and start our our ecs service
-    command = <<EOF
-ecs-cli compose \
---project-name ${var.bootstrap_task_name} \
---cluster ${var.cluster} \
---file ${var.bootstrap_compose} \
-up
-EOF
-  }
+  # Networking
+  vpc_id                = "${module.vpc.id}"
+  key_name              = "${var.key_name}"
+  jump_ssh_sg_id        = "${module.public.jump_ssh_sg_id}"
+  nat_ids               = "${module.public.nat_ids}"
+  nat_instance_ids      = "${module.public.nat_instance_ids}"
+  availability_zones    = "${var.availability_zones}"
+  private_subnet_cidrs  = "${var.private_subnet_cidrs}"
+  container_port        = "${var.container_port}"
+  alb_security_group_id = "${list(module.ecs_main.alb_security_group_id)}"
+  # If EFS is being used create the module and uncomment the efs_id
+  use_efs               = false
+  # efs_id                = "${module.efs.efs_id}"
+
+  # NAT
+  enable_nat     = "${var.enable_nat}"
+
+  # Force dependency wait
+  depends_id = "${module.public.nat_complete}"
+
+  # Tags
+  owner     = "${var.owner}"
+  cluster   = "${var.cluster}"
+  workspace = "${var.workspace}"
+
+  aws_region = "${var.aws_region}"
 }
 
-output "dns_name" {
-  value = "${module.ecs.alb_dns_name}"
+# Cloudfront distribution
+module "cloudfront" {
+  source = "../../../terraform-ecs/modules/cloudfront"
+
+  origin_domain = "${module.ecs_main.alb_dns_name}"
+  origin_id     = "default_lb_origin"
+}
+
+# Route 53 address for this cluster
+module "route53" {
+  source = "../../../terraform-ecs/modules/route53"
+
+  zone_domain_name   = "${local.zone_url}"
+  domain_name        = "${local.public_url}"
+  target_dns_name    = "${module.cloudfront.domain_name}"
+  target_dns_zone_id = "${module.cloudfront.hosted_zone_id }"
 }
