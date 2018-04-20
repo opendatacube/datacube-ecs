@@ -8,11 +8,11 @@
 # This means that running Terraform after a docker image
 # changes, the task will be updated.
 data "docker_registry_image" "latest" {
-  name = "geoscienceaustralia/datacube-wms:crcsi"
+  name = "geoscienceaustralia/datacube-wms:latest"
 }
 
 module "docker_help" {
-  source = "../terraform-ecs/modules/docker"
+  source = "modules/docker"
 
   image_name   = "${data.docker_registry_image.latest.name}"
   image_digest = "${data.docker_registry_image.latest.sha256_digest}"
