@@ -1,7 +1,6 @@
-
 # The ALB for the cluster
 module "alb" {
-  source = "../../../terraform-ecs/modules/load_balancer"
+  source = "../load_balancer"
 
   workspace         = "${var.workspace}"
   cluster           = "${var.cluster}"
@@ -14,10 +13,9 @@ module "alb" {
   health_check_path = "/health"
 }
 
-
 # The ECS Service module
 module "ecs_service" {
-  source = "../../../terraform-ecs/modules/ecs"
+  source = "../ecs_service"
 
   name    = "${var.name}"
   cluster = "${var.cluster}"
@@ -57,11 +55,10 @@ module "ecs_service" {
 }
 ]
 EOF
-
 }
 
 module "ecs_policy" {
-  source = "../../../terraform-ecs/modules/ecs_policy"
+  source = "../ecs_policy"
 
   task_role_name = "${var.name}-role"
 
