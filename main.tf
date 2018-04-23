@@ -10,7 +10,7 @@ terraform {
     # have multiple enviornments alongside each other we set
     # this dynamically in the bitbucket-pipelines.yml with the
     # --backend
-    key = "s2-indexing-test-stack-southeast-2/"
+    key = "datacube-ecs-test/"
 
     encrypt = true
 
