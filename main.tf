@@ -32,11 +32,11 @@ terraform {
 # This means that running Terraform after a docker image
 # changes, the task will be updated.
 data "docker_registry_image" "latest" {
-  name = "geoscienceaustralia/datacube-wms:crcsi"
+  name = "geoscienceaustralia/datacube-wms:latest"
 }
 
 module "docker_help" {
-  source = "../terraform-ecs/modules/docker"
+  source = "modules/docker"
 
   image_name   = "${data.docker_registry_image.latest.name}"
   image_digest = "${data.docker_registry_image.latest.sha256_digest}"
@@ -49,9 +49,9 @@ module "docker_help" {
 
 locals {
   # base url that corresponds to the Route53 zone
-  base_url = "opendatacubes.com"
+  base_url = "dea.gadevs.ga"
   # url that points to the service
-  public_url = "s2-wms.${local.base_url}"
+  public_url = "datacube-wms.${local.base_url}"
 }
 
 module "ecs_main" {
@@ -92,21 +92,6 @@ module "ecs_main" {
 
 provider "aws" {
   region = "ap-southeast-2"
-}
-
-resource "aws_ecs_cluster" "cluster" {
-  name = "${var.cluster}"
-}
-
-module "vpc" {
-  source = "../terraform-ecs/modules/vpc"
-
-  cidr = "${var.vpc_cidr}"
-
-  # Tags
-  workspace = "${var.workspace}"
-  owner     = "${var.owner}"
-  cluster   = "${var.cluster}"
 }
 
 module "public" {
