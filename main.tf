@@ -21,7 +21,6 @@ terraform {
   }
 }
 
-
 # ===============
 # containers
 # ===============
@@ -71,20 +70,18 @@ module "ecs_main" {
   db_zone     = "${var.db_zone}"
   db_username = "${var.db_admin_username}"
   database    = "datacube"
-  
+
   task_desired_count = "${var.task_desired_count}"
   ec2_security_group = "${module.ec2_instances.ecs_instance_security_group_id}"
 
-  zone_url  = "${local.base_url}"
+  zone_url   = "${local.base_url}"
   public_url = "${local.public_url}"
   aws_region = "${var.aws_region}"
-
 
   # Tags
   owner     = "${var.owner}"
   cluster   = "${var.cluster}"
   workspace = "${var.workspace}"
-
 }
 
 # ==============
@@ -93,7 +90,6 @@ module "ecs_main" {
 provider "aws" {
   region = "ap-southeast-2"
 }
-
 
 # Cloudfront distribution
 module "cloudfront" {
