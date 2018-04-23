@@ -87,6 +87,13 @@ module "ecs_main" {
 
 }
 
+# ==============
+# Ancilliary
+
+provider "aws" {
+  region = "ap-southeast-2"
+}
+
 module "public" {
   source = "../terraform-ecs/modules/public_layer"
 
