@@ -31,7 +31,7 @@ terraform {
 # This means that running Terraform after a docker image
 # changes, the task will be updated.
 data "docker_registry_image" "latest" {
-  name = "geoscienceaustralia/datacube-wms:crcsi"
+  name = "geoscienceaustralia/datacube-wms:latest"
 }
 
 module "docker_help" {
@@ -48,10 +48,9 @@ module "docker_help" {
 
 locals {
   # base url that corresponds to the Route53 zone
-  base_url = "opendatacubes.com"
-
+  base_url = "dea.gadevs.ga"
   # url that points to the service
-  public_url = "s2-wms.${local.base_url}"
+  public_url = "datacube-wms.${local.base_url}"
 }
 
 module "ecs_main" {
@@ -92,108 +91,6 @@ provider "aws" {
   region = "ap-southeast-2"
 }
 
-resource "aws_ecs_cluster" "cluster" {
-  name = "${var.cluster}"
-}
-
-module "vpc" {
-  source = "../terraform-ecs/modules/vpc"
-
-  cidr = "${var.vpc_cidr}"
-
-  # Tags
-  workspace = "${var.workspace}"
-  owner     = "${var.owner}"
-  cluster   = "${var.cluster}"
-}
-
-module "public" {
-  source = "../terraform-ecs/modules/public_layer"
-
-  # Networking
-  vpc_id               = "${module.vpc.id}"
-  vpc_igw_id           = "${module.vpc.igw_id}"
-  availability_zones   = "${var.availability_zones}"
-  public_subnet_cidrs  = "${var.public_subnet_cidrs}"
-  private_subnet_cidrs = "${var.private_subnet_cidrs}"
-
-  # Jumpbox
-  ssh_ip_address = "${var.ssh_ip_address}"
-  key_name       = "${var.key_name}"
-  jumpbox_ami    = "${data.aws_ami.jumpbox_ami.image_id}"
-  enable_jumpbox = "${var.enable_jumpbox}"
-
-  # NAT
-  enable_nat      = "${var.enable_nat}"
-  enable_gateways = "${var.enable_gateways}"
-
-  # Tags
-  owner     = "${var.owner}"
-  cluster   = "${var.cluster}"
-  workspace = "${var.workspace}"
-}
-
-module "database" {
-  source = "../terraform-ecs/modules/database_layer"
-
-  # Networking
-  vpc_id                = "${module.vpc.id}"
-  availability_zones    = "${var.availability_zones}"
-  ecs_instance_sg_id    = "${module.ec2_instances.ecs_instance_security_group_id}"
-  jump_ssh_sg_id        = "${module.public.jump_ssh_sg_id}"
-  database_subnet_cidrs = "${var.database_subnet_cidrs}"
-
-  # DB params
-  db_admin_username = "${var.db_admin_username}"
-  db_admin_password = "${var.db_admin_password}"
-  dns_name          = "${var.db_dns_name}"
-  zone              = "${var.db_zone}"
-  db_name           = "${var.db_name}"
-
-  # Tags
-  owner     = "${var.owner}"
-  cluster   = "${var.cluster}"
-  workspace = "${var.workspace}"
-}
-
-module "ec2_instances" {
-  source = "../terraform-ecs/modules/ec2_instances"
-
-  # EC2 Parameters
-  instance_group   = "datacubewms"
-  instance_type    = "t2.medium"
-  max_size         = "2"
-  min_size         = "1"
-  desired_capacity = "2"
-  aws_ami          = "${data.aws_ami.node_ami.image_id}"
-
-  # Networking
-  vpc_id                = "${module.vpc.id}"
-  key_name              = "${var.key_name}"
-  jump_ssh_sg_id        = "${module.public.jump_ssh_sg_id}"
-  nat_ids               = "${module.public.nat_ids}"
-  nat_instance_ids      = "${module.public.nat_instance_ids}"
-  availability_zones    = "${var.availability_zones}"
-  private_subnet_cidrs  = "${var.private_subnet_cidrs}"
-  container_port        = "${var.container_port}"
-  alb_security_group_id = "${list(module.ecs_main.alb_security_group_id)}"
-
-  # If EFS is being used create the module and uncomment the efs_id
-  use_efs = false
-
-  # efs_id                = "${module.efs.efs_id}"
-
-  # NAT
-  enable_nat = "${var.enable_nat}"
-  # Force dependency wait
-  depends_id = "${module.public.nat_complete}"
-  # Tags
-  owner     = "${var.owner}"
-  cluster   = "${var.cluster}"
-  workspace = "${var.workspace}"
-  aws_region = "${var.aws_region}"
-}
-
 # Cloudfront distribution
 module "cloudfront" {
   source = "modules/cloudfront"
@@ -204,7 +101,7 @@ module "cloudfront" {
 
 # Route 53 address for this cluster
 module "route53" {
-  source = "../../../terraform-ecs/modules/route53"
+  source = "modules/route53"
 
   zone_domain_name   = "${local.zone_url}"
   domain_name        = "${local.public_url}"
