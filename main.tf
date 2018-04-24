@@ -116,8 +116,6 @@ module "ecs_main" {
 }
 ]
 EOF
-}
-
 
   # Tags
   owner     = "${var.owner}"
