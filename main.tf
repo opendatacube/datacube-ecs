@@ -72,11 +72,52 @@ module "ecs_main" {
   database    = "datacube"
 
   task_desired_count = "${var.task_desired_count}"
-  ec2_security_group = "${module.ec2_instances.ecs_instance_security_group_id}"
+
 
   zone_url   = "${local.base_url}"
   public_url = "${local.public_url}"
   aws_region = "${var.aws_region}"
+
+  family  = "${var.name}-service-task"
+
+  task_role_arn    = "${module.ecs.role_arn}"
+  target_group_arn = "${module.alb.alb_target_group}"
+  task_role_name   = "${var.name}-role"
+
+  account_id         = "${data.aws_caller_identity.current.account_id}"
+  ec2_security_group = "${var.ec2_security_group}"
+
+  # // container def
+  container_definitions = <<EOF
+[
+  {
+  "name": "${var.name}",
+  "image": "${var.docker_image}",
+  "memory": ${var.memory},
+  "essential": true,
+  "portMappings": [
+    {
+      "containerPort": ${var.container_port}
+    }
+  ],
+  "mountPoints": [
+    {
+      "containerPath": "/opt/data",
+      "sourceVolume": "volume-0"
+    }
+  ],
+  "environment": [
+    { "name": "DB_USERNAME", "value": "${var.db_username}" },
+    { "name": "DB_DATABASE", "value": "${var.database}" },
+    { "name": "DB_HOSTNAME", "value": "${var.db_name}.${var.db_zone}" },
+    { "name": "DB_PORT"    , "value": "5432" },
+    { "name": "PUBLIC_URL" , "value": "${var.public_url}"}
+  ]
+}
+]
+EOF
+}
+
 
   # Tags
   owner     = "${var.owner}"
