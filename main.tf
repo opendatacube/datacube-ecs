@@ -10,7 +10,7 @@ terraform {
     # have multiple enviornments alongside each other we set
     # this dynamically in the bitbucket-pipelines.yml with the
     # --backend
-    key = "s2-indexing-test-stack-southeast-2/"
+    key = "datacube-ecs-test/terraform.tfstate"
 
     encrypt = true
 
@@ -63,8 +63,8 @@ module "ecs_main" {
   container_port = "${var.container_port}"
 
   alb_name          = "datacube-wms-loadbalancer"
-  vpc_id            = "${module.vpc.id}"
-  public_subnet_ids = "${module.public.public_subnet_ids}"
+  vpc_id            = "${var.vpc_id}"
+  public_subnet_ids = "${var.public_subnet_ids}"
 
   db_name     = "${var.db_dns_name}"
   db_zone     = "${var.db_zone}"
@@ -72,11 +72,50 @@ module "ecs_main" {
   database    = "datacube"
 
   task_desired_count = "${var.task_desired_count}"
-  ec2_security_group = "${module.ec2_instances.ecs_instance_security_group_id}"
+
 
   zone_url   = "${local.base_url}"
   public_url = "${local.public_url}"
   aws_region = "${var.aws_region}"
+
+  family  = "${var.name}-service-task"
+
+  task_role_arn    = "${data.aws_iam_role.role_arn.arn}"
+
+  task_role_name   = "${var.name}-role"
+
+  account_id         = "${data.aws_caller_identity.current.account_id}"
+  ec2_security_group = "${var.ec2_security_group}"
+
+  # // container def
+  container_definitions = <<EOF
+[
+  {
+  "name": "${var.name}",
+  "image": "${var.docker_image}",
+  "memory": ${var.memory},
+  "essential": true,
+  "portMappings": [
+    {
+      "containerPort": ${var.container_port}
+    }
+  ],
+  "mountPoints": [
+    {
+      "containerPath": "/opt/data",
+      "sourceVolume": "volume-0"
+    }
+  ],
+  "environment": [
+    { "name": "DB_USERNAME", "value": "${var.db_username}" },
+    { "name": "DB_DATABASE", "value": "${var.database}" },
+    { "name": "DB_HOSTNAME", "value": "${var.db_name}.${var.db_zone}" },
+    { "name": "DB_PORT"    , "value": "5432" },
+    { "name": "PUBLIC_URL" , "value": "${local.public_url}"}
+  ]
+}
+]
+EOF
 
   # Tags
   owner     = "${var.owner}"
@@ -84,6 +123,11 @@ module "ecs_main" {
   workspace = "${var.workspace}"
 }
 
+module "load_balancer" {
+  source = "modules/load_balancer"
+
+  target_group_arn = "${module.alb.alb_target_group}"
+}
 # ==============
 # Ancilliary
 

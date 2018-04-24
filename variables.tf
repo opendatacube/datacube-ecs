@@ -14,6 +14,26 @@ variable "owner" {
   default = "DEA"
 }
 
+variable "name" {
+  type = "string"
+  description = "Name of the service"
+}
+
+variable "docker_image" {
+  type = "string"
+  description = "docker image to run"
+}
+
+variable "memory" {
+  default = 1024
+  description = "memory for the container in MB"
+}
+
+variable "ec2_security_group" {
+  type = "string"
+  description = "EC2 security group ID"
+}
+
 # =============================
 # Networking
 variable "availability_zones" {
@@ -119,3 +139,14 @@ variable "db_name" {
   default = "datacube"
   description = "name of first database in RDS"
 }
+
+variable "db_username" {
+  type = "string"
+  description = "database admin username"
+}
+
+variable "database" {
+  type = "string"
+  description = "name of the database being used"
+}
+
