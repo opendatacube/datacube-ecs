@@ -42,3 +42,11 @@ data "aws_ami" "jumpbox_ami" {
 # Get the AWS account ID so we can use it in IAM policies
 
 data "aws_caller_identity" "current" {}
+
+#--------------------------------------------------------
+# Role Arn
+#-------------------------------------------------------
+
+data "aws_iam_role" "role_arn" {
+  name = "${var.cluster}_shared_alb_sg"
+}

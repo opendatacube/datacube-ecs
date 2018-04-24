@@ -80,7 +80,7 @@ module "ecs_main" {
 
   family  = "${var.name}-service-task"
 
-  task_role_arn    = "${module.ecs.role_arn}"
+  task_role_arn    = "${data.aws_iam_role.role_arn.arn}"
   target_group_arn = "${module.alb.alb_target_group}"
   task_role_name   = "${var.name}-role"
 
