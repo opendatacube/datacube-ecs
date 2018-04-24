@@ -111,7 +111,7 @@ module "ecs_main" {
     { "name": "DB_DATABASE", "value": "${var.database}" },
     { "name": "DB_HOSTNAME", "value": "${var.db_name}.${var.db_zone}" },
     { "name": "DB_PORT"    , "value": "5432" },
-    { "name": "PUBLIC_URL" , "value": "${var.public_url}"}
+    { "name": "PUBLIC_URL" , "value": "${local.public_url}"}
   ]
 }
 ]
