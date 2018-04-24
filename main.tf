@@ -63,8 +63,8 @@ module "ecs_main" {
   container_port = "${var.container_port}"
 
   alb_name          = "datacube-wms-loadbalancer"
-  vpc_id            = "${module.vpc.id}"
-  public_subnet_ids = "${module.public.public_subnet_ids}"
+  vpc_id            = "${var.vpc_id}"
+  public_subnet_ids = "${var.public_subnet_ids}"
 
   db_name     = "${var.db_dns_name}"
   db_zone     = "${var.db_zone}"
@@ -81,7 +81,7 @@ module "ecs_main" {
   family  = "${var.name}-service-task"
 
   task_role_arn    = "${data.aws_iam_role.role_arn.arn}"
-  target_group_arn = "${module.alb.alb_target_group}"
+
   task_role_name   = "${var.name}-role"
 
   account_id         = "${data.aws_caller_identity.current.account_id}"
@@ -123,6 +123,11 @@ EOF
   workspace = "${var.workspace}"
 }
 
+module "load_balancer" {
+  source = "modules/load_balancer"
+
+  target_group_arn = "${module.alb.alb_target_group}"
+}
 # ==============
 # Ancilliary
 
