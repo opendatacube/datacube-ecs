@@ -34,6 +34,11 @@ variable "ec2_security_group" {
   description = "EC2 security group ID"
 }
 
+variable "alb_name" {
+  default     = "default"
+  description = "The name of the loadbalancer"
+}
+
 # =============================
 # Networking
 variable "availability_zones" {
