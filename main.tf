@@ -10,7 +10,7 @@ terraform {
     # have multiple enviornments alongside each other we set
     # this dynamically in the bitbucket-pipelines.yml with the
     # --backend
-    key = "datacube-ecs-test/"
+    key = "datacube-ecs-test/terraform.tfstate"
 
     encrypt = true
 
