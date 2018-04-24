@@ -83,7 +83,7 @@ module "ecs_main" {
   task_role_arn    = "${data.aws_iam_role.role_arn.arn}"
 
   task_role_name   = "${var.name}-role"
-
+  target_group_arn = "${module.alb.alb_target_group}"
   account_id         = "${data.aws_caller_identity.current.account_id}"
   ec2_security_group = "${var.ec2_security_group}"
 
@@ -136,7 +136,6 @@ module "alb" {
   container_port    = "${var.container_port}"
   health_check_path = "/health"
 
-  target_group_arn = "${module.alb.alb_target_group}"
 }
 # ==============
 # Ancilliary
