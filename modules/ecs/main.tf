@@ -24,17 +24,3 @@ resource "aws_ecs_service" "service" {
   }
 }
 
-# The ALB for the cluster
-module "alb" {
-  source = "../load_balancer"
-
-  workspace         = "${var.workspace}"
-  cluster           = "${var.cluster}"
-  owner             = "${var.owner}"
-  service_name      = "${var.name}"
-  vpc_id            = "${var.vpc_id}"
-  public_subnet_ids = "${var.public_subnet_ids}"
-  alb_name          = "${var.alb_name}"
-  container_port    = "${var.container_port}"
-  health_check_path = "/health"
-}

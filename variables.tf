@@ -34,6 +34,11 @@ variable "ec2_security_group" {
   description = "EC2 security group ID"
 }
 
+variable "alb_name" {
+  default     = "default"
+  description = "The name of the loadbalancer"
+}
+
 # =============================
 # Networking
 variable "availability_zones" {
@@ -78,6 +83,17 @@ variable "enable_nat" {
 
 variable "enable_gateways" {
   default = false
+}
+
+variable "public_subnet_ids" {
+  type        = "list"
+  default     = ["subnet-e42eeabc", "subnet-3d324f74", "subnet-e6b2f281"]
+  description = "List of public subnet ids to place the loadbalancer in"
+}
+
+variable "vpc_id" {
+  description = "The VPC id"
+  default = "vpc-5472fd33"
 }
 
 # ==================
