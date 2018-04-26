@@ -6,7 +6,7 @@
 
 usage() { echo "Usage: $0 [-d <days>] [-p <prefix>] [-b <bucket>]" 1>&2; exit 1; }
 
-while getopts ":d:b:p" o; do
+while getopts ":d:p:b:" o; do
     case "${o}" in
         d)
             d=${OPTARG}
@@ -27,15 +27,18 @@ fi
 
 # d is number of days older than current date
 # calculate date string
-todate=$(date -d"$(date) -${d} day" +%s)
+todate=$(gdate -d"$(gdate) -${d} day" +%s)
+
+# trim trailing '/' from prefix, we are adding it by default in search
+p=${p%/}
 
 # list of folders with names formated to be %Y-%m-%d
 # grep for "PRE" to get folders
-folders=$(aws s3 ls s3://${b}/${p} | grep "PRE " | awk '{print $2}' | sed 's/\/$//')
-
+folders=$(aws s3 ls s3://${b}/${p}/ | grep "PRE " | awk '{print $2}' | sed 's/\/$//')
+echo $folders
 # archive data in folders older than todate
 for folder in $folders; do
-    if [ $todate -ge  $(date -d $folder +%s) ]; then
+    if [ $todate -gt $(gdate -d $folder +%s) ]; then
         python ls_s2_cog.py ${b} --prefix ${p}/$folder --archive
     fi
 done
