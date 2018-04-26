@@ -15,23 +15,18 @@ variable "owner" {
 }
 
 variable "name" {
-  type = "string"
+  type        = "string"
   description = "Name of the service"
 }
 
 variable "docker_image" {
-  type = "string"
+  type        = "string"
   description = "docker image to run"
 }
 
 variable "memory" {
-  default = 1024
+  default     = 1024
   description = "memory for the container in MB"
-}
-
-variable "ec2_security_group" {
-  type = "string"
-  description = "EC2 security group ID"
 }
 
 variable "alb_name" {
@@ -42,12 +37,12 @@ variable "alb_name" {
 # =============================
 # Networking
 variable "availability_zones" {
-  type = "list"
+  type    = "list"
   default = ["ap-southeast-2a", "ap-southeast-2b", "ap-southeast-2c"]
 }
 
 variable "public_subnet_cidrs" {
-  type = "list"
+  type    = "list"
   default = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24"]
 }
 
@@ -64,12 +59,12 @@ variable "database_subnet_cidrs" {
 }
 
 variable "ssh_ip_address" {
-  type = "string"
+  type    = "string"
   default = "127.0.0.1/32"
 }
 
 variable "key_name" {
-  type = "string"
+  type    = "string"
   default = ""
 }
 
@@ -93,7 +88,7 @@ variable "public_subnet_ids" {
 
 variable "vpc_id" {
   description = "The VPC id"
-  default = "vpc-5472fd33"
+  default     = "vpc-5472fd33"
 }
 
 # ==================
@@ -114,15 +109,6 @@ variable "task_desired_count" {
   default = 1
 }
 
-variable "parameter_store_key_arn" {
-  description = <<EOF
-The ARN of the KMS key aliased "parameter_store_key"
-to hide this prompt create an environment variable with the name:
-
-TF_VAR_parameter_store_key_arn
-EOF
-}
-
 # ==================
 # database
 variable "db_admin_password" {
@@ -135,34 +121,33 @@ TF_VAR_db_admin_password
 }
 
 variable "db_admin_username" {
-  type = "string"
+  type        = "string"
   description = "admin username for RDS instance"
-  default = "master"
+  default     = "master"
 }
 
 variable "db_dns_name" {
-  type = "string"
+  type    = "string"
   default = "local"
 }
 
 variable "db_zone" {
-  type = "string"
+  type    = "string"
   default = "database"
 }
 
 variable "db_name" {
-  type = "string"
-  default = "datacube"
+  type        = "string"
+  default     = "datacube"
   description = "name of first database in RDS"
 }
 
 variable "db_username" {
-  type = "string"
+  type        = "string"
   description = "database admin username"
 }
 
 variable "database" {
-  type = "string"
+  type        = "string"
   description = "name of the database being used"
 }
-
