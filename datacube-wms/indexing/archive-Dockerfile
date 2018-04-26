@@ -1,0 +1,6 @@
+FROM geoscienceaustralia/datacube-wms:latest
+
+COPY archive.sh /archive.sh
+ADD  https://raw.githubusercontent.com/roarmstrong/Prepare_script/master/ls_s2_cog.py /ls_s2_cog.py
+
+ENTRYPOINT ["/bin/bash", "-c", "/archive.sh"]
