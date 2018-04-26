@@ -27,7 +27,7 @@ fi
 
 # d is number of days older than current date
 # calculate date string
-todate=$(gdate -d"$(gdate) -${d} day" +%s)
+todate=$(date -d"$(date) -${d} day" +%s)
 
 # trim trailing '/' from prefix, we are adding it by default in search
 p=${p%/}
@@ -38,7 +38,7 @@ folders=$(aws s3 ls s3://${b}/${p}/ | grep "PRE " | awk '{print $2}' | sed 's/\/
 echo $folders
 # archive data in folders older than todate
 for folder in $folders; do
-    if [ $todate -gt $(gdate -d $folder +%s) ]; then
+    if [ $todate -gt $(date -d $folder +%s) ]; then
         python ls_s2_cog.py ${b} --prefix ${p}/$folder --archive
     fi
 done
