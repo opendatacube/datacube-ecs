@@ -4,6 +4,8 @@
 #        -p prefix for search
 #        -b bucket containing data
 
+usage() { echo "Usage: $0 [-d <days>] [-p <prefix>] [-b <bucket>]" 1>&2; exit 1; }
+
 while getopts ":d:b:p" o; do
     case "${o}" in
         d)
@@ -18,6 +20,10 @@ while getopts ":d:b:p" o; do
     esac
 done
 shift $((OPTIND-1))
+
+if [ -z "${d}" ] || [ -z "${p}" ] || [ -z "${b}" ]; then
+    usage
+fi
 
 # d is number of days older than current date
 # calculate date string
