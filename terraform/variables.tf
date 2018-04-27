@@ -142,11 +142,6 @@ variable "db_name" {
   description = "name of first database in RDS"
 }
 
-variable "db_username" {
-  type        = "string"
-  description = "database admin username"
-}
-
 variable "database" {
   type        = "string"
   description = "name of the database being used"
