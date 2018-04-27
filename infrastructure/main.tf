@@ -77,36 +77,33 @@ module "ecs_main" {
   container_definitions = <<EOF
 [
   {
-  "name": "${var.name}",
-  "image": "${var.docker_image}",
-  "memory": ${var.memory},
-  "essential": true,
-  "logConfiguration": {
-      "logDriver": "awslogs",
-      "options" : {
-        "awslogs-region" : "${var.aws_region}",
-        "awslogs-group" : "${var.cluster}/${var.name}"
+    "name": "${var.name}",
+    "image": "${var.docker_image}",
+    "memory": ${var.memory},
+    "essential": true,
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options" : {
+          "awslogs-region" : "${var.aws_region}",
+          "awslogs-group" : "${var.cluster}/${var.name}"
+        }
+    },
+    "portMappings": [
+      {
+        "containerPort": ${var.container_port}
       }
-  },
-  "portMappings": [
-    {
-      "containerPort": ${var.container_port}
-    }
-  ],
-  "mountPoints": [
-    {
-      "containerPath": "/opt/data",
-      "sourceVolume": "volume-0"
-    }
-  ],
-  "environment": [
-    { "name": "DB_USERNAME", "value": "${var.db_admin_username}" },
-    { "name": "DB_DATABASE", "value": "${var.database}" },
-    { "name": "DB_HOSTNAME", "value": "${var.db_name}.${var.db_zone}" },
-    { "name": "DB_PORT"    , "value": "5432" },
-    { "name": "PUBLIC_URL" , "value": "${local.public_url}"}
-  ]
-}
+    ],
+    "environment": [
+      { "name": "DATACUBE_CONFIG_PATH", "value": "/opt/odc/datacube.conf" },
+      { "name": "DB_HOSTNAME", "value": "${data.aws_ssm_parameter.db_host.value}" },
+      { "name": "DB_USERNAME", "value": "${data.aws_ssm_parameter.db_username.value}" },
+      { "name": "DB_PASSWORD", "value": "${data.aws_ssm_parameter.db_password.value}" },
+      { "name": "DB_DATABASE", "value": "${data.aws_ssm_parameter.db_name.value}" },
+      { "name": "DB_PORT", "value": "5432"},
+      { "name": "VIRTUAL_HOST", "value": "localhost,127.0.0." }
+    ],
+    "command" : ["gunicorn", "-b", "0.0.0.0:8000", "-w", "5", "--timeout", "300", "datacube_wms.wsgi"]
+  }
 ]
 EOF
 
