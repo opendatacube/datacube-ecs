@@ -57,25 +57,14 @@ locals {
 module "ecs_main" {
   source = "modules/ecs"
 
-  name         = "datacube-wms"
+  name         = "${var.name}"
   docker_image = "${module.docker_help.name_and_digest_ecs}"
 
-  memory         = "768"
-  container_port = "${var.container_port}"
-
-  alb_name          = "datacube-wms-loadbalancer"
-  vpc_id            = "${var.vpc_id}"
-  public_subnet_ids = "${var.public_subnet_ids}"
-
-  db_name     = "${var.db_dns_name}"
-  db_zone     = "${var.db_zone}"
-  db_username = "${var.db_admin_username}"
-  database    = "datacube"
-
+  memory             = "768"
+  container_port     = "${var.container_port}"
+  container_name     = "${var.name}"
   task_desired_count = "${var.task_desired_count}"
 
-  zone_url   = "${local.base_url}"
-  public_url = "${local.public_url}"
   aws_region = "${var.aws_region}"
 
   family = "${var.name}-service-task"
@@ -104,7 +93,7 @@ module "ecs_main" {
     }
   ],
   "environment": [
-    { "name": "DB_USERNAME", "value": "${var.db_username}" },
+    { "name": "DB_USERNAME", "value": "${var.db_admin_username}" },
     { "name": "DB_DATABASE", "value": "${var.database}" },
     { "name": "DB_HOSTNAME", "value": "${var.db_name}.${var.db_zone}" },
     { "name": "DB_PORT"    , "value": "5432" },

@@ -6,6 +6,6 @@ task_desired_count = 2
 
 database = "default-dev-mydb-rds"
 
-name = "default-wms"
+name = "datacube-wms"
 
-docker_image = "geoscienceaustralia/datacube-wms"
+docker_image = "geoscienceaustralia/datacube-wms:latest"
