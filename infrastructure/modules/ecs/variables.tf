@@ -8,36 +8,6 @@ variable "docker_image" {
   description = "docker image to run"
 }
 
-variable "zone_url" {
-  type        = "string"
-  description = "Zone URL"
-}
-
-variable "public_url" {
-  type        = "string"
-  description = "The URL at which this service will be accessed"
-}
-
-variable "database" {
-  type        = "string"
-  description = "name of the database being used"
-}
-
-variable "db_username" {
-  type        = "string"
-  description = "database admin username"
-}
-
-variable "db_zone" {
-  type        = "string"
-  description = "database DNS zone"
-}
-
-variable "db_name" {
-  type        = "string"
-  description = "database DNS name"
-}
-
 variable "container_name" {
   type        = "string"
   default     = "datacube-wms"
@@ -46,6 +16,10 @@ variable "container_name" {
 
 variable "container_port" {
   default = 80
+}
+
+variable "cpu" {
+  default = 1024
 }
 
 variable "memory" {
@@ -61,23 +35,6 @@ variable "aws_region" {
 variable "task_desired_count" {
   default     = 1
   description = "Desired count of the ecs task"
-}
-
-## ALB required vars
-
-variable "alb_name" {
-  type        = "string"
-  description = "unique name for the alb"
-}
-
-variable "vpc_id" {
-  type        = "string"
-  description = "ID of the VPC this ALB is contained in"
-}
-
-variable "public_subnet_ids" {
-  type        = "list"
-  description = "IDs of the public subnets that this ALB will use"
 }
 
 #######
@@ -122,12 +79,6 @@ variable "parameter_store_resource" {
   description = "The parameter store services that can be acccessed. E.g. * for all or /datacube/* for all datacube"
 }
 
-# Dummy variable to emulate a depends_on
-variable depends_on {
-  default = []
-  type    = "list"
-}
-
 ########
 # ecs_service
 ########
@@ -158,53 +109,4 @@ variable "volume_name" {
 variable "container_definitions" {
   type        = "string"
   description = "JSON container definition"
-
-  # example JSON string
-  #   <<EOF
-  #   [
-  #     {
-  #     "name": "${var.container_name}",
-  #     "image": "${var.container}",
-  #     "memory": ${var.memory},
-  #     "essential": true,
-  #     "portMappings": [
-  #       {
-  #         "containerPort": ${var.container_port}
-  #       }
-  #     ],
-  #     "mountPoints": [
-  #       {
-  #         "containerPath": "${var.container_path}",
-  #         "sourceVolume": "${var.volume_name}"
-  #       }
-  #     ],
-  #     "environment": [
-  #       { "name": "DB_USERNAME", "value": "master" },
-  #       { "name": "DB_PASSWORD", "value": "${var.db_admin_password}" },
-  #       { "name": "DB_DATABASE", "value": "datacube" },
-  #       { "name": "DB_HOSTNAME", "value": "database.local" },
-  #       { "name": "DB_PORT", "value": "5432" },
-  #       { "name": "PUBLIC_URL", "value": "${var.public_url}"}
-  #     ]
-  #   }
-  # ]
-  # EOF
 }
-
-# variable "cpu" {
-#   type = "string"
-#   default = 1024
-# }
-
-
-# variable "cpu" {
-#   type = "string"
-#   default = 1024
-# }
-
-
-# variable "launch_type" {
-#   type = "string"
-#   default = "FARGATE"
-# }
-

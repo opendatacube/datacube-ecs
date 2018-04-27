@@ -16,6 +16,7 @@ install:
   - terraform -v
 
 script:
+  - cd infrastructure
   - terraform init
   - terraform plan -input=false
   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then terraform apply -auto-approve -input=false; fi'
