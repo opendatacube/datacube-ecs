@@ -57,11 +57,12 @@ locals {
 module "ecs_main" {
   source = "modules/ecs"
 
-  name         = "datacube-wms"
+  name         = "${var.name}"
   docker_image = "${module.docker_help.name_and_digest_ecs}"
 
   memory         = "768"
   container_port = "${var.container_port}"
+  container_name = "${var.name}"
 
   alb_name          = "datacube-wms-loadbalancer"
   vpc_id            = "${var.vpc_id}"
