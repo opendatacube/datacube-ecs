@@ -93,7 +93,7 @@ module "ecs_main" {
     }
   ],
   "environment": [
-    { "name": "DB_USERNAME", "value": "${var.db_username}" },
+    { "name": "DB_USERNAME", "value": "${var.db_admin_username}" },
     { "name": "DB_DATABASE", "value": "${var.database}" },
     { "name": "DB_HOSTNAME", "value": "${var.db_name}.${var.db_zone}" },
     { "name": "DB_PORT"    , "value": "5432" },
