@@ -49,6 +49,7 @@ module "docker_help" {
 locals {
   # base url that corresponds to the Route53 zone
   base_url = "dea.gadevs.ga"
+
   # url that points to the service
   public_url = "datacube-wms.${local.base_url}"
 }
@@ -73,19 +74,15 @@ module "ecs_main" {
 
   task_desired_count = "${var.task_desired_count}"
 
-
   zone_url   = "${local.base_url}"
   public_url = "${local.public_url}"
   aws_region = "${var.aws_region}"
 
-  family  = "${var.name}-service-task"
-
-  task_role_arn    = "${data.aws_iam_role.role_arn.arn}"
+  family = "${var.name}-service-task"
 
   task_role_name   = "${var.name}-role"
   target_group_arn = "${module.alb.alb_target_group}"
-  account_id         = "${data.aws_caller_identity.current.account_id}"
-  ec2_security_group = "${var.ec2_security_group}"
+  account_id       = "${data.aws_caller_identity.current.account_id}"
 
   # // container def
   container_definitions = <<EOF
@@ -134,9 +131,10 @@ module "alb" {
   public_subnet_ids = "${var.public_subnet_ids}"
   alb_name          = "${var.alb_name}"
   container_port    = "${var.container_port}"
+  security_group    = "${data.aws_security_group.alb_sg.id}"
   health_check_path = "/health"
-
 }
+
 # ==============
 # Ancilliary
 
@@ -145,19 +143,23 @@ provider "aws" {
 }
 
 # Cloudfront distribution
-module "cloudfront" {
-  source = "modules/cloudfront"
+# module "cloudfront" {
+#   source = "modules/cloudfront"
 
-  origin_domain = "${module.ecs_main.alb_dns_name}"
-  origin_id     = "default_lb_origin"
-}
 
-# Route 53 address for this cluster
-module "route53" {
-  source = "modules/route53"
+#   origin_domain = "${module.alb.alb_dns_name}"
+#   origin_id     = "default_lb_origin"
+# }
 
-  zone_domain_name   = "${local.zone_url}"
-  domain_name        = "${local.public_url}"
-  target_dns_name    = "${module.cloudfront.domain_name}"
-  target_dns_zone_id = "${module.cloudfront.hosted_zone_id }"
-}
+
+# # Route 53 address for this cluster
+# module "route53" {
+#   source = "modules/route53"
+
+
+#   zone_domain_name   = "${local.base_url}"
+#   domain_name        = "${local.public_url}"
+#   target_dns_name    = "${module.cloudfront.domain_name}"
+#   target_dns_zone_id = "${module.cloudfront.hosted_zone_id }"
+# }
+

@@ -23,6 +23,10 @@ variable "container_port" {
   description = "The port servicing traffic on the container"
 }
 
+variable "security_group" {
+  description = "The SG for the ALB"
+}
+
 variable "public_subnet_ids" {
   type        = "list"
   description = "List of public subnet ids to place the loadbalancer in"
