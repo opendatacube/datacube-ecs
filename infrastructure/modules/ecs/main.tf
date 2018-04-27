@@ -44,3 +44,18 @@ resource "aws_iam_role" "task_role" {
 }
 EOF
 }
+
+resource "aws_iam_policy_attachment" "cw_logs" {
+  name       = "${var.workspace}_${var.name}_attach_cw_logs"
+  roles      = ["${aws_iam_role.task_role.name}"]
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
+
+resource "aws_cloudwatch_log_group" "yada" {
+  name = "${var.cluster}/${var.name}"
+
+  tags {
+    Environment = "${var.workspace}"
+    Application = "${var.name}"
+  }
+}

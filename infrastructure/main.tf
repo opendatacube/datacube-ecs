@@ -81,6 +81,13 @@ module "ecs_main" {
   "image": "${var.docker_image}",
   "memory": ${var.memory},
   "essential": true,
+  "logConfiguration": {
+      "logDriver": "awslogs",
+      "options" : {
+        "awslogs-region" : "${var.aws_region}",
+        "awslogs-group" : "${var.cluster}/${var.name}"
+      }
+  },
   "portMappings": [
     {
       "containerPort": ${var.container_port}
