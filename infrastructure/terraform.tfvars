@@ -8,4 +8,4 @@ database = "default-dev-mydb-rds"
 
 name = "datacube-wms"
 
-docker_image = "geoscienceaustralia/datacube-wms:latest"
+docker_image = "opendatacube/wms:latest"

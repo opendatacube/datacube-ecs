@@ -94,7 +94,7 @@ variable "vpc_id" {
 # ==================
 # Containers
 variable "container_port" {
-  default = 80
+  default = 8000
 }
 
 # variable "container" {
@@ -111,38 +111,4 @@ variable "task_desired_count" {
 
 # ==================
 # database
-variable "db_admin_password" {
-  description = <<EOF
-The password for our database, 
-to hide this prompt create an environment variable with the name:
 
-TF_VAR_db_admin_password
-  EOF
-}
-
-variable "db_admin_username" {
-  type        = "string"
-  description = "admin username for RDS instance"
-  default     = "master"
-}
-
-variable "db_dns_name" {
-  type    = "string"
-  default = "local"
-}
-
-variable "db_zone" {
-  type    = "string"
-  default = "database"
-}
-
-variable "db_name" {
-  type        = "string"
-  default     = "datacube"
-  description = "name of first database in RDS"
-}
-
-variable "database" {
-  type        = "string"
-  description = "name of the database being used"
-}
