@@ -85,7 +85,7 @@ module "ecs_main" {
         "logDriver": "awslogs",
         "options" : {
           "awslogs-region" : "${var.aws_region}",
-          "awslogs-group" : "${var.cluster}/${var.name}"
+          "awslogs-group" : "${var.cluster}/${var.workspace}/${var.name}"
         }
     },
     "portMappings": [
