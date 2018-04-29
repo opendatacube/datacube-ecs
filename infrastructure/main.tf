@@ -125,7 +125,7 @@ module "alb" {
   alb_name          = "${var.alb_name}"
   container_port    = "${var.container_port}"
   security_group    = "${data.aws_security_group.alb_sg.id}"
-  health_check_path = "/health"
+  health_check_path = "${var.health_check_path}"
 }
 
 # ==============
