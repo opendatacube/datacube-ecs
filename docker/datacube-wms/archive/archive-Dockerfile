@@ -1,6 +1,6 @@
 FROM geoscienceaustralia/datacube-wms:latest
 
-COPY archive.sh /archive.sh
-COPY  ls_s2_cog.py /ls_s2_cog.py
+COPY assets/archive.sh /archive.sh
+COPY assets/ls_s2_cog.py /ls_s2_cog.py
 
 ENTRYPOINT ["/bin/bash", "-c", "/archive.sh"]

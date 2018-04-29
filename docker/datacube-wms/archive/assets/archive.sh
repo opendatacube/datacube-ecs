@@ -39,6 +39,6 @@ echo $folders
 # archive data in folders older than todate
 for folder in $folders; do
     if [ $todate -gt $(date -d $folder +%s) ]; then
-        python ls_s2_cog.py ${b} --prefix ${p}/$folder --archive
+        python /ls_s2_cog.py ${b} --prefix ${p}/$folder --archive
     fi
 done
