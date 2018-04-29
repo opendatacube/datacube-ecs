@@ -24,6 +24,11 @@ variable "docker_image" {
   description = "docker image to run"
 }
 
+variable "health_check_path" {
+  default     = "/?version=1.3.0&request=GetCapabilities&service=WMS"
+  description = "A path that returns 200OK if container is healthy"
+}
+
 variable "memory" {
   default     = 1024
   description = "memory for the container in MB"
