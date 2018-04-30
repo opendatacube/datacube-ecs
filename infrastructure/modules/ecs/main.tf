@@ -98,8 +98,8 @@ resource "aws_iam_policy_attachment" "cw_logs" {
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
 
-resource "aws_cloudwatch_log_group" "yada" {
-  name = "${var.cluster}/${var.name}"
+resource "aws_cloudwatch_log_group" "cw_logs" {
+  name = "${var.cluster}/${var.workspace}/${var.name}"
 
   tags {
     Environment = "${var.workspace}"
