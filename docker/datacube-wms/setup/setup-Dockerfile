@@ -5,9 +5,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /code
+WORKDIR /code/firsttime
 
 COPY assets/setup.sh setup.sh
 COPY assets/code/metadata-types.yaml metadata-types.yaml
 
-CMD ./setup.sh
+WORKDIR /code
+
+CMD /bin/bash -c firsttime/setup.sh
