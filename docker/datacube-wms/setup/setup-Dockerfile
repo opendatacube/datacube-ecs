@@ -1,0 +1,13 @@
+FROM opendatacube/wms:latest
+
+# install psql for WMS database script
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /code
+
+COPY assets/setup.sh setup.sh
+COPY assets/code/metadata-types.yaml metadata-types.yaml
+
+CMD ./setup.sh
