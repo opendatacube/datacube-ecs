@@ -1,6 +1,11 @@
 FROM geoscienceaustralia/datacube-wms:latest
 
-COPY assets/update_ranges.sh /update_ranges.sh
-COPY assets/ls_s2_cog.py /ls_s2_cog.py
+WORKDIR indexing
 
-ENTRYPOINT ["/bin/bash", "-c", "/update_ranges.sh"]
+COPY assets/update_ranges.sh update_ranges.sh
+COPY assets/update_ranges_wrapper.sh update_ranges_wrapper.sh
+COPY assets/ls_s2_cog.py ls_s2_cog.py
+
+WORKDIR ..
+
+CMD /bin/bash -c indexing/update_ranges_wrapper.sh
