@@ -84,7 +84,7 @@ variable "parameter_store_resource" {
 ########
 
 variable "target_group_arn" {
-  type        = "string"
+  type        = "list"
   description = "ARN of the ELB's target group"
 }
 
@@ -109,4 +109,9 @@ variable "volume_name" {
 variable "container_definitions" {
   type        = "string"
   description = "JSON container definition"
+}
+
+variable "webservice" {
+  default     = true
+  description = "Whether the task should restart and be publically accessible"
 }

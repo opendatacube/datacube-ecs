@@ -1,4 +1,4 @@
-FROM geoscienceaustralia/datacube-wms:latest
+FROM opendatacube/wms:latest
 
 WORKDIR indexing
 
