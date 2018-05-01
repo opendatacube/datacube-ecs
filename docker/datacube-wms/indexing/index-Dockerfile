@@ -1,5 +1,9 @@
 FROM opendatacube/wms:latest
 
+RUN pip3 install \
+    ruamel.yaml \
+    && rm -rf $HOME/.cache/pip
+
 WORKDIR indexing
 
 COPY assets/update_ranges.sh update_ranges.sh

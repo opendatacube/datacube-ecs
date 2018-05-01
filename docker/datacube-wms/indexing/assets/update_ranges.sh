@@ -29,8 +29,8 @@ fi
 # prepare script will add new records to the database
 for p in $prefixes
 do
-    python indexing/ls_s2_cog.py $b --prefix $p
+    python3 indexing/ls_s2_cog.py $b --prefix $p
 done
 
 # update ranges in wms database
-python update_ranges.py
+python3 update_ranges.py
