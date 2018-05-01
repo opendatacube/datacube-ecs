@@ -72,6 +72,7 @@ module "container_def" {
   }]
 
   environment = "${local.env_vars}"
+  command     = ["${join("\",\"",split(" ",var.docker_command))}"]
 }
 
 module "ecs_main" {
