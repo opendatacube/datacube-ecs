@@ -15,6 +15,11 @@ variable "service_name" {
   description = "The name of the service"
 }
 
+variable "webservice" {
+  default     = true
+  description = "Whether the task should restart and be publically accessible"
+}
+
 variable "owner" {
   description = "A mailing list that owns the service"
 }

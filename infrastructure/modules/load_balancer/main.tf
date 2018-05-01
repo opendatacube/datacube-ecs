@@ -1,6 +1,8 @@
 # Default ALB implementation that can be used connect ECS instances to it
 
 resource "aws_alb_target_group" "default" {
+  # only create if webservice is true
+  count                = "${var.webservice}"
   name                 = "${var.alb_name}"
   port                 = "${var.container_port}"
   protocol             = "HTTP"
@@ -25,6 +27,8 @@ resource "aws_alb_target_group" "default" {
 }
 
 resource "aws_alb" "alb" {
+  # only create if webservice is true
+  count           = "${var.webservice}"
   name            = "${var.alb_name}"
   subnets         = ["${var.public_subnet_ids}"]
   security_groups = ["${var.security_group}"]
@@ -39,6 +43,8 @@ resource "aws_alb" "alb" {
 }
 
 resource "aws_alb_listener" "http" {
+  # only create if webservice is true
+  count             = "${var.webservice}"
   load_balancer_arn = "${aws_alb.alb.id}"
   port              = 80
   protocol          = "HTTP"
@@ -52,7 +58,8 @@ resource "aws_alb_listener" "http" {
 }
 
 resource "aws_alb_listener" "https" {
-  count = "${var.enable_https}"
+  # only create if webservice and enable_https is true
+  count = "${var.enable_https * var.webservice}"
 
   load_balancer_arn = "${aws_alb.alb.id}"
   port              = 443

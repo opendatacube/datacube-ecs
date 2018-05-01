@@ -72,6 +72,7 @@ module "ecs_main" {
   task_role_name   = "${var.name}-role"
   target_group_arn = "${module.alb.alb_target_group}"
   account_id       = "${data.aws_caller_identity.current.account_id}"
+  webservice       = "${var.webservice}"
 
   # // container def
   container_definitions = <<EOF
@@ -102,7 +103,7 @@ module "ecs_main" {
       { "name": "DB_PORT", "value": "5432"},
       { "name": "VIRTUAL_HOST", "value": "localhost,127.0.0." }
     ],
-    "command" : ["gunicorn", "-b", "0.0.0.0:8000", "-w", "5", "--timeout", "300", "datacube_wms.wsgi"]
+    "command" : ["${join("\",\"",split(" ",var.docker_command))}"]
   }
 ]
 EOF
@@ -126,6 +127,7 @@ module "alb" {
   container_port    = "${var.container_port}"
   security_group    = "${data.aws_security_group.alb_sg.id}"
   health_check_path = "${var.health_check_path}"
+  webservice        = "${var.webservice}"
 }
 
 # ==============
