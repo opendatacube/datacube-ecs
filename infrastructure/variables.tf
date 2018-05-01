@@ -31,6 +31,7 @@ variable "docker_image" {
 
 variable "docker_command" {
   description = "Command to run on docker container"
+  default = ""
 }
 
 variable "health_check_path" {
@@ -109,6 +110,11 @@ variable "vpc_id" {
 # Containers
 variable "container_port" {
   default = 8000
+}
+
+variable "environment_vars" {
+  default     = {}
+  description = "Map containing environment variables to pass to docker container. Overrides defaults."
 }
 
 # variable "container" {

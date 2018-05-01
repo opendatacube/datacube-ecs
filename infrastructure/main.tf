@@ -40,6 +40,40 @@ locals {
   public_url = "datacube-wms.${local.base_url}"
 }
 
+locals {
+  default_environment_vars = {
+    "DATACUBE_CONFIG_PATH" = "/opt/odc/datacube.conf"
+    "DB_HOSTNAME"          = "${data.aws_ssm_parameter.db_host.value}"
+    "DB_USERNAME"          = "${data.aws_ssm_parameter.db_username.value}"
+    "DB_PASSWORD"          = "${data.aws_ssm_parameter.db_password.value}"
+    "DB_DATABASE"          = "${data.aws_ssm_parameter.db_name.value}"
+    "DB_PORT"              = "5432"
+    "VIRTUAL_HOST"         = "localhost,127.0.0."
+  }
+  env_vars = "${merge(local.default_environment_vars, var.environment_vars)}"
+}
+
+module "container_def" {
+  source = "github.com/eiara/terraform_container_definitions"
+
+  name      = "${var.name}"
+  image     = "${var.docker_image}"
+  essential = true
+  memory    = "${var.memory}"
+
+  logging_driver  = "awslogs"
+  logging_options = {
+    "awslogs-region" = "${var.aws_region}"
+    "awslogs-group"  = "${var.cluster}/${var.workspace}/${var.name}"
+  }
+
+  port_mappings = [{
+    "container_port" = "${var.container_port}"
+  }]
+
+  environment = "${local.env_vars}"
+}
+
 module "ecs_main" {
   source = "modules/ecs"
 
@@ -61,38 +95,7 @@ module "ecs_main" {
   webservice       = "${var.webservice}"
 
   # // container def
-  container_definitions = <<EOF
-[
-  {
-    "name": "${var.name}",
-    "image": "${var.docker_image}",
-    "memory": ${var.memory},
-    "essential": true,
-    "logConfiguration": {
-        "logDriver": "awslogs",
-        "options" : {
-          "awslogs-region" : "${var.aws_region}",
-          "awslogs-group" : "${var.cluster}/${var.workspace}/${var.name}"
-        }
-    },
-    "portMappings": [
-      {
-        "containerPort": ${var.container_port}
-      }
-    ],
-    "environment": [
-      { "name": "DATACUBE_CONFIG_PATH", "value": "/opt/odc/datacube.conf" },
-      { "name": "DB_HOSTNAME", "value": "${data.aws_ssm_parameter.db_host.value}" },
-      { "name": "DB_USERNAME", "value": "${data.aws_ssm_parameter.db_username.value}" },
-      { "name": "DB_PASSWORD", "value": "${data.aws_ssm_parameter.db_password.value}" },
-      { "name": "DB_DATABASE", "value": "${data.aws_ssm_parameter.db_name.value}" },
-      { "name": "DB_PORT", "value": "5432"},
-      { "name": "VIRTUAL_HOST", "value": "localhost,127.0.0." }
-    ],
-    "command" : ["${join("\",\"",split(" ",var.docker_command))}"]
-  }
-]
-EOF
+  container_definitions = "[${module.container_def.json}]"
 
   # Tags
   owner     = "${var.owner}"
