@@ -19,9 +19,18 @@ variable "name" {
   description = "Name of the service"
 }
 
+variable "webservice" {
+  default     = true
+  description = "Whether the task should restart and be publically accessible"
+}
+
 variable "docker_image" {
   type        = "string"
   description = "docker image to run"
+}
+
+variable "docker_command" {
+  description = "Command to run on docker container"
 }
 
 variable "health_check_path" {

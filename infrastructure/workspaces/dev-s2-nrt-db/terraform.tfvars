@@ -2,19 +2,22 @@
 cluster = "default"
 
 # The name of your project
-workspace = "dev-s2-nrt"
+workspace = "dev-s2-nrt-db"
+
+# Setting this to false will turn off auto-restart and web access
+webservice = false
 
 # The number of containers to run at once
-task_desired_count = 2
+task_desired_count = 1
 
 # The name of the database server
 database = "default-dev-mydb-rds"
 
 # The name of the service
-name = "datacube-wms"
+name = "datacube-wms-db"
 
 # The docker image to deploy
-docker_image = "opendatacube/wms:latest"
+docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
 
 # Command to run on the container
-docker_command = "gunicorn -b 0.0.0.0:8000 -w 5 --timeout 300 datacube_wms.wsgi"
+docker_command = "/bin/bash -c firsttime/setup.sh"

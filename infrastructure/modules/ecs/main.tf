@@ -13,15 +13,31 @@ resource "aws_ecs_task_definition" "service-task" {
 }
 
 resource "aws_ecs_service" "service" {
+  # only create if webservice is true
+  count           = "${var.webservice}"
   name            = "${var.name}"
   cluster         = "${var.cluster}"
-  task_definition = "${aws_ecs_task_definition.service-task.arn}"
+  task_definition = "${aws_ecs_task_definition.service-task.0.arn}"
   desired_count   = "${var.task_desired_count}"
 
   load_balancer {
-    target_group_arn = "${var.target_group_arn}"
+    target_group_arn = "${element(var.target_group_arn,0)}"
     container_name   = "${var.container_name}"
     container_port   = "${var.container_port}"
+  }
+}
+
+resource "null_resource" "aws_ecs_task" {
+  count = "${var.webservice ? 0 : 1}"
+
+  triggers {
+    timestamp = "${timestamp()}"
+  }
+
+  # If it isn't a webservice start a once-off task
+  # Terraform doesn't have a run-task capability as it's a short term thing
+  provisioner "local-exec" {
+    command = "aws ecs run-task --cluster ${var.cluster} --task-definition ${aws_ecs_task_definition.service-task.0.arn}"
   }
 }
 
