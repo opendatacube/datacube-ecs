@@ -38,6 +38,8 @@ locals {
 
   # url that points to the service
   public_url = "datacube-wms.${local.base_url}"
+
+  public_subnet_ids = ["${data.aws_subnet.a.id}", "${data.aws_subnet.b.id}", "${data.aws_subnet.c.id}"]
 }
 
 locals {
@@ -50,6 +52,7 @@ locals {
     "DB_PORT"              = "5432"
     "VIRTUAL_HOST"         = "localhost,127.0.0."
   }
+
   env_vars = "${merge(local.default_environment_vars, var.environment_vars)}"
 }
 
@@ -61,7 +64,8 @@ module "container_def" {
   essential = true
   memory    = "${var.memory}"
 
-  logging_driver  = "awslogs"
+  logging_driver = "awslogs"
+
   logging_options = {
     "awslogs-region" = "${var.aws_region}"
     "awslogs-group"  = "${var.cluster}/${var.workspace}/${var.name}"
@@ -111,8 +115,8 @@ module "alb" {
   cluster           = "${var.cluster}"
   owner             = "${var.owner}"
   service_name      = "${var.name}"
-  vpc_id            = "${var.vpc_id}"
-  public_subnet_ids = "${var.public_subnet_ids}"
+  vpc_id            = "${data.aws_vpc.cluster.id}"
+  public_subnet_ids = "${local.public_subnet_ids}"
   alb_name          = "${var.alb_name}"
   container_port    = "${var.container_port}"
   security_group    = "${data.aws_security_group.alb_sg.id}"
