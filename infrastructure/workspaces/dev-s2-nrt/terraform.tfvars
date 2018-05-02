@@ -1,5 +1,5 @@
 # The cluster you created using terraform-ecs
-cluster = "default"
+cluster = "datacube-prod"
 
 # The name of your project
 workspace = "dev-s2-nrt"
@@ -8,7 +8,7 @@ workspace = "dev-s2-nrt"
 task_desired_count = 2
 
 # The name of the database server
-database = "default-dev-mydb-rds"
+database = "datacube-prod-dev-mydb-rds"
 
 # The name of the service
 name = "datacube-wms"
