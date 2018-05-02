@@ -31,7 +31,7 @@ variable "docker_image" {
 
 variable "docker_command" {
   description = "Command to run on docker container"
-  default = ""
+  default     = ""
 }
 
 variable "health_check_path" {
@@ -97,13 +97,13 @@ variable "enable_gateways" {
 
 variable "public_subnet_ids" {
   type        = "list"
-  default     = ["subnet-e42eeabc", "subnet-3d324f74", "subnet-e6b2f281"]
+  default     = ["subnet-96410ef1", "subnet-96410ef1", "subnet-a428e9fc"]
   description = "List of public subnet ids to place the loadbalancer in"
 }
 
 variable "vpc_id" {
   description = "The VPC id"
-  default     = "vpc-5472fd33"
+  default     = "vpc-3d36a35a"
 }
 
 # ==================
