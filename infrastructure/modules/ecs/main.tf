@@ -42,7 +42,7 @@ resource "null_resource" "aws_ecs_task" {
 }
 
 resource "aws_iam_role" "task_role" {
-  name = "task_role"
+  name = "${var.cluster}-${var.name}-task_role"
 
   assume_role_policy = <<EOF
 {
