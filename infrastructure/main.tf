@@ -17,7 +17,7 @@ terraform {
 # This means that running Terraform after a docker image
 # changes, the task will be updated.
 data "docker_registry_image" "latest" {
-  name = "geoscienceaustralia/datacube-wms:latest"
+  name = "${var.docker_image}"
 }
 
 module "docker_help" {
