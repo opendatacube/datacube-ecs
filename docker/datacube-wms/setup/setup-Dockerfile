@@ -5,11 +5,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
+# AWS cli
+RUN pip install awscli
+
+# Terraform
+RUN curl -o terraform.zip $(echo "https://releases.hashicorp.com/terraform/$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')/terraform_$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')_linux_amd64.zip")
+RUN unzip terraform.zip && \
+    mv terraform /usr/local/bin/terraform && \
+    terraform -v 
+
 WORKDIR /code/firsttime
 
 COPY assets/setup.sh setup.sh
+COPY assets/main.tf
 COPY assets/code/metadata-types.yaml metadata-types.yaml
 
 WORKDIR /code
 
-CMD /bin/bash -c firsttime/setup.sh
+CMD /bin/bash -c terraform init && terraform apply -auto-approve

@@ -12,11 +12,6 @@
 
 # Create Database + datacube & WMS initialization
 function setup_db {
-    PGPASSWORD=$DB_PASSWORD createdb \
-    -h $DB_HOSTNAME \
-    -p $DB_PORT \
-    -U $DB_USERNAME \
-    $DB_DATABASE
 
 datacube system init --no-default-types --no-init-users
 
