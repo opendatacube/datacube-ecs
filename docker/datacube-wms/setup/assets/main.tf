@@ -56,7 +56,7 @@ resource "random_string" "password" {
 resource "aws_ssm_parameter" "service_db_password" {
   name      = "${var.cluster}.${var.workspace}.${var.name}.service_db_password"
   value     = "${random_string.password.result}"
-  type      = "String"
+  type      = "SecureString"
   overwrite = false
 }
 
