@@ -11,16 +11,6 @@ variable "db_port" {
 
 variable "cluster" {}
 
-variable "workspace" {}
-
-variable "name" {}
-
-variable "db_host" {}
-
-variable "db_admin_user" {}
-
-variable "db_admin_pass" {}
-
 variable "database" {}
 
 # --------------
@@ -29,20 +19,26 @@ provider "aws" {
   region = "${var.aws_region}"
 }
 
-locals {
-  db_name = "${var.cluster}-${var.workspace}-${var.name}-db"
-  db_user = "${var.cluster}_${var.workspace}_${var.name}_user"
+# Get the admin credentials from SSM
+data "aws_ssm_parameter" "db_admin_username" {
+  name = "${var.cluster}.db_username"
 }
 
-resource "aws_ssm_parameter" "service_db_name" {
-  name      = "${var.cluster}.${var.workspace}.${var.name}.service_db_name"
-  value     = "${local.db_name}"
-  type      = "String"
-  overwrite = false
+data "aws_ssm_parameter" "db_admin_password" {
+  name = "${var.cluster}.db_password"
+}
+
+data "aws_ssm_parameter" "db_host" {
+  name = "${var.cluster}.db_host"
+}
+
+# Set the user credentials in SSM
+locals {
+  db_user = "${var.cluster}_${var.database}_user"
 }
 
 resource "aws_ssm_parameter" "service_db_username" {
-  name      = "${var.cluster}.${var.workspace}.${var.name}.service_db_username"
+  name      = "${var.cluster}.${var.database}.db_username"
   value     = "${local.db_user}"
   type      = "String"
   overwrite = false
@@ -54,7 +50,7 @@ resource "random_string" "password" {
 }
 
 resource "aws_ssm_parameter" "service_db_password" {
-  name      = "${var.cluster}.${var.workspace}.${var.name}.service_db_password"
+  name      = "${var.cluster}.${var.database}.db_password"
   value     = "${random_string.password.result}"
   type      = "SecureString"
   overwrite = false
@@ -73,7 +69,7 @@ provider "postgresql" {
 resource "postgresql_role" "my_role" {
   name     = "${local.db_user}"
   login    = true
-  password = "${local.db_pass}"
+  password = "${random_string.password.result}"
 }
 
 resource "postgresql_database" "my_db" {
@@ -98,7 +94,7 @@ resource "null_resource" "env_vars" {
       DB_HOSTNAME = "${var.db_host}"
       DB_PORT     = "${var.db_port}"
       DB_USERNAME = "${local.db_user}"
-      DB_PASSWORD = "${local.db_pass}"
+      DB_PASSWORD = "${random_string.password.result}"
       DB_DATABASE = "${var.database}"
     }
   }
