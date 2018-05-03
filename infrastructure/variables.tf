@@ -95,17 +95,6 @@ variable "enable_gateways" {
   default = false
 }
 
-variable "public_subnet_ids" {
-  type        = "list"
-  default     = ["subnet-96410ef1", "subnet-96410ef1", "subnet-a428e9fc"]
-  description = "List of public subnet ids to place the loadbalancer in"
-}
-
-variable "vpc_id" {
-  description = "The VPC id"
-  default     = "vpc-3d36a35a"
-}
-
 # ==================
 # Containers
 variable "container_port" {
