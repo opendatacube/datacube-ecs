@@ -3,9 +3,6 @@ resource "aws_ecs_task_definition" "service-task" {
   container_definitions = "${var.container_definitions}"
   task_role_arn         = "${aws_iam_role.task_role.arn}"
 
-  # cpu = "${var.cpu}"
-  # memory = "${var.memory}"
-  # requires_compatibilities = "${var.launch_type}"
   volume {
     name      = "${var.volume_name}"
     host_path = "${var.container_path}"
