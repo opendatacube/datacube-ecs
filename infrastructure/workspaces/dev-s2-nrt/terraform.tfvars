@@ -7,8 +7,8 @@ workspace = "dev-s2-nrt"
 # The number of containers to run at once
 task_desired_count = 2
 
-# The name of the database server
-database = "datacube-prod-dev-mydb-rds"
+# The name of the database
+database = "datacube-prod.nrt"
 
 # The name of the service
 name = "datacube-wms"

@@ -18,16 +18,12 @@ data "aws_security_group" "alb_sg" {
 # Database 
 #-------------------------------------------------------
 
-data "aws_ssm_parameter" "db_name" {
-  name = "${var.cluster}.db_username"
-}
-
 data "aws_ssm_parameter" "db_username" {
-  name = "${var.cluster}.db_username"
+  name = "${var.database}.db_username"
 }
 
 data "aws_ssm_parameter" "db_password" {
-  name = "${var.cluster}.db_password"
+  name = "${var.database}.db_password"
 }
 
 data "aws_ssm_parameter" "db_host" {

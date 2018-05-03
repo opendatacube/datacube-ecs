@@ -10,8 +10,8 @@ webservice = false
 # The number of containers to run at once
 task_desired_count = 1
 
-# The name of the database server
-database = "datacube-prod-dev-mydb-rds"
+# The name of the database
+database = "datacube-prod"
 
 # The name of the service
 name = "datacube-wms-db"
@@ -19,5 +19,7 @@ name = "datacube-wms-db"
 # The docker image to deploy
 docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
 
-# Command to run on the container
-docker_command = "/bin/bash -c firsttime/setup.sh"
+environment_vars = {
+  TF_VAR_cluster  = "datacube-prod"
+  TF_VAR_database = "nrt"
+}

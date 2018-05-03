@@ -65,3 +65,10 @@ variable "environment_vars" {
 variable "task_desired_count" {
   default = 1
 }
+
+# ==================
+# Database
+
+variable "database" {
+  default = "prod"
+}
