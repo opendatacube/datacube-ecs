@@ -40,9 +40,7 @@ locals {
   public_url = "datacube-wms.${local.base_url}"
 
   public_subnet_ids = ["${data.aws_subnet.a.id}", "${data.aws_subnet.b.id}", "${data.aws_subnet.c.id}"]
-}
 
-locals {
   default_environment_vars = {
     "DATACUBE_CONFIG_PATH" = "/opt/odc/datacube.conf"
     "DB_HOSTNAME"          = "${data.aws_ssm_parameter.db_host.value}"
