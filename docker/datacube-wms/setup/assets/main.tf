@@ -37,6 +37,13 @@ locals {
   db_user = "${var.cluster}_${var.database}_user"
 }
 
+resource "aws_ssm_parameter" "service_db_name" {
+  name      = "${var.cluster}.${var.database}.db_name"
+  value     = "${var.database}"
+  type      = "String"
+  overwrite = false
+}
+
 resource "aws_ssm_parameter" "service_db_username" {
   name      = "${var.cluster}.${var.database}.db_username"
   value     = "${local.db_user}"

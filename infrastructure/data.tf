@@ -18,6 +18,10 @@ data "aws_security_group" "alb_sg" {
 # Database 
 #-------------------------------------------------------
 
+data "aws_ssm_parameter" "db_name" {
+  name = "${var.database}.db_name"
+}
+
 data "aws_ssm_parameter" "db_username" {
   name = "${var.database}.db_username"
 }

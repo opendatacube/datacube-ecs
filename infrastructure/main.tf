@@ -46,7 +46,7 @@ locals {
     "DB_HOSTNAME"          = "${data.aws_ssm_parameter.db_host.value}"
     "DB_USERNAME"          = "${data.aws_ssm_parameter.db_username.value}"
     "DB_PASSWORD"          = "${data.aws_ssm_parameter.db_password.value}"
-    "DB_DATABASE"          = "${var.database}"
+    "DB_DATABASE"          = "${data.aws_ssm_parameter.db_name.value}"
     "DB_PORT"              = "5432"
     "VIRTUAL_HOST"         = "localhost,127.0.0."
   }
