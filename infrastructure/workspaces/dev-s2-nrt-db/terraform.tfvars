@@ -23,3 +23,36 @@ environment_vars = {
   TF_VAR_cluster  = "datacube-prod"
   TF_VAR_database = "nrt"
 }
+
+custom_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:DescribeParameters",
+                "kms:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParameterHistory",
+                "ssm:GetParameters",
+                "ssm:GetParameter",
+                "ssm:DeleteParameters",
+                "ssm:PutParameter",
+                "ssm:DeleteParameter",
+                "ssm:GetParametersByPath"
+            ],
+            "Resource": [
+                "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod*"
+            ]
+        }
+    ]
+}
+EOF

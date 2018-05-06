@@ -99,6 +99,7 @@ module "ecs_main" {
 
   # // container def
   container_definitions = "[${module.container_def.json}]"
+  custom_policy         = "${var.custom_policy}"
 
   # Tags
   owner     = "${var.owner}"
