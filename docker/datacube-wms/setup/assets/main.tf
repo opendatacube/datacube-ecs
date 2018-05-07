@@ -73,10 +73,10 @@ resource "aws_ssm_parameter" "service_db_password" {
 # Postgres
 
 provider "postgresql" {
-  host     = "${data.aws_ssm_parameter.db_host}"
+  host     = "${data.aws_ssm_parameter.db_host.value}"
   port     = "${var.db_port}"
-  username = "${data.aws_ssm_parameter.db_admin_username}"
-  password = "${data.aws_ssm_parameter.db_admin_passsword}"
+  username = "${data.aws_ssm_parameter.db_admin_username.value}"
+  password = "${data.aws_ssm_parameter.db_admin_password.value}"
 }
 
 resource "postgresql_role" "my_role" {
