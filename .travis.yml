@@ -1,6 +1,11 @@
 env:
   AWS_DEFAULT_REGION: 'ap-southeast-2'
 
+sudo: required
+
+services:
+  - docker
+
 branches:
   only: 
     - master
@@ -17,8 +22,14 @@ install:
 
 env:
  - WORKSPACE=dev-s2-nrt
+ - IMAGE=geoscienceaustralia/datacube-wms:aux_setup
 
 script:
+  - pushd docker/datacube-wms/setup
+  - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+  - docker build --pull -t $IMAGE .
+  - docker push $IMAGE
+  - popd
   - cd infrastructure
   - terraform init -backend-config workspaces/$WORKSPACE/backend.cfg
   - terraform workspace new $WORKSPACE || terraform workspace select $WORKSPACE
