@@ -1,7 +1,6 @@
-FROM opendatacube/wms:latest
+FROM opendatacube/wms:ubuntu17.10
 
 # Set timezone so tzdata doesn't ask and break the build
-RUN cp /usr/share/zoneinfo/Australia/Canberra /etc/localtime
 
 # install psql for WMS database script
 RUN apt-get update && apt-get install -y --no-install-recommends \
