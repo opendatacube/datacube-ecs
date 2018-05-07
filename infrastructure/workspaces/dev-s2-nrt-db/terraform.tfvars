@@ -52,7 +52,8 @@ custom_policy = <<EOF
                 "ssm:GetParametersByPath"
             ],
             "Resource": [
-                "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod*"
+                "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod*",
+                "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod.nrt*"
             ]
         }
     ]
