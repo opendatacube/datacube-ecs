@@ -14,9 +14,9 @@ RUN unzip terraform.zip && \
 WORKDIR /code/firsttime
 
 COPY assets/setup.sh setup.sh
-COPY assets/main.tf main.tf
 COPY assets/code/metadata-types.yaml metadata-types.yaml
 
 WORKDIR /code
 
+COPY assets/main.tf main.tf
 CMD /bin/bash -c terraform init && terraform apply -auto-approve

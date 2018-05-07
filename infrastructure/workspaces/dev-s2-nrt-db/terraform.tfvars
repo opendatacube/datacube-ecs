@@ -10,6 +10,8 @@ webservice = false
 # The number of containers to run at once
 task_desired_count = 1
 
+memory = 512
+
 # The name of the database
 database = "datacube-prod"
 
