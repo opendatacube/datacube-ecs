@@ -2,7 +2,7 @@ FROM opendatacube/wms:latest
 
 # install psql for WMS database script
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    postgresql-client awscli\
+    postgresql-client awscli curl jq\
     && rm -rf /var/lib/apt/lists/*
 
 # Terraform
