@@ -1,5 +1,8 @@
 FROM opendatacube/wms:latest
 
+# Set timezone so tzdata doesn't ask and break the build
+RUN timedatectl set-timezone Australia/Sydney
+
 # install psql for WMS database script
 RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client awscli curl jq\
