@@ -1,5 +1,6 @@
 env:
   AWS_DEFAULT_REGION: 'ap-southeast-2'
+  IMAGE: geoscienceaustralia/datacube-wms:aux_setup
 
 sudo: required
 
@@ -21,8 +22,7 @@ install:
   - terraform -v
 
 env:
- - WORKSPACE=dev-s2-nrt
- - IMAGE=geoscienceaustralia/datacube-wms:aux_setup
+  - WORKSPACE=dev-s2-nrt
 
 script:
   - pushd docker/datacube-wms/setup
