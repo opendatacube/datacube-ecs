@@ -104,7 +104,7 @@ resource "null_resource" "env_vars" {
 
     # This will add environment vars to any already set
     environment = {
-      DB_HOSTNAME = "${var.db_host}"
+      DB_HOSTNAME = "${data.aws_ssm_parameter.db_host.value}"
       DB_PORT     = "${var.db_port}"
       DB_USERNAME = "${local.db_user}"
       DB_PASSWORD = "${random_string.password.result}"
