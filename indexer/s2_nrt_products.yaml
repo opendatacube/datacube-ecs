@@ -4,7 +4,7 @@
 
 name: s2a_l1c_aws_pds
 description: Sentinel-2A MSI L1C - AWS PDS
-metadata_type: sentinel_2_alpha
+metadata_type: eo
 
 metadata:
     format:
@@ -15,8 +15,6 @@ metadata:
         code: SENTINEL_2A
     processing_level: Level-1C
     product_type: level1
-    product_format:
-        name: s2_aws_pds
 
 ---
 
@@ -33,8 +31,7 @@ metadata:
         code: SENTINEL_2B
     processing_level: Level-1C
     product_type: level1
-    product_format:
-        name: s2_aws_pds
+
 
 ---
 
@@ -51,11 +48,7 @@ metadata:
         code: SENTINEL_2A
     processing_level: Level-2
     product_type: ard
-    lineage:
-        source_datasets:
-            level1:
-                product_format:
-                    name: s2_aws_pds
+
 
 measurements:
     - name: 'azimuthal_exiting'
@@ -847,11 +840,6 @@ metadata:
         code: SENTINEL_2B
     processing_level: Level-2
     product_type: ard
-    lineage:
-        source_datasets:
-            level1:
-                product_format:
-                    name: s2_aws_pds
 
 measurements:
     - name: 'azimuthal_exiting'
