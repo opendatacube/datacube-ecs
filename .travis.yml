@@ -27,7 +27,7 @@ env:
 script:
   - pushd docker/datacube-wms/setup
   - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-  - docker build --pull -t $IMAGE .
+  - docker build --pull -f setup-Dockerfile -t $IMAGE .
   - docker push $IMAGE
   - popd
   - cd infrastructure
