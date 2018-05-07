@@ -55,6 +55,23 @@ custom_policy = <<EOF
                 "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod*",
                 "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod.nrt*"
             ]
+        },
+        {
+            "Sid": "TerraformState",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:GetItem",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::dea-devs-tfstate",
+                "arn:aws:s3:::dea-devs-tfstate/*",
+                "arn:aws:dynamodb:*:*:table/terraform"
+            ]
         }
     ]
 }
