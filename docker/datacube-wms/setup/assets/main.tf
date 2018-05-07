@@ -124,5 +124,5 @@ resource "null_resource" "env_vars" {
     }
   }
 
-  depends_on = ["postgresql_database.mydb"]
+  depends_on = ["postgresql_database.my_db"]
 }
