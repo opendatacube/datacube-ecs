@@ -23,7 +23,7 @@ docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
 
 environment_vars = {
   TF_VAR_cluster  = "datacube-prod"
-  TF_VAR_database = "nrt"
+  TF_VAR_database = "nrtprod"
 }
 
 custom_policy = <<EOF

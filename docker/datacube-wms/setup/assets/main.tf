@@ -6,12 +6,6 @@ terraform {
     # space
     bucket = "dea-devs-tfstate"
 
-    # The key should be unique to each stack, because we want to
-    # have multiple enviornments alongside each other we set
-    # this dynamically in the bitbucket-pipelines.yml with the
-    # --backend
-    key = "three-tier-efs-dev"
-
     region = "ap-southeast-2"
 
     # This is a DynamoDB table with the Primary Key set to LockID
@@ -105,7 +99,7 @@ resource "postgresql_role" "my_role" {
 
 resource "postgresql_database" "my_db" {
   name              = "${var.database}"
-  owner             = "${local.db_user}"
+  owner             = "${postgresql_role.my_role.name}"
   connection_limit  = -1
   allow_connections = true
 }
@@ -114,7 +108,7 @@ resource "postgresql_database" "my_db" {
 # Variables
 resource "null_resource" "env_vars" {
   triggers {
-    db_user = "${timestamp()}"
+    now = "${timestamp()}"
   }
 
   provisioner "local-exec" {
@@ -129,4 +123,6 @@ resource "null_resource" "env_vars" {
       DB_DATABASE = "${var.database}"
     }
   }
+
+  depends_on = ["postgresql_database.mydb"]
 }

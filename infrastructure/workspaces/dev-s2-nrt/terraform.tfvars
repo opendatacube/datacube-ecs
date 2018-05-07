@@ -8,7 +8,7 @@ workspace = "dev-s2-nrt"
 task_desired_count = 2
 
 # The name of the database
-database = "datacube-prod.nrt"
+database = "datacube-prod.nrtprod"
 
 # The name of the service
 name = "datacube-wms"
