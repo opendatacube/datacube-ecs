@@ -1,8 +1,5 @@
 resource "aws_kms_key" "parameter_store_key" {
-  # For operation with chamber, the parameter_store_key
-  # should be imported to use here. Alternatively the exported
-  # key_id could be used as an environment variable argument
-  # to chamber on the ECS instances 
+  # For operation with chamber, the parameter_store_key  # should be imported to use here. Alternatively the exported  # key_id could be used as an environment variable argument  # to chamber on the ECS instances 
 }
 
 data "aws_iam_policy_document" "container_perms" {
@@ -80,18 +77,4 @@ resource "aws_iam_policy_attachment" "ssm_perms_to_odc_role" {
   name       = "${var.workspace}_${var.name}_attach_ssm_policy_to_odc_ecs"
   roles      = ["${aws_iam_role.instance_role.name}"]
   policy_arn = "${aws_iam_policy.access_to_ssm.id}"
-}
-
-resource "aws_iam_policy" "custom_policy" {
-  count  = "${length(var.custom_policy) > 0 ? 1 : 0}"
-  name   = "${var.cluster}_${var.workspace}_${var.name}_policy"
-  path   = "/"
-  policy = "${var.custom_policy}"
-}
-
-resource "aws_iam_policy_attachment" "custom_policy_to_odc_role" {
-  count      = "${length(var.custom_policy) > 0 ? 1 : 0}"
-  name       = "${var.workspace}_${var.name}_attach_ssm_policy_to_odc_ecs"
-  roles      = ["${aws_iam_role.instance_role.name}"]
-  policy_arn = "${aws_iam_policy.custom_policy.id}"
 }
