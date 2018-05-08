@@ -12,17 +12,15 @@
 
 # Create Database + datacube & WMS initialization
 function setup_db {
-
-datacube system init --no-default-types --no-init-users
-
-datacube metadata_type add firsttime/metadata-types.yaml
+docker-entrypoint.sh
+datacube system init --no-init-users 2>&1
 
 PGPASSWORD=$DB_PASSWORD psql \
     -d $DB_DATABASE \
     -h $DB_HOSTNAME \
     -p $DB_PORT \
     -U $DB_USERNAME \
-    -f create_tables.sql
+    -f create_tables.sql 2>&1
 }
 
 # Add product definitions to datacube

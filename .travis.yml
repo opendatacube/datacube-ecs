@@ -1,5 +1,14 @@
 env:
-  AWS_DEFAULT_REGION: 'ap-southeast-2'
+  global:
+    - AWS_DEFAULT_REGION=ap-southeast-2
+    - IMAGE=geoscienceaustralia/datacube-wms:aux_setup
+  matrix:
+    - WORKSPACE=dev-s2-nrt
+
+sudo: required
+
+services:
+  - docker
 
 branches:
   only: 
@@ -14,9 +23,6 @@ install:
   - curl -o terraform.zip $(echo "https://releases.hashicorp.com/terraform/$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')/terraform_$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')_linux_amd64.zip")
   - unzip terraform.zip && sudo mv terraform /usr/local/bin/terraform
   - terraform -v
-
-env:
- - WORKSPACE=dev-s2-nrt
 
 script:
   - cd infrastructure
