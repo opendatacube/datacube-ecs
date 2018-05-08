@@ -20,7 +20,7 @@ metadata:
 
 name: s2b_l1c_aws_pds
 description: Sentinel-2B MSI L1C - AWS PDS
-metadata_type: sentinel_2_alpha
+metadata_type: eo
 
 metadata:
     format:
@@ -37,7 +37,7 @@ metadata:
 
 name: s2a_nrt_granule
 description: Sentinel-2A MSI NRT - NBAR NBART and Pixel Quality
-metadata_type: sentinel_2_alpha
+metadata_type: eo
 
 metadata:
     format:
