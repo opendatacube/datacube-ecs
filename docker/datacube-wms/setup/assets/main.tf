@@ -1,3 +1,21 @@
+terraform {
+  required_version = ">= 0.9.1"
+
+  backend "s3" {
+    # This is an s3bucket you will need to create in your aws 
+    # space
+    bucket = "dea-devs-tfstate"
+
+    region = "ap-southeast-2"
+
+    # This is a DynamoDB table with the Primary Key set to LockID
+    lock_table = "terraform"
+
+    #Enable server side encryption on your terraform state
+    encrypt = true
+  }
+}
+
 # --------------
 # Variables
 
@@ -11,16 +29,6 @@ variable "db_port" {
 
 variable "cluster" {}
 
-variable "workspace" {}
-
-variable "name" {}
-
-variable "db_host" {}
-
-variable "db_admin_user" {}
-
-variable "db_admin_pass" {}
-
 variable "database" {}
 
 # --------------
@@ -29,21 +37,34 @@ provider "aws" {
   region = "${var.aws_region}"
 }
 
+# Get the admin credentials from SSM
+data "aws_ssm_parameter" "db_admin_username" {
+  name = "${var.cluster}.db_username"
+}
+
+data "aws_ssm_parameter" "db_admin_password" {
+  name = "${var.cluster}.db_password"
+}
+
+data "aws_ssm_parameter" "db_host" {
+  name = "${var.cluster}.db_host"
+}
+
+# Set the user credentials in SSM
 locals {
-  db_name = "${var.cluster}-${var.workspace}-${var.name}-db"
-  db_user = "${var.cluster}_${var.workspace}_${var.name}_user"
+  db_user = "${var.cluster}_${var.database}_user"
 }
 
 resource "aws_ssm_parameter" "service_db_name" {
-  name      = "${var.cluster}.${var.workspace}.${var.name}.service_db_name"
-  value     = "${local.db_name}"
+  name      = "${var.cluster}.${var.database}.db_name"
+  value     = "${var.database}"
   type      = "String"
   overwrite = false
 }
 
 resource "aws_ssm_parameter" "service_db_username" {
-  name      = "${var.cluster}.${var.workspace}.${var.name}.service_db_username"
-  value     = "${local.db_user}"
+  name      = "${var.cluster}.${var.database}.db_username"
+  value     = "${postgresql_role.my_role.name}"
   type      = "String"
   overwrite = false
 }
@@ -54,7 +75,7 @@ resource "random_string" "password" {
 }
 
 resource "aws_ssm_parameter" "service_db_password" {
-  name      = "${var.cluster}.${var.workspace}.${var.name}.service_db_password"
+  name      = "${var.cluster}.${var.database}.db_password"
   value     = "${random_string.password.result}"
   type      = "SecureString"
   overwrite = false
@@ -64,21 +85,21 @@ resource "aws_ssm_parameter" "service_db_password" {
 # Postgres
 
 provider "postgresql" {
-  host     = "${var.db_host}"
+  host     = "${data.aws_ssm_parameter.db_host.value}"
   port     = "${var.db_port}"
-  username = "${var.db_admin_user}"
-  password = "${var.db_admin_pass}"
+  username = "${data.aws_ssm_parameter.db_admin_username.value}"
+  password = "${data.aws_ssm_parameter.db_admin_password.value}"
 }
 
 resource "postgresql_role" "my_role" {
   name     = "${local.db_user}"
   login    = true
-  password = "${local.db_pass}"
+  password = "${random_string.password.result}"
 }
 
 resource "postgresql_database" "my_db" {
   name              = "${var.database}"
-  owner             = "${local.db_user}"
+  owner             = "${postgresql_role.my_role.name}"
   connection_limit  = -1
   allow_connections = true
 }
@@ -87,7 +108,7 @@ resource "postgresql_database" "my_db" {
 # Variables
 resource "null_resource" "env_vars" {
   triggers {
-    db_user = "${timestamp()}"
+    now = "${timestamp()}"
   }
 
   provisioner "local-exec" {
@@ -95,11 +116,13 @@ resource "null_resource" "env_vars" {
 
     # This will add environment vars to any already set
     environment = {
-      DB_HOSTNAME = "${var.db_host}"
+      DB_HOSTNAME = "${data.aws_ssm_parameter.db_host.value}"
       DB_PORT     = "${var.db_port}"
-      DB_USERNAME = "${local.db_user}"
-      DB_PASSWORD = "${local.db_pass}"
+      DB_USERNAME = "${postgresql_role.my_role.name}"
+      DB_PASSWORD = "${random_string.password.result}"
       DB_DATABASE = "${var.database}"
     }
   }
+
+  depends_on = ["postgresql_database.my_db"]
 }
