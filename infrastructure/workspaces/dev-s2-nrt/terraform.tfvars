@@ -18,3 +18,7 @@ docker_image = "opendatacube/wms:latest"
 
 # Command to run on the container
 docker_command = "gunicorn -b 0.0.0.0:8000 -w 5 --timeout 300 datacube_wms.wsgi"
+
+environment_vars = {
+  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/master/infrastructure/workspaces/dev-s2-nrt/wms_cfg.py"
+}
