@@ -64,7 +64,7 @@ resource "aws_ssm_parameter" "service_db_name" {
 
 resource "aws_ssm_parameter" "service_db_username" {
   name      = "${var.cluster}.${var.database}.db_username"
-  value     = "${local.db_user}"
+  value     = "${postgresql_role.my_role.name}"
   type      = "String"
   overwrite = false
 }
@@ -118,7 +118,7 @@ resource "null_resource" "env_vars" {
     environment = {
       DB_HOSTNAME = "${data.aws_ssm_parameter.db_host.value}"
       DB_PORT     = "${var.db_port}"
-      DB_USERNAME = "${local.db_user}"
+      DB_USERNAME = "${postgresql_role.my_role.name}"
       DB_PASSWORD = "${random_string.password.result}"
       DB_DATABASE = "${var.database}"
     }

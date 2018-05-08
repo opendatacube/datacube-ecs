@@ -21,4 +21,4 @@ COPY assets/code/metadata-types.yaml metadata-types.yaml
 WORKDIR /code
 
 COPY assets/main.tf main.tf
-CMD terraform init -backend-config="key=db-$TF_VAR_cluster-$TF_VAR_database.tfstate" && terraform apply -auto-approve
+ENTRYPOINT terraform init -backend-config="key=db-$TF_VAR_cluster-$TF_VAR_database.tfstate" && terraform apply -auto-approve
