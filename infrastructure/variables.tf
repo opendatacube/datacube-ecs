@@ -60,8 +60,20 @@ variable "environment_vars" {
   description = "Map containing environment variables to pass to docker container. Overrides defaults."
 }
 
+variable "custom_policy" {
+  default     = ""
+  description = "IAM Policy JSON"
+}
+
 # ==================
 # Services and Tasks
 variable "task_desired_count" {
   default = 1
+}
+
+# ==================
+# Database
+
+variable "database" {
+  default = "prod"
 }
