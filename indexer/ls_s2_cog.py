@@ -28,16 +28,17 @@ def get_s3_url(bucket_name, obj_key):
         bucket_name=bucket_name, obj_key=obj_key)
 
 
-def get_metadata_docs(bucket_name, prefix, suffix):
+def get_metadata_docs(bucket_name, prefix, suffix, unsafe):
     s3 = boto3.resource('s3')
     bucket = s3.Bucket(bucket_name)
     logging.info("Bucket : %s", bucket_name)
+    safety = 'safe' if not unsafe else 'unsafe'
     for obj in bucket.objects.filter(Prefix = str(prefix)):
         if obj.key.endswith(suffix):
             obj_key = obj.key
             logging.info("Processing %s", obj_key)
-            raw_string = obj.get()['Body'].read().decode('utf8')
-            yaml = YAML(typ='safe', pure = True)
+            raw_string = obj.get(ResponseCacheControl='no-cache')['Body'].read().decode('utf8')
+            yaml = YAML(typ=safety, pure = True)
             yaml.default_flow_style = False
             data = yaml.load(raw_string)
             yield obj_key,data
@@ -75,12 +76,12 @@ def add_dataset(doc, uri, rules, index):
     return uri
 
 
-def iterate_datasets(bucket_name, config, prefix, suffix, func):
+def iterate_datasets(bucket_name, config, prefix, suffix, func, unsafe):
     dc=datacube.Datacube(config=config)
     index = dc.index
     rules = make_rules(index)
     
-    for metadata_path,metadata_doc in get_metadata_docs(bucket_name, prefix, suffix):
+    for metadata_path,metadata_doc in get_metadata_docs(bucket_name, prefix, suffix, unsafe):
         uri= get_s3_url(bucket_name, metadata_path)
         func(metadata_doc, uri, rules, index)
 
@@ -92,10 +93,11 @@ def iterate_datasets(bucket_name, config, prefix, suffix, func):
 @click.option('--prefix', '-p', help="Pass the prefix of the object to the bucket")
 @click.option('--suffix', '-s', default="ARD-METADATA.yaml", help="Defines the suffix of the metadata_docs that will be used to load datasets")
 @click.option('--archive', is_flag=True, help="If true, datasets found in the specified bucket and prefix will be archived")
-def main(bucket_name, config, prefix, suffix, archive):
+@click.option('--unsafe', is_flag=True, help="If true, YAML will be parsed unsafely. Only use on trusted datasets.")
+def main(bucket_name, config, prefix, suffix, archive, unsafe):
     logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
     action = archive_dataset if archive else add_dataset
-    iterate_datasets(bucket_name, config, prefix, suffix, action)
+    iterate_datasets(bucket_name, config, prefix, suffix, action, unsafe)
    
 
 if __name__ == "__main__":
