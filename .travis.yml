@@ -25,11 +25,6 @@ install:
   - terraform -v
 
 script:
-  - pushd docker/datacube-wms/setup
-  - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-  - . build.sh
-  - docker push $IMAGE
-  - popd
   - cd infrastructure
   - terraform init -backend-config workspaces/$WORKSPACE/backend.cfg
   - terraform workspace new $WORKSPACE || terraform workspace select $WORKSPACE
