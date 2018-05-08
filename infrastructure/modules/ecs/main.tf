@@ -119,3 +119,17 @@ resource "aws_cloudwatch_log_group" "cw_logs" {
     Application = "${var.name}"
   }
 }
+
+resource "aws_iam_policy" "custom_policy" {
+  count  = "${length(var.custom_policy) > 0 ? 1 : 0}"
+  name   = "${var.cluster}_${var.workspace}_${var.name}_policy"
+  path   = "/"
+  policy = "${var.custom_policy}"
+}
+
+resource "aws_iam_policy_attachment" "custom_policy_to_odc_role" {
+  count      = "${length(var.custom_policy) > 0 ? 1 : 0}"
+  name       = "${var.workspace}_${var.name}_attach_ssm_policy_to_odc_ecs"
+  roles      = ["${aws_iam_role.task_role.name}"]
+  policy_arn = "${aws_iam_policy.custom_policy.id}"
+}
