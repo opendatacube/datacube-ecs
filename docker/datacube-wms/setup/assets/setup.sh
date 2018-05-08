@@ -13,7 +13,7 @@
 # Create Database + datacube & WMS initialization
 function setup_db {
 
-datacube system init --no-default-types
+datacube system init --no-init-users
 
 datacube metadata_type add firsttime/metadata-types.yaml
 
