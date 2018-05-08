@@ -36,7 +36,7 @@ def get_metadata_docs(bucket_name, prefix, suffix):
         if obj.key.endswith(suffix):
             obj_key = obj.key
             logging.info("Processing %s", obj_key)
-            raw_string = obj.get()['Body'].read().decode('utf8')
+            raw_string = obj.get(ResponseCacheControl='no-cache')['Body'].read().decode('utf8')
             yaml = YAML(typ='safe', pure = True)
             yaml.default_flow_style = False
             data = yaml.load(raw_string)
