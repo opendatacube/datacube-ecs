@@ -24,6 +24,9 @@ docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
 environment_vars = {
   TF_VAR_cluster  = "datacube-prod"
   TF_VAR_database = "nrtprod"
+  "DB_DATABASE"   = "nrtprod"
+  "DB_PORT"       = "5432"
+  "VIRTUAL_HOST"  = "localhost,127.0.0."
 }
 
 custom_policy = <<EOF
