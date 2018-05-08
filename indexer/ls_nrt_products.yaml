@@ -28,6 +28,21 @@ metadata:
         name: GeoTIFF
 ---
 
+name: ls7_l1c1
+description: Landsat 7 L1C1
+metadata_type: eo
+
+metadata:
+    platform:
+        code: LANDSAT_7
+    instrument:
+        name: ETM
+    product_type: LS_USGS_L1C1
+    format:
+      name: GeoTiff
+
+---
+
 name: ls7_nrt_level2
 description: Landsat 7 ETM+ NRT Level 2 - NBAR NBART
 metadata_type: eo
@@ -614,6 +629,21 @@ metadata:
     instrument:
         name: OLI_TIRS
     product_type: level1
+    format:
+        name: GeoTIFF
+
+---
+
+name: ls8_l1c1
+metadata_type: eo
+description: Landsat 8 L1C1
+
+metadata:
+    platform:
+        code: LANDSAT_8
+    instrument:
+        name: OLI_TIRS
+    product_type: LS_USGS_L1C1
     format:
         name: GeoTIFF
 
