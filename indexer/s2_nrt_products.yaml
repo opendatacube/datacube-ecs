@@ -829,7 +829,7 @@ measurements:
 
 name: s2b_nrt_granule
 description: Sentinel-2B MSI NRT - NBAR NBART and Pixel Quality
-metadata_type: sentinel_2_alpha
+metadata_type: eo
 
 metadata:
     format:
