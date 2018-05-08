@@ -111,6 +111,11 @@ variable "container_definitions" {
   description = "JSON container definition"
 }
 
+variable "custom_policy" {
+  default     = ""
+  description = "custom policy to add to the task"
+}
+
 variable "webservice" {
   default     = true
   description = "Whether the task should restart and be publically accessible"
