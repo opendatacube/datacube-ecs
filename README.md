@@ -37,12 +37,13 @@ We use the standard OpenDataCube containers defined [here](https://github.com/op
     * `task_desired_count = $taskcount` Number of ECS tasks to run
 
 ### Creating
- * `export WORKSPACE=$workspace`
- * `cd infrastructure`
- * `terraform init -backend-config workspaces/$WORKSPACE/backend.cfg`
- * `terraform workspace new $WORKSPACE || terraform workspace select $WORKSPACE`
- * `terraform plan -var-file="workspaces/$WORKSPACE/terraform.tfvars`
- * `terraform apply -var-file="workspaces/$WORKSPACE/terraform.tfvars"`
+ * Setup DB
+   `./deploy.sh dev-s2-nrt-db`
+ * Create Index
+   `./deploy.sh dev-s2-nrt-index`
+ * Deploy WMS
+   `./deploy.sh dev-s2-nrt`
+
 
 ### Monitor logs
  * `awslogs get $cluster/$workspacename/$name --watch`
