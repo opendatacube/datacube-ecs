@@ -5,7 +5,7 @@ cluster = "datacube-prod"
 workspace = "dev-s2-nrt"
 
 # The number of containers to run at once
-task_desired_count = 2
+task_desired_count = 10
 
 # The name of the database
 database = "datacube-prod.nrtprod"
