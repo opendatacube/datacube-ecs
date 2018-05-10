@@ -1,6 +1,7 @@
-FROM opendatacube/wms:ubuntu17.10
+FROM opendatacube/wms:latest
 
-# Set timezone so tzdata doesn't ask and break the build
+# Make sure apt doesn't ask questions
+ENV DEBIAN_FRONTEND=noninteractive
 
 # install psql for WMS database script
 RUN apt-get update && apt-get install -y --no-install-recommends \
