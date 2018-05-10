@@ -123,6 +123,15 @@ module "alb" {
   webservice        = "${var.webservice}"
 }
 
+module "route53" {
+  source = "modules/route53"
+
+  domain_name        = "${var.dns_name}"
+  zone_domain_name   = "${var.dns_zone}"
+  target_dns_name    = "${element(module.alb.alb_dns_name, 0)}"
+  target_dns_zone_id = "${element(module.alb.alb_dns_zone_id, 0)}"
+}
+
 # ==============
 # Ancilliary
 
