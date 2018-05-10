@@ -6,8 +6,8 @@ response_cfg = {
 
 service_cfg = {
     # Required config
-    "title": "WMS server for Australian Landsat Datacube",
-    "url": "http://9xjfk12.nexus.csiro.au/datacube_wms",
+    "title": "WMS server for Near Realtime Sentinel 2 and Landsat",
+    "url": "nrt.dea.ga.gov.au",
     "published_CRSs": {
         "EPSG:3857": {  # Web Mercator
             "geographic": False,
@@ -30,16 +30,18 @@ service_cfg = {
     "max_height": 512,
 
     # Optional config - may be set to blank/empty
-    "abstract": """Historic Landsat imagery for Australia.""",
+    "abstract": """Near Realtime Sentinel 2 and Landsat imagery for Murray Darling Basin Authority""",
     "keywords": [
         "landsat",
+        "sentinel",
         "australia",
         "time-series",
+        "murraydarling",
     ],
     "contact_info": {
-        "person": "David Gavin",
+        "person": "Digital Earth Australia",
         "organisation": "Geoscience Australia",
-        "position": "Technical Lead",
+        "position": "",
         "address": {
             "type": "postal",
             "address": "GPO Box 378",
@@ -48,9 +50,9 @@ service_cfg = {
             "postcode": "2906",
             "country": "Australia",
         },
-        "telephone": "+61 2 1234 5678",
-        "fax": "+61 2 1234 6789",
-        "email": "test@example.com",
+        "telephone": "+61 2 6249 9111",
+        "fax": "",
+        "email": "earth.observation@ga.gov.au",
     },
     "fees": "",
     "access_constraints": "",
