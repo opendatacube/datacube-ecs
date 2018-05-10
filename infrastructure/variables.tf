@@ -77,3 +77,16 @@ variable "task_desired_count" {
 variable "database" {
   default = "prod"
 }
+
+# ==================
+# DNS
+
+variable "dns_name" {
+  default     = ""
+  description = "DNS name of the service"
+}
+
+variable "dns_zone" {
+  default     = ""
+  description = "DNS zone of the service"
+}
