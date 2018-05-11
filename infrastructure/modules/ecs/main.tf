@@ -135,6 +135,7 @@ resource "aws_iam_policy_attachment" "custom_policy_to_odc_role" {
 }
 
 resource "aws_cloudwatch_event_rule" "task" {
+  name                = "${var.cluster}_${var.workspace}_${var.name}_task"
   count               = "${var.schedulable ? 1 : 0}"
   schedule_expression = "${var.schedule_expression}"
 }
@@ -142,7 +143,7 @@ resource "aws_cloudwatch_event_rule" "task" {
 resource "aws_cloudwatch_event_target" "task" {
   count    = "${var.schedulable ? 1 : 0}"
   rule     = "${aws_cloudwatch_event_rule.task.name}"
-  arn      = "${aws_ecs_task_definition.service-task.0.arn}"
+  arn      = "${data.aws_ecs_cluster.cluster.arn}"
   role_arn = "${aws_iam_role.task_role.arn}"
 
   ecs_target {
