@@ -24,3 +24,7 @@ environment_vars = {
   "DC_S3_INDEX_BUCKET" = "dea-public-data"
   "DC_S3_INDEX_PREFIX" = "projects/2018-04-MDBA/"
 }
+
+schedulable = true
+
+schedule_expression = "cron(1 0 * * ? *)"

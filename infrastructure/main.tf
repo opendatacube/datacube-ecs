@@ -101,6 +101,10 @@ module "ecs_main" {
   container_definitions = "[${module.container_def.json}]"
   custom_policy         = "${var.custom_policy}"
 
+  # Scheduling definitions
+  schedulable         = "${var.schedulable}"
+  schedule_expression = "${var.schedule_expression}"
+
   # Tags
   owner     = "${var.owner}"
   cluster   = "${var.cluster}"
@@ -123,13 +127,21 @@ module "alb" {
   webservice        = "${var.webservice}"
 }
 
+
+# Lack of a module count means we need to use flags
+# and counts inside the route53 module to conditionally
+# create the resources.
+# Terraform doesn't lazily evaluate conditional expressions
+# we have to ensure there is something in the list for
+# terraform to not complain about an empty list, even if webservice is false
 module "route53" {
   source = "modules/route53"
 
   domain_name        = "${var.dns_name}"
   zone_domain_name   = "${var.dns_zone}"
-  target_dns_name    = "${element(module.alb.alb_dns_name, 0)}"
-  target_dns_zone_id = "${element(module.alb.alb_dns_zone_id, 0)}"
+  target_dns_name    = "${var.webservice ? element(concat(module.alb.alb_dns_name, list("")), 0) : ""}"
+  target_dns_zone_id = "${var.webservice ? element(concat(module.alb.alb_dns_zone_id, list("")), 0) : ""}"
+  enable             = "${var.webservice}"
 }
 
 # ==============

@@ -6,6 +6,7 @@ variable "domain_name" {
 variable "zone_domain_name" {
   type = "string"
   description = "Domain name of the route53 zone. Generally the base domain e.g. datacube.org.au"
+  default = "dummydomain"
 }
 
 variable "private_zone" {
@@ -32,4 +33,9 @@ variable "target_dns_zone_id" {
 variable "evaluate_target_health" {
   default = true
   description = "If true, Route53 will health check the target before routing traffic to it"
+}
+
+variable "enable" {
+  default = false
+  description = "Whether to create route53 entry or not"
 }
