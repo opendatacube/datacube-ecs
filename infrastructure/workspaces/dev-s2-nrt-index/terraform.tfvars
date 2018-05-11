@@ -22,7 +22,7 @@ docker_image = "geoscienceaustralia/datacube-wms:aux_index"
 # environment variables configuring the docker container
 environment_vars = {
   "DC_S3_INDEX_BUCKET" = "dea-public-data"
-  "DC_S3_INDEX_PREFIX" = "L2/sentinel-2-nrt/S2MSIARD"
+  "DC_S3_INDEX_PREFIX" = "projects/2018-04-MDBA/"
 }
 
 schedulable = true
