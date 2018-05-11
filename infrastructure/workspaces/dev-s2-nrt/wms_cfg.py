@@ -1307,7 +1307,7 @@ layer_cfg = [
                         "title": "NDWI",
                         "abstract": "Normalised Difference Water Index - a derived index that correlates well with the existence of water",
                         "heat_mapped": True,
-                        "index_function": lambda data: (data["nbart_green"] - data["nbatr_nir"]) / (
+                        "index_function": lambda data: (data["nbart_green"] - data["nbart_nir"]) / (
                                     data["nbart_nir"] + data["nbart_green"]),
                         "needed_bands": ["nbart_green", "nbart_nir"],
                         "range": [0.0, 1.0],
