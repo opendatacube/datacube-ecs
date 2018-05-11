@@ -33,3 +33,8 @@ variable "evaluate_target_health" {
   default = true
   description = "If true, Route53 will health check the target before routing traffic to it"
 }
+
+variable "enable" {
+  default = false
+  description = "Whether to create route53 entry or not"
+}
