@@ -133,3 +133,20 @@ resource "aws_iam_policy_attachment" "custom_policy_to_odc_role" {
   roles      = ["${aws_iam_role.task_role.name}"]
   policy_arn = "${aws_iam_policy.custom_policy.id}"
 }
+
+resource "aws_cloudwatch_event_rule" "task" {
+  count               = "${var.schedulable ? 1 : 0}"
+  schedule_expression = "${var.schedule_expression}"
+}
+
+resource "aws_cloudwatch_event_target" "task" {
+  count    = "${var.schedulable ? 1 : 0}"
+  rule     = "${aws_cloudwatch_event_rule.task.name}"
+  arn      = "${aws_ecs_task_definition.service-task.0.arn}"
+  role_arn = "${aws_iam_role.task_role.arn}"
+
+  ecs_target {
+    task_count          = "${var.task_desired_count}"
+    task_definition_arn = "${aws_ecs_task_definition.service-task.0.arn}"
+  }
+}

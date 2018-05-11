@@ -101,6 +101,10 @@ module "ecs_main" {
   container_definitions = "[${module.container_def.json}]"
   custom_policy         = "${var.custom_policy}"
 
+  # Scheduling definitions
+  schedulable         = "${var.schedulable}"
+  schedule_expression = "${var.schedule_expression}"
+
   # Tags
   owner     = "${var.owner}"
   cluster   = "${var.cluster}"

@@ -71,6 +71,14 @@ variable "task_desired_count" {
   default = 1
 }
 
+variable "schedulable" {
+  default = false
+}
+
+variable "schedule_expression" {
+  default = ""
+}
+
 # ==================
 # Database
 

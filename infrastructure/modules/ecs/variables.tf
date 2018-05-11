@@ -120,3 +120,13 @@ variable "webservice" {
   default     = true
   description = "Whether the task should restart and be publically accessible"
 }
+
+variable "schedulable" {
+  default     = false
+  description = "Whether the task will run periodically on a schedule"
+}
+
+variable "schedule_expression" {
+  default     = ""
+  description = "Determines the schedule of a schedulable task. e.g. cron(0 20 * * ? *) or rate(5 minutes)"
+}
