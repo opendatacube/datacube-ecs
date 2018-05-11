@@ -24,7 +24,7 @@ variable "origin_protocol_policy" {
   description = "Which protocol is used to connect to origin, http-only, https-only, match-viewer"
 }
 
-variable "enable" {
+variable "enable_distribution" {
   default = false
   description = "Enables the cloudfront distribution"
 }
@@ -62,4 +62,9 @@ variable "default_ttl" {
 variable "price_class" {
   default     = "PriceClass_All"
   description = "The Price class for this distribution, can be PriceClass_100, PriceClass_200 or PriceClass_All"
+}
+
+variable "enable" {
+  default = false
+  description = "Whether the cloudfront distribution should be created"
 }

@@ -1,6 +1,8 @@
 # Creates a basic cloudfront disribution with a custom (i.e. not S3) origin
 
 resource "aws_cloudfront_distribution" "cloudfront" {
+  count = "${var.enable ? 1 : 0}"
+
   origin {
     domain_name = "${var.origin_domain}"
     origin_id   = "${var.origin_id}"
@@ -13,7 +15,7 @@ resource "aws_cloudfront_distribution" "cloudfront" {
     }
   }
 
-  enabled = "${var.enable}"
+  enabled = "${var.enable_distribution}"
   is_ipv6_enabled = "${var.enable_ipv6}"
   default_root_object = ""
 

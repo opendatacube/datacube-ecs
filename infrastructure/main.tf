@@ -139,10 +139,25 @@ module "route53" {
 
   domain_name        = "${var.dns_name}"
   zone_domain_name   = "${var.dns_zone}"
-  target_dns_name    = "${var.webservice ? element(concat(module.alb.alb_dns_name, list("")), 0) : ""}"
-  target_dns_zone_id = "${var.webservice ? element(concat(module.alb.alb_dns_zone_id, list("")), 0) : ""}"
+  target_dns_name    = "${var.webservice ? element(concat(module.cloudfront.domain_name, list("")), 0) : ""}"
+  target_dns_zone_id = "${var.webservice ? element(concat(module.cloudfront.hosted_zone_id, list("")), 0) : ""}"
   enable             = "${var.webservice}"
 }
+
+# Lack of a module count means we need to use flags
+# and counts inside the cloudfront module to conditionally
+# create the resources.
+# Terraform doesn't lazily evaluate conditional expressions
+# we have to ensure there is something in the list for
+# terraform to not complain about an empty list, even if webservice is false
+module "cloudfront" {
+  source = "modules/cloudfront"
+
+  origin_domain = "${var.webservice ? element(concat(module.alb.alb_dns_name, list("")), 0) : ""}"
+  origin_id     = "${var.cluster}_${var.workspace}_${var.name}_origin"
+  enable        = "${var.webservice}"
+}
+
 
 # ==============
 # Ancilliary
@@ -151,24 +166,4 @@ provider "aws" {
   region = "ap-southeast-2"
 }
 
-# Cloudfront distribution
-# module "cloudfront" {
-#   source = "modules/cloudfront"
-
-
-#   origin_domain = "${module.alb.alb_dns_name}"
-#   origin_id     = "default_lb_origin"
-# }
-
-
-# # Route 53 address for this cluster
-# module "route53" {
-#   source = "modules/route53"
-
-
-#   zone_domain_name   = "${local.base_url}"
-#   domain_name        = "${local.public_url}"
-#   target_dns_name    = "${module.cloudfront.domain_name}"
-#   target_dns_zone_id = "${module.cloudfront.hosted_zone_id }"
-# }
 
