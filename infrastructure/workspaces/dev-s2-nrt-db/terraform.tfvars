@@ -27,7 +27,7 @@ environment_vars = {
   "DB_DATABASE"   = "nrtprod"
   "DB_PORT"       = "5432"
   "VIRTUAL_HOST"  = "localhost,127.0.0."
-  "PRODUCT_URLS"  = "raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/ls_nrt_products.yaml:raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/s2_nrt_products.yaml:raw.githubusercontent.com/harshurampur/datacube-products/master/ls8_scenes.yaml:raw.githubusercontent.com/harshurampur/datacube-products/master/ls7_scenes.yaml"
+  "PRODUCT_URLS"  = "raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/ls_nrt_products.yaml:raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/s2_nrt_products.yaml"
 }
 
 custom_policy = <<EOF
