@@ -3,7 +3,7 @@
 # Must have a zone name specified, even if the count is 0
 data "aws_route53_zone" "selected" {
   count        = "${var.enable ? 1 : 0}"
-  name         = "${var.enable ? var.zone_domain_name : "notazone"}"
+  name         = "${var.zone_domain_name}"
   private_zone = "${var.private_zone}"
 }
 

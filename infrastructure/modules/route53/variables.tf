@@ -6,6 +6,7 @@ variable "domain_name" {
 variable "zone_domain_name" {
   type = "string"
   description = "Domain name of the route53 zone. Generally the base domain e.g. datacube.org.au"
+  default = "dummydomain"
 }
 
 variable "private_zone" {
