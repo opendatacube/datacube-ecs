@@ -130,8 +130,7 @@ layer_cfg = [
                                 "nbart_blue": 1.0
                             }
                         },
-                        # Used to clip off very bright areas.
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "extended_rgb",
@@ -149,7 +148,7 @@ layer_cfg = [
                                  "nbart_coastal_aerosol": 0.4
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "wideband",
@@ -172,7 +171,7 @@ layer_cfg = [
                                 "nbart_coastal_aerosol": 0.255,
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "infrared_green",
@@ -188,7 +187,8 @@ layer_cfg = [
                             "blue": {
                                 "nbart_green": 1.0
                             }
-                        }
+                        },
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "infra_red",
@@ -205,7 +205,7 @@ layer_cfg = [
                                 "nbart_nir_1": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "aerosol",
@@ -222,7 +222,7 @@ layer_cfg = [
                                 "nbart_coastal_aerosol": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "blue",
@@ -239,7 +239,7 @@ layer_cfg = [
                                 "nbart_blue": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "green",
@@ -256,7 +256,7 @@ layer_cfg = [
                                 "nbart_green": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "red",
@@ -273,7 +273,7 @@ layer_cfg = [
                                 "nbart_red": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "nir",
@@ -290,7 +290,7 @@ layer_cfg = [
                                 "nbart_nir_1": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "narrow_nir",
@@ -307,7 +307,7 @@ layer_cfg = [
                                 "nbart_nir_2": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "swir1",
@@ -324,7 +324,7 @@ layer_cfg = [
                                 "nbart_swir_2": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "swir2",
@@ -341,7 +341,7 @@ layer_cfg = [
                                 "nbart_swir_3": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     #
                     # Examples of non-linear heat-mapped styles.
@@ -397,7 +397,7 @@ layer_cfg = [
                                 "nbart_blue": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     }
                 ],
                 # Default style (if request does not specify style)
@@ -466,7 +466,7 @@ layer_cfg = [
                             }
                         },
                         # Used to clip off very bright areas.
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "extended_rgb",
@@ -484,7 +484,7 @@ layer_cfg = [
                                 "nbart_coastal_aerosol": 0.4
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "wideband",
@@ -507,7 +507,7 @@ layer_cfg = [
                                 "nbart_coastal_aerosol": 0.255,
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "infrared_green",
@@ -523,7 +523,8 @@ layer_cfg = [
                             "blue": {
                                 "nbart_green": 1.0
                             }
-                        }
+                        },
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "infra_red",
@@ -540,7 +541,7 @@ layer_cfg = [
                                 "nbart_nir_1": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "aerosol",
@@ -557,7 +558,7 @@ layer_cfg = [
                                 "nbart_coastal_aerosol": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "blue",
@@ -574,7 +575,7 @@ layer_cfg = [
                                 "nbart_blue": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "green",
@@ -591,7 +592,7 @@ layer_cfg = [
                                 "nbart_green": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "red",
@@ -608,7 +609,7 @@ layer_cfg = [
                                 "nbart_red": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "nir",
@@ -625,7 +626,7 @@ layer_cfg = [
                                 "nbart_nir_1": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "narrow_nir",
@@ -642,7 +643,7 @@ layer_cfg = [
                                 "nbart_nir_2": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "swir1",
@@ -659,7 +660,7 @@ layer_cfg = [
                                 "nbart_swir_2": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "swir2",
@@ -676,7 +677,7 @@ layer_cfg = [
                                 "nbart_swir_3": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     },
                     #
                     # Examples of non-linear heat-mapped styles.
@@ -736,7 +737,7 @@ layer_cfg = [
                                 "nbart_blue": 1.0
                             }
                         },
-                        "scale_factor": 12.0
+                        "scale_range": [0.0, 3000.0]
                     }
                 ],
                 # Default style (if request does not specify style)
@@ -971,7 +972,8 @@ layer_cfg = [
                             "blue": {
                                 "nbart_green": 1.0
                             }
-                        }
+                        },
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "nir",
@@ -1258,7 +1260,8 @@ layer_cfg = [
                             "blue": {
                                 "nbart_green": 1.0
                             }
-                        }
+                        },
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "nir",
