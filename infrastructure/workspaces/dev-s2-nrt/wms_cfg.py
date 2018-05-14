@@ -175,6 +175,22 @@ layer_cfg = [
                         "scale_factor": 12.0
                     },
                     {
+                        "name": "infrared_green",
+                        "title": "False colour SWIR, NIR and green",
+                        "abstract": "False Colour image with SWIR1->Red, NIR->Green, and Green->Blue",
+                        "components": {
+                            "red": {
+                                "nbart_swir_1": 1.0
+                            },
+                            "green": {
+                                "nbart_nir_1": 1.0
+                            },
+                            "blue": {
+                                "nbart_green": 1.0
+                            }
+                        }
+                    },
+                    {
                         "name": "infra_red",
                         "title": "False colour multi-band infra-red",
                         "abstract": "Simple false-colour image, using the near and short-wave infra-red bands",
@@ -492,6 +508,22 @@ layer_cfg = [
                             }
                         },
                         "scale_factor": 12.0
+                    },
+                    {
+                        "name": "infrared_green",
+                        "title": "False colour SWIR, NIR and green",
+                        "abstract": "False Colour image with SWIR1->Red, NIR->Green, and Green->Blue",
+                        "components": {
+                            "red": {
+                                "nbart_swir_1": 1.0
+                            },
+                            "green": {
+                                "nbart_nir_1": 1.0
+                            },
+                            "blue": {
+                                "nbart_green": 1.0
+                            }
+                        }
                     },
                     {
                         "name": "infra_red",
@@ -841,6 +873,10 @@ layer_cfg = [
                         "scale_range": [0.0, 3000.0]
                     },
                     {
+                        "name": "false_colour",
+                        ""
+                    }
+                    {
                         "name": "infra_red",
                         "title": "False colour multi-band infra-red",
                         "abstract": "Simple false-colour image, using the near and short-wave infra-red bands",
@@ -924,6 +960,22 @@ layer_cfg = [
                             }
                         },
                         "scale_range": [0.0, 3000.0]
+                    },
+                    {
+                        "name": "infrared_green",
+                        "title": "False colour SWIR, NIR and green",
+                        "abstract": "False Colour image with SWIR1->Red, NIR->Green, and Green->Blue",
+                        "components": {
+                            "red": {
+                                "nbart_swir_1": 1.0
+                            },
+                            "green": {
+                                "nbart_nir": 1.0
+                            },
+                            "blue": {
+                                "nbart_green": 1.0
+                            }
+                        }
                     },
                     {
                         "name": "nir",
@@ -1195,6 +1247,22 @@ layer_cfg = [
                             }
                         },
                         "scale_range": [0.0, 3000.0]
+                    },
+                    {
+                        "name": "infrared_green",
+                        "title": "False colour SWIR, NIR and green",
+                        "abstract": "False Colour image with SWIR1->Red, NIR->Green, and Green->Blue",
+                        "components": {
+                            "red": {
+                                "nbart_swir_1": 1.0
+                            },
+                            "green": {
+                                "nbart_nir": 1.0
+                            },
+                            "blue": {
+                                "nbart_green": 1.0
+                            }
+                        }
                     },
                     {
                         "name": "nir",
