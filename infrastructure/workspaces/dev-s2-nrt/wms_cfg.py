@@ -179,7 +179,7 @@ layer_cfg = [
                         "abstract": "False Colour image with SWIR1->Red, NIR->Green, and Green->Blue",
                         "components": {
                             "red": {
-                                "nbart_swir_1": 1.0
+                                "nbart_swir_2": 1.0
                             },
                             "green": {
                                 "nbart_nir_1": 1.0
@@ -515,7 +515,7 @@ layer_cfg = [
                         "abstract": "False Colour image with SWIR1->Red, NIR->Green, and Green->Blue",
                         "components": {
                             "red": {
-                                "nbart_swir_1": 1.0
+                                "nbart_swir_2": 1.0
                             },
                             "green": {
                                 "nbart_nir_1": 1.0
