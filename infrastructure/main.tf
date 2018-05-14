@@ -155,6 +155,7 @@ module "cloudfront" {
 
   origin_domain = "${var.webservice ? element(concat(module.alb.alb_dns_name, list("")), 0) : ""}"
   origin_id     = "${var.cluster}_${var.workspace}_${var.name}_origin"
+  aliases       = ["${var.dns_name}"]
   enable        = "${var.webservice}"
 }
 
