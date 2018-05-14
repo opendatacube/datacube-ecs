@@ -873,10 +873,6 @@ layer_cfg = [
                         "scale_range": [0.0, 3000.0]
                     },
                     {
-                        "name": "false_colour",
-                        ""
-                    }
-                    {
                         "name": "infra_red",
                         "title": "False colour multi-band infra-red",
                         "abstract": "Simple false-colour image, using the near and short-wave infra-red bands",
