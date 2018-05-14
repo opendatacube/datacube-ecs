@@ -28,3 +28,6 @@ dns_name = "nrt.dea.ga.gov.au"
 
 # DNS zone for WMS service
 dns_zone = "dea.ga.gov.au"
+
+# Memory for each container
+memory = 1536
