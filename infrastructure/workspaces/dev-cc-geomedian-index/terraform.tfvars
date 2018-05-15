@@ -2,7 +2,7 @@
 cluster = "datacube-prod"
 
 # The name of your project
-workspace = "dev-s2-nrt-index"
+workspace = "dev-cc-geomedian-index"
 
 # Setting this to false will turn off auto-restart and web access
 webservice = false
@@ -11,7 +11,7 @@ webservice = false
 task_desired_count = 1
 
 # The name of the database
-database = "datacube-prod.nrtprod"
+database = "datacube-prod.geomprod"
 
 # The name of the service
 name = "datacube-wms-index"
@@ -22,8 +22,8 @@ docker_image = "geoscienceaustralia/datacube-wms:aux_index"
 # environment variables configuring the docker container
 environment_vars = {
   "DC_S3_INDEX_BUCKET" = "dea-public-data"
-  "DC_S3_INDEX_PREFIX" = "projects/2018-04-MDBA/"
-  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/master/infrastructure/workspaces/dev-s2-nrt/wms_cfg.py"
+  "DC_S3_INDEX_PREFIX" = "ewater/cambodia_cube"
+  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/harshurampur/datacube-wms/master/datacube_wms/wms_cfg.py"
 
 }
 

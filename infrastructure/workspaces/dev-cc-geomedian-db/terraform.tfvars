@@ -2,7 +2,7 @@
 cluster = "datacube-prod"
 
 # The name of your project
-workspace = "dev-s2-nrt-db"
+workspace = "dev-cc-geomedian-db"
 
 # Setting this to false will turn off auto-restart and web access
 webservice = false
@@ -23,11 +23,11 @@ docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
 
 environment_vars = {
   TF_VAR_cluster  = "datacube-prod"
-  TF_VAR_database = "nrtprod"
-  "DB_DATABASE"   = "nrtprod"
+  TF_VAR_database = "geomedianprod"
+  "DB_DATABASE"   = "geomedianprod"
   "DB_PORT"       = "5432"
   "VIRTUAL_HOST"  = "localhost,127.0.0."
-  "PRODUCT_URLS"  = "raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/ls_nrt_products.yaml:raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/s2_nrt_products.yaml"
+  "PRODUCT_URLS"  = "raw.githubusercontent.com/GeoscienceAustralia/digitalearthau/config-geomedian/digitalearthau/config/cambodia/geomed_product.yaml:raw.githubusercontent.com/opendatacube/datacube-core/develop/docs/config_samples/dataset_types/ls_usgs_sr_scene.yaml"
 }
 
 custom_policy = <<EOF
