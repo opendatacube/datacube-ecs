@@ -11,7 +11,7 @@ task_desired_count = 50
 database = "datacube-prod.geomprod"
 
 # The name of the service
-name = "datacube-wms"
+name = "datacube-wms-geom"
 
 # The docker image to deploy
 docker_image = "opendatacube/wms:latest"

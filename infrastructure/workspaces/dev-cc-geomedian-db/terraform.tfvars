@@ -16,7 +16,7 @@ memory = 512
 database = "datacube-prod"
 
 # The name of the service
-name = "datacube-wms-db"
+name = "datacube-wms-geom-db"
 
 # The docker image to deploy
 docker_image = "geoscienceaustralia/datacube-wms:aux_setup"

@@ -14,7 +14,7 @@ task_desired_count = 1
 database = "datacube-prod.geomprod"
 
 # The name of the service
-name = "datacube-wms-index"
+name = "datacube-wms-geom-index"
 
 # The docker image to deploy
 docker_image = "geoscienceaustralia/datacube-wms:aux_index"
