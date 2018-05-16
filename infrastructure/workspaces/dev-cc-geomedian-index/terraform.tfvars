@@ -23,7 +23,7 @@ docker_image = "geoscienceaustralia/datacube-wms:aux_index"
 environment_vars = {
   "DC_S3_INDEX_BUCKET" = "dea-public-data"
   "DC_S3_INDEX_PREFIX" = "ewater/cambodia_cube"
-  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/harshurampur/datacube-wms/master/datacube_wms/wms_cfg.py"
+  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/geomedian/infrastructure/workspaces/dev-cc-geomedian/geom-wms/wms_cfg.py"
 
 }
 
