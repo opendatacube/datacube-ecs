@@ -110,7 +110,7 @@ layer_cfg = [
                 # Flags listed here are ignored in GetFeatureInfo requests.
                 # (defaults to empty list)
                 "ignore_info_flags": [],
-                "data_manual_merge": False,
+                "data_manual_merge": True,
                 "pq_manual_merge": False,
                 "always_fetch_bands": [ ],
                 "apply_solar_corrections": False,
