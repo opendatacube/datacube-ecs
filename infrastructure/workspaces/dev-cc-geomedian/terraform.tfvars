@@ -5,7 +5,7 @@ cluster = "datacube-prod"
 workspace = "dev-cc-geomedian"
 
 # The number of containers to run at once
-task_desired_count = 0
+task_desired_count = 50
 
 # The name of the database
 database = "datacube-prod.geomedianprod"
