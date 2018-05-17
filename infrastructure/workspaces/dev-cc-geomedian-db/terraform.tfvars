@@ -57,7 +57,7 @@ custom_policy = <<EOF
             ],
             "Resource": [
                 "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod*",
-                "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod.nrt*"
+                "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod.geomedian*"
             ]
         },
         {

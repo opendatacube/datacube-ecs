@@ -8,7 +8,7 @@ workspace = "dev-cc-geomedian"
 task_desired_count = 50
 
 # The name of the database
-database = "datacube-prod.geomprod"
+database = "datacube-prod.geomedianprod"
 
 # The name of the service
 name = "datacube-wms-geom"
@@ -31,3 +31,5 @@ dns_zone = "dea.ga.gov.au"
 
 # Memory for each container
 memory = 1536
+
+alb_name = "geomedian"

@@ -11,10 +11,10 @@ webservice = false
 task_desired_count = 1
 
 # The name of the database
-database = "datacube-prod.geomprod"
+database = "datacube-prod.geomedianprod"
 
 # The name of the service
-name = "datacube-wms-geom-index"
+name = "datacube-wms-g-index"
 
 # The docker image to deploy
 docker_image = "geoscienceaustralia/datacube-wms:aux_index"
@@ -22,7 +22,7 @@ docker_image = "geoscienceaustralia/datacube-wms:aux_index"
 # environment variables configuring the docker container
 environment_vars = {
   "DC_S3_INDEX_BUCKET" = "dea-public-data"
-  "DC_S3_INDEX_PREFIX" = "ewater/cambodia_cube"
+  "DC_S3_INDEX_PREFIX" = "ewater/rainfall_bom"
   "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/geomedian/infrastructure/workspaces/dev-cc-geomedian/geom-wms/wms_cfg.py"
 
 }
