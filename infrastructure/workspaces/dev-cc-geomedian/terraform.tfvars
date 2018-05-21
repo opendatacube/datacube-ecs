@@ -14,7 +14,7 @@ database = "datacube-prod.geomedianprod"
 name = "datacube-wms-geom"
 
 # The docker image to deploy
-docker_image = "opendatacube/wms:latest"
+docker_image = "opendatacube/wms:1.5.4"
 
 # Command to run on the container
 docker_command = "gunicorn -b 0.0.0.0:8000 -w 4 --timeout 300 datacube_wms.wsgi"

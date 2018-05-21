@@ -22,7 +22,7 @@ docker_image = "geoscienceaustralia/datacube-wms:aux_index"
 # environment variables configuring the docker container
 environment_vars = {
   "DC_S3_INDEX_BUCKET" = "dea-public-data"
-  "DC_S3_INDEX_PREFIX" = "ewater/rainfall_bom"
+  "DC_S3_INDEX_PREFIX" = "ewater/cambodia_cube/output_2014/ls_level2/"
   "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/geomedian/infrastructure/workspaces/dev-cc-geomedian/geom-wms/wms_cfg.py"
 
 }
