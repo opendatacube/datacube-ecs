@@ -152,7 +152,7 @@ layer_cfg = [
                         },
                         # The raw band value range to be compressed to an 8 bit range for the output image tiles.
                         # Band values outside this range are clipped to 0 or 255 as appropriate.
-                        "scale_range": [3000.0, 6000.0]
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "infra_red",
@@ -169,7 +169,7 @@ layer_cfg = [
                                 "nir": 1.0
                             }
                         },
-                        "scale_range": [3000.0, 6000.0]
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "blue",
@@ -186,7 +186,7 @@ layer_cfg = [
                                 "blue": 1.0
                             }
                         },
-                        "scale_range": [3000.0, 6000.0]
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "green",
@@ -203,7 +203,7 @@ layer_cfg = [
                                 "green": 1.0
                             }
                         },
-                        "scale_range": [3000.0, 6000.0]
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "red",
@@ -220,7 +220,7 @@ layer_cfg = [
                                 "red": 1.0
                             }
                         },
-                        "scale_range": [3000.0, 6000.0]
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "nir",
@@ -237,7 +237,7 @@ layer_cfg = [
                                 "nir": 1.0
                             }
                         },
-                        "scale_range": [3000.0, 6000.0]
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "swir1",
@@ -254,7 +254,7 @@ layer_cfg = [
                                 "swir1": 1.0
                             }
                         },
-                        "scale_range": [3000.0, 6000.0]
+                        "scale_range": [0.0, 3000.0]
                     },
                     {
                         "name": "swir2",
@@ -271,7 +271,7 @@ layer_cfg = [
                                 "swir2": 1.0
                             }
                         },
-                        "scale_range": [3000.0, 6000.0]
+                        "scale_range": [0.0, 3000.0]
                     },
                     #
                     # Examples of non-linear heat-mapped styles.
@@ -399,7 +399,7 @@ layer_cfg = [
                                 "blue": 1.0
                             }
                         },
-                        "scale_range": [0.0, 2000.0]
+                        "scale_range": [0.0, 3000.0]
                     },
                 ],
                 # Default style (if request does not specify style)
