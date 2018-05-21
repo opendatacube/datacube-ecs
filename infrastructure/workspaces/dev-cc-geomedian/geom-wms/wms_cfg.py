@@ -186,7 +186,7 @@ layer_cfg = [
                                 "blue": 1.0
                             }
                         },
-                        "scale_range": [0.0, 5000.0]
+                        "scale_range": [0.0, 2000.0]
                     },
                     {
                         "name": "green",
@@ -203,7 +203,7 @@ layer_cfg = [
                                 "green": 1.0
                             }
                         },
-                        "scale_range": [0.0, 5000.0]
+                        "scale_range": [0.0, 2000.0]
                     },
                     {
                         "name": "red",
@@ -220,7 +220,7 @@ layer_cfg = [
                                 "red": 1.0
                             }
                         },
-                        "scale_range": [0.0, 5000.0]
+                        "scale_range": [0.0, 2000.0]
                     },
                     {
                         "name": "nir",
@@ -237,7 +237,7 @@ layer_cfg = [
                                 "nir": 1.0
                             }
                         },
-                        "scale_range": [0.0, 5000.0]
+                        "scale_range": [0.0, 2000.0]
                     },
                     {
                         "name": "swir1",
@@ -254,7 +254,7 @@ layer_cfg = [
                                 "swir1": 1.0
                             }
                         },
-                        "scale_range": [0.0, 5000.0]
+                        "scale_range": [0.0, 2000.0]
                     },
                     {
                         "name": "swir2",
@@ -271,7 +271,7 @@ layer_cfg = [
                                 "swir2": 1.0
                             }
                         },
-                        "scale_range": [0.0, 5000.0]
+                        "scale_range": [0.0, 2000.0]
                     },
                     #
                     # Examples of non-linear heat-mapped styles.
@@ -399,7 +399,7 @@ layer_cfg = [
                                 "blue": 1.0
                             }
                         },
-                        "scale_range": [0.0, 5000.0]
+                        "scale_range": [0.0, 2000.0]
                     },
                 ],
                 # Default style (if request does not specify style)
