@@ -141,8 +141,8 @@ module "route53" {
 
   domain_name        = "${var.dns_name}"
   zone_domain_name   = "${var.dns_zone}"
-  target_dns_name    = "${var.webservice ? element(concat(module.alb.alb_dns_name, list("")), 0) : ""}"
-  target_dns_zone_id = "${var.webservice ? element(concat(module.alb.alb_dns_zone_id, list("")), 0) : ""}"
+  target_dns_name    = "${var.webservice ? element(concat(module.cloudfront.dns_name, list("")), 0) : ""}"
+  target_dns_zone_id = "${var.webservice ? element(concat(module.cloudfront.dns_zone_id, list("")), 0) : ""}"
   enable             = "${var.webservice}"
 }
 
@@ -152,14 +152,15 @@ module "route53" {
 # Terraform doesn't lazily evaluate conditional expressions
 # we have to ensure there is something in the list for
 # terraform to not complain about an empty list, even if webservice is false
-# module "cloudfront" {
-#   source = "modules/cloudfront"
+module "cloudfront" {
+  source = "modules/cloudfront"
 
-#   origin_domain = "${var.webservice ? element(concat(module.alb.alb_dns_name, list("")), 0) : ""}"
-#   origin_id     = "${var.cluster}_${var.workspace}_${var.name}_origin"
-#   aliases       = ["${var.dns_name}"]
-#   enable        = "${var.webservice}"
-# }
+  origin_domain        = "${var.webservice ? element(concat(module.alb.dns_name, list("")), 0) : ""}"
+  origin_id            = "${var.cluster}_${var.workspace}_${var.name}_origin"
+  aliases              = ["${var.dns_name}"]
+  ssl_cert_domain_name = "${var.ssl_cert_domain_name}"
+  enable               = "${var.webservice}"
+}
 
 
 # ==============
