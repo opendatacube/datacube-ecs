@@ -114,17 +114,19 @@ module "ecs_main" {
 module "alb" {
   source = "modules/load_balancer"
 
-  workspace         = "${var.workspace}"
-  cluster           = "${var.cluster}"
-  owner             = "${var.owner}"
-  service_name      = "${var.name}"
-  vpc_id            = "${data.aws_vpc.cluster.id}"
-  public_subnet_ids = "${local.public_subnet_ids}"
-  alb_name          = "${var.alb_name}"
-  container_port    = "${var.container_port}"
-  security_group    = "${data.aws_security_group.alb_sg.id}"
-  health_check_path = "${var.health_check_path}"
-  webservice        = "${var.webservice}"
+  workspace            = "${var.workspace}"
+  cluster              = "${var.cluster}"
+  owner                = "${var.owner}"
+  service_name         = "${var.name}"
+  vpc_id               = "${data.aws_vpc.cluster.id}"
+  public_subnet_ids    = "${local.public_subnet_ids}"
+  alb_name             = "${var.alb_name}"
+  container_port       = "${var.container_port}"
+  security_group       = "${data.aws_security_group.alb_sg.id}"
+  health_check_path    = "${var.health_check_path}"
+  webservice           = "${var.webservice}"
+  enable_https         = "${var.enable_https}"
+  ssl_cert_domain_name = "${var.ssl_cert_domain_name}"
 }
 
 
@@ -166,5 +168,3 @@ module "route53" {
 provider "aws" {
   region = "ap-southeast-2"
 }
-
-
