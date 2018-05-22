@@ -48,7 +48,10 @@ resource "aws_iam_role" "task_role" {
     {
       "Action": "sts:AssumeRole",
       "Principal": {
-        "Service": "ecs-tasks.amazonaws.com"
+        "Service": [
+          "ecs-tasks.amazonaws.com",
+          "events.amazonaws.com"
+        ]
       },
       "Effect": "Allow",
       "Sid": ""
@@ -132,6 +135,31 @@ resource "aws_iam_policy_attachment" "custom_policy_to_odc_role" {
   name       = "${var.workspace}_${var.name}_attach_ssm_policy_to_odc_ecs"
   roles      = ["${aws_iam_role.task_role.name}"]
   policy_arn = "${aws_iam_policy.custom_policy.id}"
+}
+
+
+data "aws_iam_policy_document" "scheduled_task" {
+  statement {
+    effect    = "Allow"
+    actions   = [ "ecs:RunTask" ]
+    resources = [ "*" ]
+  }
+
+  statement {
+    effect    = "Allow"
+    actions   = [ "iam:PassRole" ]
+    resources = [ "${aws_iam_role.task_role.arn}" ]
+  }
+}
+
+resource "aws_iam_policy" "scheduled_task" {
+  name   = "${var.cluster}_${var.workspace}_${var.name}_s_policy"
+  policy = "${data.aws_iam_policy_document.scheduled_task.json}"
+}
+
+resource "aws_iam_role_policy_attachment" "schedule_policy_role" {
+  role       = "${aws_iam_role.task_role.name}"
+  policy_arn = "${aws_iam_policy.scheduled_task.arn}"
 }
 
 resource "aws_cloudwatch_event_rule" "task" {
