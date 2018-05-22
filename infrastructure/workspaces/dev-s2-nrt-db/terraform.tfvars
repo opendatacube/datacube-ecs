@@ -1,5 +1,5 @@
 # The cluster you created using terraform-ecs
-cluster = "datacube-prod"
+cluster = "datacube-dev"
 
 # The name of your project
 workspace = "dev-s2-nrt-db"
@@ -13,7 +13,7 @@ task_desired_count = 1
 memory = 512
 
 # The name of the database
-database = "datacube-prod"
+database = "datacube-dev"
 
 # The name of the service
 name = "datacube-wms-db"
@@ -22,7 +22,7 @@ name = "datacube-wms-db"
 docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
 
 environment_vars = {
-  TF_VAR_cluster  = "datacube-prod"
+  TF_VAR_cluster  = "datacube-dev"
   TF_VAR_database = "nrtprod"
   "DB_DATABASE"   = "nrtprod"
   "DB_PORT"       = "5432"
@@ -56,8 +56,8 @@ custom_policy = <<EOF
                 "ssm:GetParametersByPath"
             ],
             "Resource": [
-                "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod*",
-                "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod.nrt*"
+                "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-dev*",
+                "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-dev.nrt*"
             ]
         },
         {
