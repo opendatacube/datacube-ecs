@@ -61,9 +61,14 @@ variable "enable_https" {
   description = "Specify if this ALB will allow HTTPS"
 }
 
-variable "ssl_cert_arn" {
+variable "ssl_cert_region" {
+  default     = "us-east-1"
+  description = "Region containing the SSL certificate"
+}
+
+variable "ssl_cert_domain_name" {
   default     = ""
-  description = "If enable_https is true this must be specified"
+  description = "If enable_https is true, this should be the domain name used for the certificate used"
 }
 
 variable "ssl_policy_name" {

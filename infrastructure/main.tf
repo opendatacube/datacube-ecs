@@ -114,17 +114,19 @@ module "ecs_main" {
 module "alb" {
   source = "modules/load_balancer"
 
-  workspace         = "${var.workspace}"
-  cluster           = "${var.cluster}"
-  owner             = "${var.owner}"
-  service_name      = "${var.name}"
-  vpc_id            = "${data.aws_vpc.cluster.id}"
-  public_subnet_ids = "${local.public_subnet_ids}"
-  alb_name          = "${var.alb_name}"
-  container_port    = "${var.container_port}"
-  security_group    = "${data.aws_security_group.alb_sg.id}"
-  health_check_path = "${var.health_check_path}"
-  webservice        = "${var.webservice}"
+  workspace            = "${var.workspace}"
+  cluster              = "${var.cluster}"
+  owner                = "${var.owner}"
+  service_name         = "${var.name}"
+  vpc_id               = "${data.aws_vpc.cluster.id}"
+  public_subnet_ids    = "${local.public_subnet_ids}"
+  alb_name             = "${var.alb_name}"
+  container_port       = "${var.container_port}"
+  security_group       = "${data.aws_security_group.alb_sg.id}"
+  health_check_path    = "${var.health_check_path}"
+  webservice           = "${var.webservice}"
+  enable_https         = "${var.enable_https}"
+  ssl_cert_domain_name = "${var.ssl_cert_domain_name}"
 }
 
 
@@ -139,8 +141,8 @@ module "route53" {
 
   domain_name        = "${var.dns_name}"
   zone_domain_name   = "${var.dns_zone}"
-  target_dns_name    = "${var.webservice ? element(concat(module.alb.alb_dns_name, list("")), 0) : ""}"
-  target_dns_zone_id = "${var.webservice ? element(concat(module.alb.alb_dns_zone_id, list("")), 0) : ""}"
+  target_dns_name    = "${var.webservice ? element(concat(module.cloudfront.dns_name, list("")), 0) : ""}"
+  target_dns_zone_id = "${var.webservice ? element(concat(module.cloudfront.dns_zone_id, list("")), 0) : ""}"
   enable             = "${var.webservice}"
 }
 
@@ -150,14 +152,15 @@ module "route53" {
 # Terraform doesn't lazily evaluate conditional expressions
 # we have to ensure there is something in the list for
 # terraform to not complain about an empty list, even if webservice is false
-# module "cloudfront" {
-#   source = "modules/cloudfront"
+module "cloudfront" {
+  source = "modules/cloudfront"
 
-#   origin_domain = "${var.webservice ? element(concat(module.alb.alb_dns_name, list("")), 0) : ""}"
-#   origin_id     = "${var.cluster}_${var.workspace}_${var.name}_origin"
-#   aliases       = ["${var.dns_name}"]
-#   enable        = "${var.webservice}"
-# }
+  origin_domain        = "${var.webservice ? element(concat(module.alb.dns_name, list("")), 0) : ""}"
+  origin_id            = "${var.cluster}_${var.workspace}_${var.name}_origin"
+  aliases              = ["${var.dns_name}"]
+  ssl_cert_domain_name = "${var.ssl_cert_domain_name}"
+  enable               = "${var.webservice}"
+}
 
 
 # ==============
@@ -166,5 +169,3 @@ module "route53" {
 provider "aws" {
   region = "ap-southeast-2"
 }
-
-

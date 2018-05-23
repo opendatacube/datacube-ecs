@@ -14,10 +14,10 @@ database = "datacube-prod.nrtprod"
 name = "datacube-wms"
 
 # The docker image to deploy
-docker_image = "opendatacube/wms:latest"
+docker_image = "opendatacube/wms:mdba"
 
 # Command to run on the container
-docker_command = "gunicorn -b 0.0.0.0:8000 -w 4 --timeout 300 datacube_wms.wsgi"
+docker_command = "gunicorn -b 0.0.0.0:8000 -w 4 --timeout 60 datacube_wms.wsgi"
 
 environment_vars = {
   "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/master/infrastructure/workspaces/dev-s2-nrt/wms_cfg.py"
@@ -30,4 +30,8 @@ dns_name = "nrt.dea.ga.gov.au"
 dns_zone = "dea.ga.gov.au"
 
 # Memory for each container
-memory = 1536
+memory = 2048
+
+enable_https = true
+
+ssl_cert_domain_name = "*.dea.ga.gov.au"

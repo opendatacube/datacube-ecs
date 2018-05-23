@@ -57,6 +57,18 @@ resource "aws_alb_listener" "http" {
   depends_on = ["aws_alb_target_group.default"]
 }
 
+provider "aws" {
+  alias  = "cert"
+  region = "${var.ssl_cert_region}"
+}
+
+data "aws_acm_certificate" "default" {
+  domain   = "${var.ssl_cert_domain_name}"
+  statuses = [ "ISSUED" ]
+  provider = "aws.cert"
+  count    = "${var.enable_https}"
+}
+
 resource "aws_alb_listener" "https" {
   # only create if webservice and enable_https is true
   count = "${var.enable_https * var.webservice}"
@@ -65,7 +77,7 @@ resource "aws_alb_listener" "https" {
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "${var.ssl_policy_name}"
-  certificate_arn   = "${var.ssl_cert_arn}"
+  certificate_arn   = "${data.aws_acm_certificate.default.arn}"
 
   default_action {
     target_group_arn = "${aws_alb_target_group.default.id}"
