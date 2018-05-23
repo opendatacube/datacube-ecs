@@ -28,13 +28,13 @@ resource "aws_cloudfront_distribution" "cloudfront" {
 
     forwarded_values {
       query_string = true
-
+      headers      = ["Host"]
       cookies {
         forward = "none"
       }
     }
 
-    viewer_protocol_policy = "allow-all"
+    viewer_protocol_policy = "redirect-to-https"
     min_ttl                = "${var.min_ttl}"
     max_ttl                = "${var.max_ttl}"
     default_ttl            = "${var.default_ttl}"
@@ -64,4 +64,5 @@ data "aws_acm_certificate" "default" {
   domain   = "${var.ssl_cert_domain_name}"
   statuses = [ "ISSUED" ]
   provider = "aws.cert"
+  count    = "${var.enable ? 1 : 0}"
 }
