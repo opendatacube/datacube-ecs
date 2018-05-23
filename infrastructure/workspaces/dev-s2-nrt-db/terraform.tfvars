@@ -22,12 +22,13 @@ name = "datacube-wms-db"
 docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
 
 environment_vars = {
-  TF_VAR_cluster  = "datacube-dev"
-  TF_VAR_database = "nrtprod"
-  "DB_DATABASE"   = "nrtprod"
-  "DB_PORT"       = "5432"
-  "VIRTUAL_HOST"  = "localhost,127.0.0."
-  "PRODUCT_URLS"  = "raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/ls_nrt_products.yaml:raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/s2_nrt_products.yaml"
+  TF_VAR_cluster      = "datacube-dev"
+  TF_VAR_state_bucket = "ga-aws-dea-dev-tfstate"
+  TF_VAR_database     = "nrtprod"
+  "DB_DATABASE"       = "nrtprod"
+  "DB_PORT"           = "5432"
+  "VIRTUAL_HOST"      = "localhost,127.0.0."
+  "PRODUCT_URLS"      = "raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/ls_nrt_products.yaml:raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/s2_nrt_products.yaml"
 }
 
 custom_policy = <<EOF
@@ -72,8 +73,8 @@ custom_policy = <<EOF
                 "s3:ListBucket"
             ],
             "Resource": [
-                "arn:aws:s3:::dea-devs-tfstate",
-                "arn:aws:s3:::dea-devs-tfstate/*",
+                "arn:aws:s3:::ga-aws-dea-dev-tfstate",
+                "arn:aws:s3:::ga-aws-dea-dev-tfstate/*",
                 "arn:aws:dynamodb:*:*:table/terraform"
             ]
         }
