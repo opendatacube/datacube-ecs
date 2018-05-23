@@ -64,4 +64,5 @@ data "aws_acm_certificate" "default" {
   domain   = "${var.ssl_cert_domain_name}"
   statuses = [ "ISSUED" ]
   provider = "aws.cert"
+  count    = "${var.enable ? 1 : 0}"
 }
