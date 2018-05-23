@@ -35,3 +35,5 @@ memory = 2048
 enable_https = true
 
 ssl_cert_domain_name = "*.dea.ga.gov.au"
+
+ssl_cert_region = "ap-southeast-2"
