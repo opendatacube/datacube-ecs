@@ -98,3 +98,20 @@ variable "dns_zone" {
   default     = ""
   description = "DNS zone of the service"
 }
+
+# ==================
+# HTTPS
+
+variable "enable_https" {
+  default = false
+}
+
+variable "ssl_cert_region" {
+  default     = "us-east-1"
+  description = "If SSL is enabled, the region the certificates exist in"
+}
+
+variable "ssl_cert_domain_name" {
+  default     = ""
+  description = "If SSL is enabled, the domain name of the certificate to be used"
+}

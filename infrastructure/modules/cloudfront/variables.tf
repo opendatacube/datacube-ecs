@@ -64,6 +64,11 @@ variable "price_class" {
   description = "The Price class for this distribution, can be PriceClass_100, PriceClass_200 or PriceClass_All"
 }
 
+variable "ssl_cert_domain_name" {
+  default     = ""
+  description = "If enable_https is true, this should be the domain name used for the certificate used. This certificate must be in us-east-1"
+}
+
 variable "enable" {
   default = false
   description = "Whether the cloudfront distribution should be created"

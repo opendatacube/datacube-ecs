@@ -48,8 +48,20 @@ resource "aws_cloudfront_distribution" "cloudfront" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn = "${data.aws_acm_certificate.default.arn}"
+    ssl_support_method  = "sni-only"
   }
 
   price_class = "${var.price_class}"
+}
+
+provider "aws" {
+  alias  = "cert"
+  region = "us-east-1"
+}
+
+data "aws_acm_certificate" "default" {
+  domain   = "${var.ssl_cert_domain_name}"
+  statuses = [ "ISSUED" ]
+  provider = "aws.cert"
 }
