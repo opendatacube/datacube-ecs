@@ -127,6 +127,7 @@ module "alb" {
   webservice           = "${var.webservice}"
   enable_https         = "${var.enable_https}"
   ssl_cert_domain_name = "${var.ssl_cert_domain_name}"
+  ssl_cert_region      = "${var.ssl_cert_region}"
 }
 
 
