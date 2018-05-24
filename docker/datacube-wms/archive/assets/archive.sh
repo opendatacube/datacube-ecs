@@ -1,44 +1,60 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Archive datasets in prefixes older than specified number of days
-# Usage: -d days prior to current date to archive
-#        -p prefix for search
+# Usage: -d days prior to current date to archive, optional, if not specified, will archive everything in prefix
+#        -p prefix for search - only single prefix allowed
 #        -b bucket containing data
+#        -s suffix of metadata files, optional
+#        -y UNSAFE if specified will do unsafe parsing of YAML files. Only use if targets are trusted
 
-usage() { echo "Usage: $0 [-d <days>] [-p <prefix>] [-b <bucket>]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-d <days>] -p <prefix> -b <bucket> [-s <suffix>] [-y UNSAFE]" 1>&2; exit 1; }
 
-while getopts ":d:p:b:" o; do
+while getopts ":d:p:b:s:y:" o; do
     case "${o}" in
         d)
-            d=${OPTARG}
+            days=${OPTARG}
             ;;
         p)
-            p=${OPTARG}
+            prefix=${OPTARG}
             ;;
         b)
             b=${OPTARG}
+            ;;
+        s)
+            suffix=${OPTARG}
+            ;;
+        y)
+            safety=${OPTARG}
             ;;
     esac
 done
 shift $((OPTIND-1))
 
-if [ -z "${d}" ] || [ -z "${p}" ] || [ -z "${b}" ]; then
+if [ -z "${prefix}" ] || [ -z "${b}" ]; then
     usage
 fi
 
-# d is number of days older than current date
-# calculate date string
-todate=$(date -d"$(date) -${d} day" +%s)
+if [ -n "${date}" ]
+then
+    # days is number of days older than current date
+    # calculate date string
+    todate=$(date -d"$(date) -${days} day" +%s) 
+fi
 
 # trim trailing '/' from prefix, we are adding it by default in search
-p=${p%/}
+p="${prefix%/}"
 
 # list of folders with names formated to be %Y-%m-%d
 # grep for "PRE" to get folders
-folders=$(aws s3 ls s3://${b}/${p}/ | grep "PRE " | awk '{print $2}' | sed 's/\/$//')
-echo $folders
+folders=$(aws s3 ls s3://${b}/${prefix}/ | grep "PRE " | awk '{print $2}' | sed 's/\/$//')
+echo "$folders"
 # archive data in folders older than todate
 for folder in $folders; do
-    if [ $todate -gt $(date -d $folder +%s) ]; then
-        python /ls_s2_cog.py ${b} --prefix ${p}/$folder --archive
+    if [ -n "${date}" ]
+    then
+        if [ $todate -gt $(date -d $folder +%s) ]; then
+            python archiving/ls_s2_cog.py ${b} --prefix ${prefix}/$folder --archive ${suffix:+"--suffix"} ${suffix:+"$suffix"} ${safety:+"--unsafe"}
+        fi
+    else
+        python archiving/ls_s2_cog.py ${b} --prefix ${prefix}/$folder --archive ${suffix:+"--suffix"} ${suffix:+"$suffix"} ${safety:+"--unsafe"}
     fi
 done
