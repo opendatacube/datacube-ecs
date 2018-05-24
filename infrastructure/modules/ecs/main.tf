@@ -14,7 +14,7 @@ resource "aws_ecs_service" "service" {
   count           = "${var.webservice}"
   name            = "${var.name}"
   cluster         = "${var.cluster}"
-  task_definition = "${aws_ecs_task_definition.service-task.0.arn}"
+  task_definition = "${aws_ecs_task_definition.service-task.arn}"
   desired_count   = "${var.task_desired_count}"
 
   load_balancer {
@@ -34,7 +34,7 @@ resource "null_resource" "aws_ecs_task" {
   # If it isn't a webservice start a once-off task
   # Terraform doesn't have a run-task capability as it's a short term thing
   provisioner "local-exec" {
-    command = "aws ecs run-task --cluster ${var.cluster} --task-definition ${aws_ecs_task_definition.service-task.0.arn}"
+    command = "aws ecs run-task --cluster ${var.cluster} --task-definition ${aws_ecs_task_definition.service-task.arn}"
   }
 }
 
@@ -137,18 +137,17 @@ resource "aws_iam_policy_attachment" "custom_policy_to_odc_role" {
   policy_arn = "${aws_iam_policy.custom_policy.id}"
 }
 
-
 data "aws_iam_policy_document" "scheduled_task" {
   statement {
     effect    = "Allow"
-    actions   = [ "ecs:RunTask" ]
-    resources = [ "*" ]
+    actions   = ["ecs:RunTask"]
+    resources = ["*"]
   }
 
   statement {
     effect    = "Allow"
-    actions   = [ "iam:PassRole" ]
-    resources = [ "${aws_iam_role.task_role.arn}" ]
+    actions   = ["iam:PassRole"]
+    resources = ["${aws_iam_role.task_role.arn}"]
   }
 }
 
@@ -176,6 +175,6 @@ resource "aws_cloudwatch_event_target" "task" {
 
   ecs_target {
     task_count          = "${var.task_desired_count}"
-    task_definition_arn = "${aws_ecs_task_definition.service-task.0.arn}"
+    task_definition_arn = "${aws_ecs_task_definition.service-task.arn}"
   }
 }

@@ -40,6 +40,7 @@ custom_policy = <<EOF
             "Effect": "Allow",
             "Action": [
                 "s3:GetObject",
+                "s3:ListObjects",
                 "s3:ListBucket"
             ],
             "Resource": [
