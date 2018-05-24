@@ -160,6 +160,7 @@ module "cloudfront" {
   origin_id            = "${var.cluster}_${var.workspace}_${var.name}_origin"
   aliases              = ["${var.dns_name}"]
   ssl_cert_domain_name = "${var.ssl_cert_domain_name}"
+  enable_distribution  = true
   enable               = "${var.webservice}"
 }
 
