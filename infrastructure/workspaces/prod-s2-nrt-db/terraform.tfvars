@@ -22,12 +22,13 @@ name = "datacube-wms-db"
 docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
 
 environment_vars = {
-  TF_VAR_cluster  = "datacube-prod"
-  TF_VAR_database = "nrtprod"
-  "DB_DATABASE"   = "nrtprod"
-  "DB_PORT"       = "5432"
-  "VIRTUAL_HOST"  = "localhost,127.0.0."
-  "PRODUCT_URLS"  = "raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/ls_nrt_products.yaml:raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/s2_nrt_products.yaml"
+  TF_VAR_cluster      = "datacube-prod"
+  TF_VAR_database     = "nrtprod"
+  TF_VAR_state_bucket = "dea-devs-tfstate"
+  "DB_DATABASE"       = "nrtprod"
+  "DB_PORT"           = "5432"
+  "VIRTUAL_HOST"      = "localhost,127.0.0."
+  "PRODUCT_URLS"      = "raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/ls_nrt_products.yaml:raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/s2_nrt_products.yaml"
 }
 
 custom_policy = <<EOF
