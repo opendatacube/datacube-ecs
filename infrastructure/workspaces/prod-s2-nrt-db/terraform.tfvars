@@ -1,5 +1,5 @@
 # The cluster you created using terraform-ecs
-cluster = "datacube-dev"
+cluster = "datacube-prod"
 
 # The name of your project
 workspace = "dev-s2-nrt-db"
@@ -13,7 +13,7 @@ task_desired_count = 1
 memory = 512
 
 # The name of the database
-database = "datacube-dev"
+database = "datacube-prod"
 
 # The name of the service
 name = "datacube-wms-db"
@@ -22,9 +22,9 @@ name = "datacube-wms-db"
 docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
 
 environment_vars = {
-  TF_VAR_cluster      = "datacube-dev"
-  TF_VAR_state_bucket = "ga-aws-dea-dev-tfstate"
+  TF_VAR_cluster      = "datacube-prod"
   TF_VAR_database     = "nrtprod"
+  TF_VAR_state_bucket = "dea-devs-tfstate"
   "DB_DATABASE"       = "nrtprod"
   "DB_PORT"           = "5432"
   "VIRTUAL_HOST"      = "localhost,127.0.0."
@@ -57,8 +57,8 @@ custom_policy = <<EOF
                 "ssm:GetParametersByPath"
             ],
             "Resource": [
-                "arn:aws:ssm:ap-southeast-2:451924316694:parameter/datacube-dev*",
-                "arn:aws:ssm:ap-southeast-2:451924316694:parameter/datacube-dev.nrt*"
+                "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod*",
+                "arn:aws:ssm:ap-southeast-2:538673716275:parameter/datacube-prod.nrt*"
             ]
         },
         {
@@ -73,8 +73,8 @@ custom_policy = <<EOF
                 "s3:ListBucket"
             ],
             "Resource": [
-                "arn:aws:s3:::ga-aws-dea-dev-tfstate",
-                "arn:aws:s3:::ga-aws-dea-dev-tfstate/*",
+                "arn:aws:s3:::dea-devs-tfstate",
+                "arn:aws:s3:::dea-devs-tfstate/*",
                 "arn:aws:dynamodb:*:*:table/terraform"
             ]
         }

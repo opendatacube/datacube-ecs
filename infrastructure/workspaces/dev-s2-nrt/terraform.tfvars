@@ -1,5 +1,5 @@
 # The cluster you created using terraform-ecs
-cluster = "datacube-prod"
+cluster = "datacube-dev"
 
 # The name of your project
 workspace = "dev-s2-nrt"
@@ -8,7 +8,7 @@ workspace = "dev-s2-nrt"
 task_desired_count = 50
 
 # The name of the database
-database = "datacube-prod.nrtprod"
+database = "datacube-dev.nrtprod"
 
 # The name of the service
 name = "datacube-wms"
@@ -20,20 +20,41 @@ docker_image = "opendatacube/wms:mdba"
 docker_command = "gunicorn -b 0.0.0.0:8000 -w 4 --timeout 60 datacube_wms.wsgi"
 
 environment_vars = {
-  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/master/infrastructure/workspaces/dev-s2-nrt/wms_cfg.py"
+  "WMS_CONFIG_URL" = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/dev/datacube-dev/infrastructure/workspaces/dev-s2-nrt/wms_cfg.py"
 }
 
 # DNS address for the WMS service
-dns_name = "nrt.dea.ga.gov.au"
+dns_name = "nrt.wms.gadevs.ga"
 
 # DNS zone for WMS service
-dns_zone = "dea.ga.gov.au"
+dns_zone = "wms.gadevs.ga"
 
 # Memory for each container
 memory = 2048
 
 enable_https = true
 
-ssl_cert_domain_name = "*.dea.ga.gov.au"
+ssl_cert_domain_name = "*.wms.gadevs.ga"
 
 ssl_cert_region = "ap-southeast-2"
+
+custom_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "GetFiles",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListObjects",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::dea-public-data",
+                "arn:aws:s3:::dea-public-data/*"
+            ]
+        }
+    ]
+}
+EOF

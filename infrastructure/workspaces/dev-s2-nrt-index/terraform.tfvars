@@ -1,5 +1,5 @@
 # The cluster you created using terraform-ecs
-cluster = "datacube-prod"
+cluster = "datacube-dev"
 
 # The name of your project
 workspace = "dev-s2-nrt-index"
@@ -11,7 +11,7 @@ webservice = false
 task_desired_count = 1
 
 # The name of the database
-database = "datacube-prod.nrtprod"
+database = "datacube-dev.nrtprod"
 
 # The name of the service
 name = "datacube-wms-index"
@@ -21,13 +21,33 @@ docker_image = "geoscienceaustralia/datacube-wms:aux_index"
 
 # environment variables configuring the docker container
 environment_vars = {
-  "DC_S3_INDEX_BUCKET"   = "dea-public-data"
-  "DC_S3_INDEX_PREFIX"   = "projects/2018-04-MDBA/"
-  "DC_S3_INDEX_SUFFIX"   = "ARD-METADATA.yaml"
-  "WMS_CONFIG_URL"       = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/master/infrastructure/workspaces/dev-s2-nrt/wms_cfg.py"
-
+  "DC_S3_INDEX_BUCKET" = "dea-public-data"
+  "DC_S3_INDEX_PREFIX" = "projects/2018-04-MDBA/"
+  "DC_S3_INDEX_SUFFIX" = "ARD-METADATA.yaml"
+  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/dev/datacube-dev/infrastructure/workspaces/dev-s2-nrt/wms_cfg.py"
 }
 
 schedulable = true
 
 schedule_expression = "cron(1 0 * * ? *)"
+
+custom_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "GetFiles",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListObjects",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::dea-public-data",
+                "arn:aws:s3:::dea-public-data/*"
+            ]
+        }
+    ]
+}
+EOF
