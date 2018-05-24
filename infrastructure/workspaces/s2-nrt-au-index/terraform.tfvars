@@ -22,9 +22,9 @@ docker_image = "geoscienceaustralia/datacube-wms:aux_index"
 # environment variables configuring the docker container
 environment_vars = {
   "DC_S3_INDEX_BUCKET" = "dea-public-data"
-  "DC_S3_INDEX_PREFIX" = "L2/sentinel-2-nrt/S2MSIARD/"
+  "DC_S3_INDEX_PREFIX" = " "
   "DC_S3_INDEX_SUFFIX" = "ARD-METADATA.yaml"
-  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/s2-au/infrastructure/workspaces/s2-nrt-au/wms_cfg.py"
+  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/master/infrastructure/workspaces/s2-nrt-au/wms_cfg.py"
 }
 
 schedulable = true
