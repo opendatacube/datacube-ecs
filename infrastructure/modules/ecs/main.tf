@@ -37,7 +37,7 @@ resource "null_resource" "aws_ecs_task" {
     command = "aws ecs run-task --cluster ${var.cluster} --task-definition ${aws_ecs_task_definition.service-task.arn}"
   }
 
-  depends_on = [ "aws_iam_role.task_role" ]
+  depends_on = ["aws_iam_role.task_role"]
 }
 
 resource "aws_iam_role" "task_role" {
@@ -61,6 +61,39 @@ resource "aws_iam_role" "task_role" {
   ]
 }
 EOF
+}
+
+resource "aws_iam_policy" "bucket_access" {
+  name        = "${var.cluster}-${var.name}-bucket_access"
+  path        = "/"
+  description = "Allow access to dea data"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "GetFiles",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListObjects",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::dea-public-data",
+                "arn:aws:s3:::dea-public-data/*"
+            ]
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_policy_attachment" "bucket_access" {
+  name       = "${var.workspace}_${var.name}_attach_bucket"
+  roles      = ["${aws_iam_role.task_role.name}"]
+  policy_arn = "${aws_iam_policy.bucket_access.arn}"
 }
 
 resource "aws_iam_policy" "secrets" {
