@@ -36,6 +36,8 @@ resource "null_resource" "aws_ecs_task" {
   provisioner "local-exec" {
     command = "aws ecs run-task --cluster ${var.cluster} --task-definition ${aws_ecs_task_definition.service-task.arn}"
   }
+
+  depends_on = [ "aws_iam_role.task_role" ]
 }
 
 resource "aws_iam_role" "task_role" {
