@@ -1,3 +1,3 @@
-output "alb_dns_name" {
-  value = "${module.alb.dns_name}"
+output "wms_endpoint" {
+  value = "${local.aliases}"
 }
