@@ -34,6 +34,14 @@ data "aws_ssm_parameter" "db_host" {
   name = "${var.cluster}.db_host"
 }
 
+data "aws_ssm_parameter" "dns_zone" {
+  name = "${var.cluster}.dns_zone"
+}
+
+data "aws_ssm_parameter" "ssl_cert_region" {
+  name = "${var.cluster}.ssl_cert_region"
+}
+
 data "aws_vpc" "cluster" {
   tags = {
     Name = "${var.cluster}-vpc"

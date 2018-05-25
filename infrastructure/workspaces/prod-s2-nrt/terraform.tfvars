@@ -24,16 +24,11 @@ environment_vars = {
 }
 
 # DNS address for the WMS service
-dns_name = "nrt.dea.ga.gov.au"
-
-# DNS zone for WMS service
-dns_zone = "dea.ga.gov.au"
+dns_name = "nrt"
 
 # Memory for each container
 memory = 2048
 
 enable_https = true
-
-ssl_cert_domain_name = "*.dea.ga.gov.au"
 
 ssl_cert_region = "ap-southeast-2"

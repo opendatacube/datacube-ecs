@@ -8,18 +8,19 @@ resource "aws_cloudfront_distribution" "cloudfront" {
     origin_id   = "${var.origin_id}"
 
     custom_origin_config {
-      http_port = "${var.origin_http_port}"
-      https_port = "${var.origin_https_port}"
+      http_port              = "${var.origin_http_port}"
+      https_port             = "${var.origin_https_port}"
       origin_protocol_policy = "${var.origin_protocol_policy}"
-      origin_ssl_protocols = ["TLSv1.1", "TLSv1.2"]
+      origin_ssl_protocols   = ["TLSv1.1", "TLSv1.2"]
     }
   }
 
-  enabled = "${var.enable_distribution}"
-  is_ipv6_enabled = "${var.enable_ipv6}"
+  enabled             = "${var.enable_distribution}"
+  is_ipv6_enabled     = "${var.enable_ipv6}"
   default_root_object = ""
 
-  aliases = "${var.aliases}"
+  # Yes this is a list of lists now, don't ask
+  aliases = ["${var.aliases}"]
 
   default_cache_behavior {
     allowed_methods  = "${var.default_allowed_methods}"
@@ -29,6 +30,7 @@ resource "aws_cloudfront_distribution" "cloudfront" {
     forwarded_values {
       query_string = true
       headers      = ["Host"]
+
       cookies {
         forward = "none"
       }
@@ -38,10 +40,9 @@ resource "aws_cloudfront_distribution" "cloudfront" {
     min_ttl                = "${var.min_ttl}"
     max_ttl                = "${var.max_ttl}"
     default_ttl            = "${var.default_ttl}"
-
   }
 
-  restrictions  {
+  restrictions {
     geo_restriction {
       restriction_type = "none"
     }
@@ -62,7 +63,7 @@ provider "aws" {
 
 data "aws_acm_certificate" "default" {
   domain   = "${var.ssl_cert_domain_name}"
-  statuses = [ "ISSUED" ]
+  statuses = ["ISSUED"]
   provider = "aws.cert"
   count    = "${var.enable ? 1 : 0}"
 }

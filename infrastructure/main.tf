@@ -51,6 +51,12 @@ locals {
     "VIRTUAL_HOST"         = "localhost,127.0.0."
   }
 
+  # Checks if we need to overwrite cluster defaults
+  dns_zone             = "${coalesce(var.dns_zone, data.aws_ssm_parameter.dns_zone.value)}"
+  ssl_cert_domain_name = "${coalesce(var.ssl_cert_domain_name, data.aws_ssm_parameter.dns_zone.value)}"
+  ssl_cert_region      = "${coalesce(var.ssl_cert_region, data.aws_ssm_parameter.ssl_cert_region.value)}"
+  aliases              = ["${var.dns_name}.${local.dns_zone}"]
+
   env_vars = "${merge(local.default_environment_vars, var.environment_vars)}"
 }
 
@@ -126,10 +132,9 @@ module "alb" {
   health_check_path    = "${var.health_check_path}"
   webservice           = "${var.webservice}"
   enable_https         = "${var.enable_https}"
-  ssl_cert_domain_name = "${var.ssl_cert_domain_name}"
-  ssl_cert_region      = "${var.ssl_cert_region}"
+  ssl_cert_domain_name = "*.${local.ssl_cert_domain_name}"
+  ssl_cert_region      = "${local.ssl_cert_region}"
 }
-
 
 # Lack of a module count means we need to use flags
 # and counts inside the route53 module to conditionally
@@ -140,8 +145,8 @@ module "alb" {
 module "route53" {
   source = "modules/route53"
 
-  domain_name        = "${var.dns_name}"
-  zone_domain_name   = "${var.dns_zone}"
+  domain_name        = "${var.dns_name}.${local.dns_zone}"
+  zone_domain_name   = "${local.dns_zone}"
   target_dns_name    = "${var.webservice ? element(concat(module.cloudfront.dns_name, list("")), 0) : ""}"
   target_dns_zone_id = "${var.webservice ? element(concat(module.cloudfront.dns_zone_id, list("")), 0) : ""}"
   enable             = "${var.webservice}"
@@ -158,12 +163,11 @@ module "cloudfront" {
 
   origin_domain        = "${var.webservice ? element(concat(module.alb.dns_name, list("")), 0) : ""}"
   origin_id            = "${var.cluster}_${var.workspace}_${var.name}_origin"
-  aliases              = ["${var.dns_name}"]
-  ssl_cert_domain_name = "${var.ssl_cert_domain_name}"
+  aliases              = ["${local.aliases}"]
+  ssl_cert_domain_name = "*.${local.ssl_cert_domain_name}"
   enable_distribution  = true
   enable               = "${var.webservice}"
 }
-
 
 # ==============
 # Ancilliary

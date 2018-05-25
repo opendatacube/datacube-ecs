@@ -24,16 +24,11 @@ environment_vars = {
 }
 
 # DNS address for the WMS service
-dns_name = "nrt.wms.gadevs.ga"
+dns_name = "nrt"
 
-# DNS zone for WMS service
-dns_zone = "wms.gadevs.ga"
+ssl_cert_region = "ap-southeast-2"
 
 # Memory for each container
 memory = 2048
 
 enable_https = true
-
-ssl_cert_domain_name = "*.wms.gadevs.ga"
-
-ssl_cert_region = "ap-southeast-2"
