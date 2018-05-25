@@ -46,9 +46,12 @@ locals {
     "DB_HOSTNAME"          = "${data.aws_ssm_parameter.db_host.value}"
     "DB_USERNAME"          = "${data.aws_ssm_parameter.db_username.value}"
     "DB_PASSWORD"          = "${data.aws_ssm_parameter.db_password.value}"
-    "DB_DATABASE"          = "${data.aws_ssm_parameter.db_name.value}"
     "DB_PORT"              = "5432"
     "VIRTUAL_HOST"         = "localhost,127.0.0."
+    "DB_DATABASE"          = "${coalesce(var.new_database_name, data.aws_ssm_parameter.db_name.value)}"
+    TF_VAR_database        = "${coalesce(var.new_database_name, data.aws_ssm_parameter.db_name.value)}"
+    TF_VAR_cluster         = "${var.cluster}"
+    TF_VAR_state_bucket    = "${data.aws_ssm_parameter.state_bucket.value}"
   }
 
   # Checks if we need to overwrite cluster defaults
@@ -110,6 +113,11 @@ module "ecs_main" {
   # Scheduling definitions
   schedulable         = "${var.schedulable}"
   schedule_expression = "${var.schedule_expression}"
+
+  # DB Task
+  database_task     = "${var.database_task}"
+  new_database_name = "${var.new_database_name}"
+  state_bucket      = "${data.aws_ssm_parameter.state_bucket.value}"
 
   # Tags
   owner     = "${var.owner}"

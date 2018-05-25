@@ -130,3 +130,21 @@ variable "schedule_expression" {
   default     = ""
   description = "Determines the schedule of a schedulable task. e.g. cron(0 20 * * ? *) or rate(5 minutes)"
 }
+
+########
+# database_task
+########
+variable "database_task" {
+  default     = false
+  description = "Whether to provision database specific policies"
+}
+
+variable "new_database_name" {
+  default     = ""
+  description = "the name of the new database, to be used when creating task perms"
+}
+
+variable "state_bucket" {
+  default     = ""
+  description = "the s3 bucket that hosts the remote state"
+}
