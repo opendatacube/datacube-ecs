@@ -31,7 +31,7 @@ def get_s3_url(bucket_name, obj_key):
 def get_metadata_docs(bucket_name, prefix, suffix, unsafe):
     s3 = boto3.resource('s3')
     bucket = s3.Bucket(bucket_name)
-    logging.info("Bucket : %s", bucket_name)
+    logging.info("Bucket : %s prefix: %s ", bucket_name, str(prefix))
     safety = 'safe' if not unsafe else 'unsafe'
     for obj in bucket.objects.filter(Prefix = str(prefix)):
         if obj.key.endswith(suffix):
@@ -59,7 +59,6 @@ def archive_dataset(doc, uri, rules, index):
 
 
     dataset = create_dataset(doc, uri, rules)
-    print("Archiving:")
     index.datasets.archive(get_ids(dataset))
     logging.info("Archiving %s and all sources of %s", dataset.id, dataset.id)
 

@@ -24,13 +24,12 @@ environment_vars = {
   "DC_S3_ARCHIVE_BUCKET" = "dea-public-data"
   "DC_S3_ARCHIVE_PREFIX" = "L2/sentinel-2-nrt/S2MSIARD/"
   "DC_S3_ARCHIVE_SUFFIX" = "ARD-METADATA.yaml"
-  "DC_ARCHIVE_DAYS"      = 30
-  "WMS_CONFIG_URL"       = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/master/infrastructure/workspaces/s2-nrt-au/wms_cfg.py"
+  "DC_ARCHIVE_DAYS"      = 31
 }
 
 schedulable = true
 
-schedule_expression = "cron(1 15 * * ? *)"
+schedule_expression = "cron(1 13 * * ? *)"
 
 custom_policy = <<EOF
 {
@@ -40,9 +39,7 @@ custom_policy = <<EOF
             "Sid": "GetFiles",
             "Effect": "Allow",
             "Action": [
-                "s3:GetObject",
-                "s3:ListObjects",
-                "s3:ListBucket"
+                "s3:*"
             ],
             "Resource": [
                 "arn:aws:s3:::dea-public-data",

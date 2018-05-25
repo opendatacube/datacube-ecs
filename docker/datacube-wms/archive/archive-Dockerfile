@@ -1,9 +1,16 @@
 FROM opendatacube/wms:latest
 
+RUN pip3 install \
+    ruamel.yaml \
+    awscli \
+    && rm -rf $HOME/.cache/pip
+
 WORKDIR archiving
 
 COPY assets/archive-wrapper.sh archive-wrapper.sh
 COPY assets/archive.sh archive.sh
 COPY assets/ls_s2_cog.py ls_s2_cog.py
 
-CMD /bin/bash -c archive.sh
+WORKDIR ..
+
+CMD /bin/bash -c archiving/archive-wrapper.sh

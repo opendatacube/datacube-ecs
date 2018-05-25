@@ -33,7 +33,7 @@ if [ -z "${prefix}" ] || [ -z "${b}" ]; then
     usage
 fi
 
-if [ -n "${date}" ]
+if [ -n "${days}" ]
 then
     # days is number of days older than current date
     # calculate date string
@@ -43,18 +43,19 @@ fi
 # trim trailing '/' from prefix, we are adding it by default in search
 p="${prefix%/}"
 
+echo "$p"
 # list of folders with names formated to be %Y-%m-%d
 # grep for "PRE" to get folders
-folders=$(aws s3 ls s3://${b}/${prefix}/ | grep "PRE " | awk '{print $2}' | sed 's/\/$//')
+folders=$(aws s3 ls s3://${b}/${p}/ | grep "PRE " | awk '{print $2}' | sed 's/\/$//')
 echo "$folders"
 # archive data in folders older than todate
 for folder in $folders; do
-    if [ -n "${date}" ]
+    if [ -n "${days}" ]
     then
         if [ $todate -gt $(date -d $folder +%s) ]; then
-            python archiving/ls_s2_cog.py ${b} --prefix ${prefix}/$folder --archive ${suffix:+"--suffix"} ${suffix:+"$suffix"} ${safety:+"--unsafe"}
+            python3 archiving/ls_s2_cog.py ${b} --prefix ${p}/$folder --archive ${suffix:+"--suffix"} ${suffix:+"$suffix"} ${safety:+"--unsafe"}
         fi
     else
-        python archiving/ls_s2_cog.py ${b} --prefix ${prefix}/$folder --archive ${suffix:+"--suffix"} ${suffix:+"$suffix"} ${safety:+"--unsafe"}
+        python3 archiving/ls_s2_cog.py ${b} --prefix ${p}/$folder --archive ${suffix:+"--suffix"} ${suffix:+"$suffix"} ${safety:+"--unsafe"}
     fi
 done
