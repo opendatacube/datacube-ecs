@@ -30,24 +30,3 @@ environment_vars = {
 schedulable = true
 
 schedule_expression = "cron(1 14 * * ? *)"
-
-custom_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "GetFiles",
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObject",
-                "s3:ListObjects",
-                "s3:ListBucket"
-            ],
-            "Resource": [
-                "arn:aws:s3:::dea-public-data",
-                "arn:aws:s3:::dea-public-data/*"
-            ]
-        }
-    ]
-}
-EOF

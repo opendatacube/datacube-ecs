@@ -5,7 +5,7 @@ cluster = "datacube-dev"
 workspace = "dev-s2-nrt"
 
 # The number of containers to run at once
-task_desired_count = 50
+task_desired_count = 10
 
 # The name of the database
 database = "datacube-dev.nrtprod"
@@ -20,7 +20,7 @@ docker_image = "opendatacube/wms:mdba"
 docker_command = "gunicorn -b 0.0.0.0:8000 -w 4 --timeout 60 datacube_wms.wsgi"
 
 environment_vars = {
-  "WMS_CONFIG_URL" = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/dev/datacube-dev/infrastructure/workspaces/dev-s2-nrt/wms_cfg.py"
+  "WMS_CONFIG_URL" = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/master/infrastructure/workspaces/dev-s2-nrt/wms_cfg.py"
 }
 
 # DNS address for the WMS service
@@ -37,24 +37,3 @@ enable_https = true
 ssl_cert_domain_name = "*.wms.gadevs.ga"
 
 ssl_cert_region = "ap-southeast-2"
-
-custom_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "GetFiles",
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObject",
-                "s3:ListObjects",
-                "s3:ListBucket"
-            ],
-            "Resource": [
-                "arn:aws:s3:::dea-public-data",
-                "arn:aws:s3:::dea-public-data/*"
-            ]
-        }
-    ]
-}
-EOF
