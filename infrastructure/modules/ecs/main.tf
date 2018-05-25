@@ -95,8 +95,8 @@ resource "aws_iam_policy" "database_task" {
                 "ssm:GetParametersByPath"
             ],
             "Resource": [
-                "arn:aws:ssm:ap-southeast-2:${data.aws_caller_identity.current.accound_id}:parameter/${var.cluster}*",
-                "arn:aws:ssm:ap-southeast-2:${data.aws_caller_identity.current.accound_id}:parameter/${var.cluster}.${var.new_database_name}*"
+                "arn:aws:ssm:ap-southeast-2:${data.aws_caller_identity.current.account_id}:parameter/${var.cluster}*",
+                "arn:aws:ssm:ap-southeast-2:${data.aws_caller_identity.current.account_id}:parameter/${var.cluster}.${var.new_database_name}*"
             ]
         },
         {

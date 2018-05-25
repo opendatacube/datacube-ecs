@@ -8,7 +8,7 @@ workspace = "dev-s2-nrt-db"
 webservice = false
 
 # Set if this is a database setup task
-database = true
+database_task = true
 
 new_database_name = "nrtprod"
 
