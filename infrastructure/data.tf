@@ -42,6 +42,10 @@ data "aws_ssm_parameter" "ssl_cert_region" {
   name = "${var.cluster}.ssl_cert_region"
 }
 
+data "aws_ssm_parameter" "state_bucket" {
+  name = "${var.cluster}.state_bucket"
+}
+
 data "aws_vpc" "cluster" {
   tags = {
     Name = "${var.cluster}-vpc"

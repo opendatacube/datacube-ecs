@@ -115,3 +115,16 @@ variable "ssl_cert_domain_name" {
   default     = ""
   description = "If SSL is enabled, the domain name of the certificate to be used"
 }
+
+# ==================
+# DB Task
+
+variable "database_task" {
+  default     = false
+  description = "Whether we should create database setup specific resources"
+}
+
+variable "new_database_name" {
+  default     = ""
+  description = "If this is a datasbase task we will create a new db with this name"
+}

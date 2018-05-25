@@ -63,6 +63,71 @@ resource "aws_iam_role" "task_role" {
 EOF
 }
 
+resource "aws_iam_policy" "database_task" {
+  count       = "${var.database_task ? 1 : 0}"
+  name        = "${var.cluster}-${var.name}-database_task"
+  path        = "/"
+  description = "Allows database provisioner to export vars"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:DescribeParameters",
+                "kms:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParameterHistory",
+                "ssm:GetParameters",
+                "ssm:GetParameter",
+                "ssm:DeleteParameters",
+                "ssm:PutParameter",
+                "ssm:DeleteParameter",
+                "ssm:GetParametersByPath"
+            ],
+            "Resource": [
+                "arn:aws:ssm:ap-southeast-2:${data.aws_caller_identity.current.accound_id}:parameter/${var.cluster}*",
+                "arn:aws:ssm:ap-southeast-2:${data.aws_caller_identity.current.accound_id}:parameter/${var.cluster}.${var.new_database_name}*"
+            ]
+        },
+        {
+            "Sid": "TerraformState",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:GetItem",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${var.state_bucket}",
+                "arn:aws:s3:::${var.state_bucket}/*",
+                "arn:aws:dynamodb:*:*:table/terraform"
+            ]
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_policy_attachment" "database_task" {
+  count      = "${var.database_task ? 1 : 0}"
+  name       = "${var.workspace}_${var.name}database_task"
+  roles      = ["${aws_iam_role.task_role.name}"]
+  policy_arn = "${aws_iam_policy.database_task.arn}"
+}
+
 resource "aws_iam_policy" "bucket_access" {
   name        = "${var.cluster}-${var.name}-bucket_access"
   path        = "/"
