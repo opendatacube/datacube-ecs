@@ -83,7 +83,7 @@ variable "schedule_expression" {
 # Database
 
 variable "database" {
-  default = "prod"
+  default = ""
 }
 
 # ==================
