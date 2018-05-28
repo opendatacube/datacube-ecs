@@ -1,6 +1,3 @@
-# The cluster you created using terraform-ecs
-cluster = "datacube-dev"
-
 # The name of your project
 workspace = "s2-nrt-au-index"
 
