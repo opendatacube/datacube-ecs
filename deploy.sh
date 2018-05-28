@@ -9,7 +9,8 @@ export WORKSPACE=$1
 export AWS_PROFILE="$profile"
 terraform init -backend-config backend-dev.cfg
 terraform workspace new $WORKSPACE || terraform workspace select $WORKSPACE
-terraform apply -auto-approve -input=false -var-file="workspaces/$WORKSPACE/terraform.tfvars"
+terraform plan-input=false -var-file="workspaces/$WORKSPACE/terraform.tfvars" -var 'cluster=datacube-dev'
+terraform apply -auto-approve -input=false -var-file="workspaces/$WORKSPACE/terraform.tfvars" -var 'cluster=datacube-dev'
 unset WORKSPACE
 unset AWS_PROFILE
 popd
