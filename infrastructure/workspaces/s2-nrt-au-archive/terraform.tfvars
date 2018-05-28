@@ -11,7 +11,7 @@ webservice = false
 task_desired_count = 1
 
 # The name of the database
-database = "datacube-dev.nrtau"
+database = "nrtau"
 
 # The name of the service
 name = "datacube-wms-s2-au-archive"
@@ -26,7 +26,6 @@ environment_vars = {
   "DC_S3_ARCHIVE_SUFFIX" = "ARD-METADATA.yaml"
   "DC_ARCHIVE_DAYS"      = 31
   "WMS_CONFIG_URL"       = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/master/infrastructure/workspaces/s2-nrt-au/wms_cfg.py"
-  
 }
 
 schedulable = true

@@ -17,9 +17,6 @@ task_desired_count = 1
 
 memory = 512
 
-# The name of the database
-database = "datacube-dev"
-
 # The name of the service
 name = "datacube-wms-db"
 

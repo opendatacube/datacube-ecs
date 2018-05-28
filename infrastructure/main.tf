@@ -59,6 +59,7 @@ locals {
   ssl_cert_domain_name = "${coalesce(var.ssl_cert_domain_name, data.aws_ssm_parameter.dns_zone.value)}"
   ssl_cert_region      = "${coalesce(var.ssl_cert_region, data.aws_ssm_parameter.ssl_cert_region.value)}"
   aliases              = ["${var.dns_name}.${local.dns_zone}"]
+  db_ref               = "${join(".", compact(list(var.cluster, var.database)))}"
 
   env_vars = "${merge(local.default_environment_vars, var.environment_vars)}"
 }

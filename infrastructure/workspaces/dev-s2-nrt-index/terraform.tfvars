@@ -11,7 +11,7 @@ webservice = false
 task_desired_count = 1
 
 # The name of the database
-database = "datacube-dev.nrtprod"
+database = "nrtprod"
 
 # The name of the service
 name = "datacube-wms-index"
