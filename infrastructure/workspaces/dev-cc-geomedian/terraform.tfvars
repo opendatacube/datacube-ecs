@@ -8,7 +8,7 @@ workspace = "dev-cc-geomedian"
 task_desired_count = 50
 
 # The name of the database
-database = "datacube-prod.geomedianprod"
+database = "geomedianprod"
 
 # The name of the service
 name = "datacube-wms-geom"
@@ -24,12 +24,14 @@ environment_vars = {
 }
 
 # DNS address for the WMS service
-dns_name = "geomedian.dea.ga.gov.au"
+dns_name = "geomedian"
 
-# DNS zone for WMS service
-dns_zone = "dea.ga.gov.au"
 
 # Memory for each container
 memory = 1536
 
 alb_name = "geomedian"
+
+enable_https = true
+
+ssl_cert_region = "ap-southeast-2"

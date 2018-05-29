@@ -1,5 +1,5 @@
 # The cluster you created using terraform-ecs
-cluster = "datacube-prod"
+cluster = "datacube-dev"
 
 # The name of your project
 workspace = "dev-cc-geomedian-db"
