@@ -7,29 +7,54 @@
 #        -b bucket containing data
 # e.g. ./update_ranges -b dea-public-data -p "L2/sentinel-2-nrt/S2MSIARD/2018 L2/sentinel-2-nrt/2017"
 
-usage() { echo "Usage: $0 [-p <prefix>] [-b <bucket>]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 -p <prefix> -b <bucket> [-s <suffix>] [-y UNSAFE]" 1>&2; exit 1; }
 
-while getopts ":p:b:" o; do
+while getopts ":p:b:s:" o; do
     case "${o}" in
         p)
-            prefixes=${OPTARG}
+            prefix=${OPTARG}
             ;;
         b)
             b=${OPTARG}
+            ;;
+        s)
+            suffix=${OPTARG}
+            ;;
+        y)
+            safety=${OPTARG}
             ;;
     esac
 done
 shift $((OPTIND-1))
 
-if [ -z "${prefixes}" ] || [ -z "${b}" ]; then
+if [ -z "${prefix}" ] || [ -z "${b}" ]; then
     usage
+fi
+
+IFS=' ' read -r -a prefixes <<< "$prefix"
+IFS=' ' read -r -a suffixes <<< "$suffix"
+first_suffix="${suffixes[0]}"
+safety_arg=""
+
+if [ "$safety" == "UNSAFE" ]
+then
+    safety_arg="--unsafe"
 fi
 
 # index new datasets
 # prepare script will add new records to the database
-for p in $prefixes
+for i in "${!prefixes[@]}"
 do
-    python3 indexing/ls_s2_cog.py $b --prefix $p
+    if [ -z "${suffixes[$i]}"  ] && [ -z "${first_suffix}" ]
+    then
+        suffix_string=""
+    elif [ -z "${suffixes[$i]}" ]
+    then
+        suffix_string="${first_suffix}"
+    else
+        suffix_string="${suffixes[$i]}"
+    fi
+    python3 indexing/ls_s2_cog.py "$b" --prefix "${prefixes[$i]}" ${suffix_string:+"--suffix"} ${suffix_string:+"$suffix_string"} ${safety_arg:+"$safety_arg"}
 done
 
 # update ranges in wms database
