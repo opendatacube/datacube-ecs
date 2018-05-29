@@ -46,10 +46,20 @@ locals {
     "DB_HOSTNAME"          = "${data.aws_ssm_parameter.db_host.value}"
     "DB_USERNAME"          = "${data.aws_ssm_parameter.db_username.value}"
     "DB_PASSWORD"          = "${data.aws_ssm_parameter.db_password.value}"
-    "DB_DATABASE"          = "${data.aws_ssm_parameter.db_name.value}"
     "DB_PORT"              = "5432"
     "VIRTUAL_HOST"         = "localhost,127.0.0."
+    "DB_DATABASE"          = "${coalesce(var.new_database_name, data.aws_ssm_parameter.db_name.value)}"
+    TF_VAR_database        = "${coalesce(var.new_database_name, data.aws_ssm_parameter.db_name.value)}"
+    TF_VAR_cluster         = "${var.cluster}"
+    TF_VAR_state_bucket    = "${data.aws_ssm_parameter.state_bucket.value}"
   }
+
+  # Checks if we need to overwrite cluster defaults
+  dns_zone             = "${coalesce(var.dns_zone, data.aws_ssm_parameter.dns_zone.value)}"
+  ssl_cert_domain_name = "${coalesce(var.ssl_cert_domain_name, data.aws_ssm_parameter.dns_zone.value)}"
+  ssl_cert_region      = "${coalesce(var.ssl_cert_region, data.aws_ssm_parameter.ssl_cert_region.value)}"
+  aliases              = ["${var.dns_name}.${local.dns_zone}"]
+  db_ref               = "${join(".", compact(list(var.cluster, var.database)))}"
 
   env_vars = "${merge(local.default_environment_vars, var.environment_vars)}"
 }
@@ -105,6 +115,11 @@ module "ecs_main" {
   schedulable         = "${var.schedulable}"
   schedule_expression = "${var.schedule_expression}"
 
+  # DB Task
+  database_task     = "${var.database_task}"
+  new_database_name = "${var.new_database_name}"
+  state_bucket      = "${data.aws_ssm_parameter.state_bucket.value}"
+
   # Tags
   owner     = "${var.owner}"
   cluster   = "${var.cluster}"
@@ -114,19 +129,21 @@ module "ecs_main" {
 module "alb" {
   source = "modules/load_balancer"
 
-  workspace         = "${var.workspace}"
-  cluster           = "${var.cluster}"
-  owner             = "${var.owner}"
-  service_name      = "${var.name}"
-  vpc_id            = "${data.aws_vpc.cluster.id}"
-  public_subnet_ids = "${local.public_subnet_ids}"
-  alb_name          = "${var.alb_name}"
-  container_port    = "${var.container_port}"
-  security_group    = "${data.aws_security_group.alb_sg.id}"
-  health_check_path = "${var.health_check_path}"
-  webservice        = "${var.webservice}"
+  workspace            = "${var.workspace}"
+  cluster              = "${var.cluster}"
+  owner                = "${var.owner}"
+  service_name         = "${var.name}"
+  vpc_id               = "${data.aws_vpc.cluster.id}"
+  public_subnet_ids    = "${local.public_subnet_ids}"
+  alb_name             = "${var.alb_name}"
+  container_port       = "${var.container_port}"
+  security_group       = "${data.aws_security_group.alb_sg.id}"
+  health_check_path    = "${var.health_check_path}"
+  webservice           = "${var.webservice}"
+  enable_https         = "${var.enable_https}"
+  ssl_cert_domain_name = "*.${local.ssl_cert_domain_name}"
+  ssl_cert_region      = "${local.ssl_cert_region}"
 }
-
 
 # Lack of a module count means we need to use flags
 # and counts inside the route53 module to conditionally
@@ -137,10 +154,10 @@ module "alb" {
 module "route53" {
   source = "modules/route53"
 
-  domain_name        = "${var.dns_name}"
-  zone_domain_name   = "${var.dns_zone}"
-  target_dns_name    = "${var.webservice ? element(concat(module.alb.alb_dns_name, list("")), 0) : ""}"
-  target_dns_zone_id = "${var.webservice ? element(concat(module.alb.alb_dns_zone_id, list("")), 0) : ""}"
+  domain_name        = "${var.dns_name}.${local.dns_zone}"
+  zone_domain_name   = "${local.dns_zone}"
+  target_dns_name    = "${var.webservice ? element(concat(module.cloudfront.dns_name, list("")), 0) : ""}"
+  target_dns_zone_id = "${var.webservice ? element(concat(module.cloudfront.dns_zone_id, list("")), 0) : ""}"
   enable             = "${var.webservice}"
 }
 
@@ -150,15 +167,16 @@ module "route53" {
 # Terraform doesn't lazily evaluate conditional expressions
 # we have to ensure there is something in the list for
 # terraform to not complain about an empty list, even if webservice is false
-# module "cloudfront" {
-#   source = "modules/cloudfront"
+module "cloudfront" {
+  source = "modules/cloudfront"
 
-#   origin_domain = "${var.webservice ? element(concat(module.alb.alb_dns_name, list("")), 0) : ""}"
-#   origin_id     = "${var.cluster}_${var.workspace}_${var.name}_origin"
-#   aliases       = ["${var.dns_name}"]
-#   enable        = "${var.webservice}"
-# }
-
+  origin_domain        = "${var.webservice ? element(concat(module.alb.dns_name, list("")), 0) : ""}"
+  origin_id            = "${var.cluster}_${var.workspace}_${var.name}_origin"
+  aliases              = ["${local.aliases}"]
+  ssl_cert_domain_name = "*.${local.ssl_cert_domain_name}"
+  enable_distribution  = true
+  enable               = "${var.webservice}"
+}
 
 # ==============
 # Ancilliary
@@ -166,5 +184,3 @@ module "route53" {
 provider "aws" {
   region = "ap-southeast-2"
 }
-
-

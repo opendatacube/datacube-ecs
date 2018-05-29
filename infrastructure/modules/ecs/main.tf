@@ -14,7 +14,7 @@ resource "aws_ecs_service" "service" {
   count           = "${var.webservice}"
   name            = "${var.name}"
   cluster         = "${var.cluster}"
-  task_definition = "${aws_ecs_task_definition.service-task.0.arn}"
+  task_definition = "${aws_ecs_task_definition.service-task.arn}"
   desired_count   = "${var.task_desired_count}"
 
   load_balancer {
@@ -34,8 +34,10 @@ resource "null_resource" "aws_ecs_task" {
   # If it isn't a webservice start a once-off task
   # Terraform doesn't have a run-task capability as it's a short term thing
   provisioner "local-exec" {
-    command = "aws ecs run-task --cluster ${var.cluster} --task-definition ${aws_ecs_task_definition.service-task.0.arn}"
+    command = "aws ecs run-task --cluster ${var.cluster} --task-definition ${aws_ecs_task_definition.service-task.arn}"
   }
+
+  depends_on = ["aws_iam_role.task_role"]
 }
 
 resource "aws_iam_role" "task_role" {
@@ -48,7 +50,10 @@ resource "aws_iam_role" "task_role" {
     {
       "Action": "sts:AssumeRole",
       "Principal": {
-        "Service": "ecs-tasks.amazonaws.com"
+        "Service": [
+          "ecs-tasks.amazonaws.com",
+          "events.amazonaws.com"
+        ]
       },
       "Effect": "Allow",
       "Sid": ""
@@ -56,6 +61,104 @@ resource "aws_iam_role" "task_role" {
   ]
 }
 EOF
+}
+
+resource "aws_iam_policy" "database_task" {
+  count       = "${var.database_task ? 1 : 0}"
+  name        = "${var.cluster}-${var.name}-database_task"
+  path        = "/"
+  description = "Allows database provisioner to export vars"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:DescribeParameters",
+                "kms:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParameterHistory",
+                "ssm:GetParameters",
+                "ssm:GetParameter",
+                "ssm:DeleteParameters",
+                "ssm:PutParameter",
+                "ssm:DeleteParameter",
+                "ssm:GetParametersByPath"
+            ],
+            "Resource": [
+                "arn:aws:ssm:ap-southeast-2:${data.aws_caller_identity.current.account_id}:parameter/${var.cluster}*",
+                "arn:aws:ssm:ap-southeast-2:${data.aws_caller_identity.current.account_id}:parameter/${var.cluster}.${var.new_database_name}*"
+            ]
+        },
+        {
+            "Sid": "TerraformState",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:GetItem",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${var.state_bucket}",
+                "arn:aws:s3:::${var.state_bucket}/*",
+                "arn:aws:dynamodb:*:*:table/terraform"
+            ]
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_policy_attachment" "database_task" {
+  count      = "${var.database_task ? 1 : 0}"
+  name       = "${var.workspace}_${var.name}database_task"
+  roles      = ["${aws_iam_role.task_role.name}"]
+  policy_arn = "${aws_iam_policy.database_task.arn}"
+}
+
+resource "aws_iam_policy" "bucket_access" {
+  name        = "${var.cluster}-${var.name}-bucket_access"
+  path        = "/"
+  description = "Allow access to dea data"
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "GetFiles",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListObjects",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::dea-public-data",
+                "arn:aws:s3:::dea-public-data/*"
+            ]
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_policy_attachment" "bucket_access" {
+  name       = "${var.workspace}_${var.name}_attach_bucket"
+  roles      = ["${aws_iam_role.task_role.name}"]
+  policy_arn = "${aws_iam_policy.bucket_access.arn}"
 }
 
 resource "aws_iam_policy" "secrets" {
@@ -134,6 +237,30 @@ resource "aws_iam_policy_attachment" "custom_policy_to_odc_role" {
   policy_arn = "${aws_iam_policy.custom_policy.id}"
 }
 
+data "aws_iam_policy_document" "scheduled_task" {
+  statement {
+    effect    = "Allow"
+    actions   = ["ecs:RunTask"]
+    resources = ["*"]
+  }
+
+  statement {
+    effect    = "Allow"
+    actions   = ["iam:PassRole"]
+    resources = ["${aws_iam_role.task_role.arn}"]
+  }
+}
+
+resource "aws_iam_policy" "scheduled_task" {
+  name   = "${var.cluster}_${var.workspace}_${var.name}_s_policy"
+  policy = "${data.aws_iam_policy_document.scheduled_task.json}"
+}
+
+resource "aws_iam_role_policy_attachment" "schedule_policy_role" {
+  role       = "${aws_iam_role.task_role.name}"
+  policy_arn = "${aws_iam_policy.scheduled_task.arn}"
+}
+
 resource "aws_cloudwatch_event_rule" "task" {
   name                = "${var.cluster}_${var.workspace}_${var.name}_task"
   count               = "${var.schedulable ? 1 : 0}"
@@ -148,6 +275,6 @@ resource "aws_cloudwatch_event_target" "task" {
 
   ecs_target {
     task_count          = "${var.task_desired_count}"
-    task_definition_arn = "${aws_ecs_task_definition.service-task.0.arn}"
+    task_definition_arn = "${aws_ecs_task_definition.service-task.arn}"
   }
 }

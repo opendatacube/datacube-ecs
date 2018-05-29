@@ -83,7 +83,7 @@ variable "schedule_expression" {
 # Database
 
 variable "database" {
-  default = "prod"
+  default = ""
 }
 
 # ==================
@@ -97,4 +97,34 @@ variable "dns_name" {
 variable "dns_zone" {
   default     = ""
   description = "DNS zone of the service"
+}
+
+# ==================
+# HTTPS
+
+variable "enable_https" {
+  default = false
+}
+
+variable "ssl_cert_region" {
+  default     = "us-east-1"
+  description = "If SSL is enabled, the region the certificates exist in"
+}
+
+variable "ssl_cert_domain_name" {
+  default     = ""
+  description = "If SSL is enabled, the domain name of the certificate to be used"
+}
+
+# ==================
+# DB Task
+
+variable "database_task" {
+  default     = false
+  description = "Whether we should create database setup specific resources"
+}
+
+variable "new_database_name" {
+  default     = ""
+  description = "If this is a datasbase task we will create a new db with this name"
 }

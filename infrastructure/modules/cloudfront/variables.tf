@@ -9,29 +9,29 @@ variable "origin_id" {
 }
 
 variable "origin_http_port" {
-  default = 80
+  default     = 80
   description = "HTTP port the origin listens on"
 }
 
 variable "origin_https_port" {
-  default = 443
+  default     = 443
   description = "HTTPS port the origin listens on"
 }
 
 variable "origin_protocol_policy" {
-  type = "string"
-  default = "match-viewer"
+  type        = "string"
+  default     = "match-viewer"
   description = "Which protocol is used to connect to origin, http-only, https-only, match-viewer"
 }
 
 variable "enable_distribution" {
-  default = false
+  default     = false
   description = "Enables the cloudfront distribution"
 }
 
 variable "aliases" {
-  type         = "list"
-  default      = [""]
+  type        = "list"
+  default     = [""]
   description = "List of aliases for the distribution, e.g. wms.datacube.org.au"
 }
 
@@ -64,7 +64,12 @@ variable "price_class" {
   description = "The Price class for this distribution, can be PriceClass_100, PriceClass_200 or PriceClass_All"
 }
 
+variable "ssl_cert_domain_name" {
+  default     = ""
+  description = "If enable_https is true, this should be the domain name used for the certificate used. This certificate must be in us-east-1"
+}
+
 variable "enable" {
-  default = false
+  default     = false
   description = "Whether the cloudfront distribution should be created"
 }
