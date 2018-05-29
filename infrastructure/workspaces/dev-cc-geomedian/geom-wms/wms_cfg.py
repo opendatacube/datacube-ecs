@@ -1,7 +1,5 @@
 # Static config for the wms metadata.
 
-import re
-s3_path_pattern = re.compile('L8/(?P<path>[0-9]*)')
 
 response_cfg = {
     "Access-Control-Allow-Origin": "*",  # CORS header
@@ -167,6 +165,23 @@ layer_cfg = [
                             },
                             "blue": {
                                 "nir": 1.0
+                            }
+                        },
+                        "scale_range": [0.0, 3000.0]
+                    },
+                    {
+                        "name": "infrared_green",
+                        "title": "False colour SWIR, NIR and green",
+                        "abstract": "False Colour image with SWIR1->Red, NIR->Green, and Green->Blue",
+                        "components": {
+                            "red": {
+                                "swir1": 1.0
+                            },
+                            "green": {
+                                "nir1": 1.0
+                            },
+                            "blue": {
+                                "green": 1.0
                             }
                         },
                         "scale_range": [0.0, 3000.0]
