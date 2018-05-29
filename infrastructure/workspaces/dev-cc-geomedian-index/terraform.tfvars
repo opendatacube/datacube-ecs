@@ -1,5 +1,5 @@
 # The cluster you created using terraform-ecs
-cluster = "datacube-prod"
+cluster = "datacube-dev"
 
 # The name of your project
 workspace = "dev-cc-geomedian-index"
@@ -11,7 +11,7 @@ webservice = false
 task_desired_count = 1
 
 # The name of the database
-database = "datacube-prod.geomedianprod"
+database = "geomedianprod"
 
 # The name of the service
 name = "datacube-wms-g-index"
