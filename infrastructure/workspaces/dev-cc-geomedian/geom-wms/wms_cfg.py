@@ -178,7 +178,7 @@ layer_cfg = [
                                 "swir1": 1.0
                             },
                             "green": {
-                                "nir1": 1.0
+                                "nir": 1.0
                             },
                             "blue": {
                                 "green": 1.0
