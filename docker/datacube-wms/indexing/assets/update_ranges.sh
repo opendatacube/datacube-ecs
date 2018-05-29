@@ -9,6 +9,7 @@
 #                                         If multiple must be same length as prefix list,
 #                                         if only one provided, suffix will be applied to ALL prefixes
 #        -y UNSAFE: If set script will use unsafe YAML reading. Only set if you fully trust source
+#        -d product to update in database (optional)
 # e.g. ./update_ranges -b dea-public-data -p "L2/sentinel-2-nrt/S2MSIARD/2018 L2/sentinel-2-nrt/2017"
 
 usage() { echo "Usage: $0 -p <prefix> -b <bucket> [-s <suffix>] [-y UNSAFE]" 1>&2; exit 1; }
@@ -26,6 +27,9 @@ while getopts ":p:b:s:" o; do
             ;;
         y)
             safety=${OPTARG}
+            ;;
+        d)
+            product=${OPTARG}
             ;;
     esac
 done
@@ -62,4 +66,4 @@ do
 done
 
 # update ranges in wms database
-python3 update_ranges.py
+python3 update_ranges.py ${product:+"--product"} ${product:+"$product"}
