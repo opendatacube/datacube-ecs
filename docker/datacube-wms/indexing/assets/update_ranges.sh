@@ -66,4 +66,6 @@ do
 done
 
 # update ranges in wms database
+
 python3 update_ranges.py ${product:+"--product"} ${product:+"$product"}
+

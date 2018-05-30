@@ -90,7 +90,7 @@ def iterate_datasets(bucket_name, config, prefix, suffix, func, unsafe):
 @click.option('--config','-c',help=" Pass the configuration file to access the database",
 		type=click.Path(exists=True))
 @click.option('--prefix', '-p', help="Pass the prefix of the object to the bucket")
-@click.option('--suffix', '-s', default="ARD-METADATA.yaml", help="Defines the suffix of the metadata_docs that will be used to load datasets")
+@click.option('--suffix', '-s', default=".yaml", help="Defines the suffix of the metadata_docs that will be used to load datasets")
 @click.option('--archive', is_flag=True, help="If true, datasets found in the specified bucket and prefix will be archived")
 @click.option('--unsafe', is_flag=True, help="If true, YAML will be parsed unsafely. Only use on trusted datasets.")
 def main(bucket_name, config, prefix, suffix, archive, unsafe):
