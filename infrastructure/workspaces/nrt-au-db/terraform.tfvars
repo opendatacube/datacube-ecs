@@ -21,5 +21,5 @@ name = "datacube-wms-s2-au-db"
 docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
 
 environment_vars = {
-  "PRODUCT_URLS" = "raw.githubusercontent.com/opendatacube/datacube-ecs/master/indexer/s2_nrt_products.yaml"
+  "PRODUCT_URLS" = "raw.githubusercontent.com/GeoscienceAustralia/dea-config/master/prod/products/nrt/sentinel/products.yaml"
 }
