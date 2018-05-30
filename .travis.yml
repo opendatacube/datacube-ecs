@@ -3,7 +3,7 @@ env:
   - AWS_DEFAULT_REGION=ap-southeast-2
   - IMAGE=geoscienceaustralia/datacube-wms:aux_setup
   matrix:
-  - WORKSPACE=prod-s2-nrt
+  - WORKSPACE=nrt
 sudo: required
 services:
 - docker
@@ -21,10 +21,10 @@ install:
 - terraform -v
 script:
 - cd infrastructure
-- terraform init -backend-config workspaces/$WORKSPACE/backend.cfg
+- terraform init -backend-config backend-prod.cfg
 - terraform workspace new $WORKSPACE || terraform workspace select $WORKSPACE
-- terraform plan -input=false -var-file="workspaces/$WORKSPACE/terraform.tfvars"
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then terraform apply -auto-approve -var-file="workspaces/$WORKSPACE/terraform.tfvars"
+- terraform plan -input=false -var-file="workspaces/$WORKSPACE/terraform.tfvars" -var 'cluster=datacube-prod'
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then terraform apply -auto-approve -var-file="workspaces/$WORKSPACE/terraform.tfvars" -var 'cluster=datacube-prod'
   -input=false; fi
 notifications:
   slack:
