@@ -46,6 +46,10 @@ data "aws_ssm_parameter" "state_bucket" {
   name = "${var.cluster}.state_bucket"
 }
 
+data "aws_ssm_parameter" "config_root" {
+  name = "${var.cluster}.config_root"
+}
+
 data "aws_vpc" "cluster" {
   tags = {
     Name = "${var.cluster}-vpc"

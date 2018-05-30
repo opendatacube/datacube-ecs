@@ -1,6 +1,3 @@
-# The cluster you created using terraform-ecs
-cluster = "datacube-prod"
-
 # The name of your project
 workspace = "dev-cc-geomedian"
 
@@ -20,12 +17,11 @@ docker_image = "opendatacube/wms:1.5.4"
 docker_command = "gunicorn -b 0.0.0.0:8000 -w 4 --timeout 300 datacube_wms.wsgi"
 
 environment_vars = {
-  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/geomedian/infrastructure/workspaces/dev-cc-geomedian/geom-wms/wms_cfg.py"
+  "WMS_CONFIG_URL" = "https://raw.githubusercontent.com/GeoscienceAustralia/dea-config/master/prod/services/wms/cc-geomedian/wms_cfg.py"
 }
 
 # DNS address for the WMS service
 dns_name = "geomedian"
-
 
 # Memory for each container
 memory = 1536
