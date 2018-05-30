@@ -1,6 +1,3 @@
-# The cluster you created using terraform-ecs
-cluster = "datacube-dev"
-
 # The name of your project
 workspace = "dev-cc-geomedian-index"
 
@@ -24,8 +21,7 @@ environment_vars = {
   "DC_S3_INDEX_BUCKET" = "dea-public-data"
   "DC_S3_INDEX_PREFIX" = "ewater/cambodia_cube/"
   "DC_S3_INDEX_SUFFIX" = ".yaml"
-  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/opendatacube/datacube-ecs/geomedian/infrastructure/workspaces/dev-cc-geomedian/geom-wms/wms_cfg.py"
-
+  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/GeoscienceAustralia/dea-config/master/prod/services/wms/cc-geomedian/wms_cfg.py"
 }
 
 schedulable = true
