@@ -76,7 +76,7 @@ module "container_def" {
 
   logging_options = {
     "awslogs-region" = "${var.aws_region}"
-    "awslogs-group"  = "${var.cluster}/${var.workspace}/${var.name}"
+    "awslogs-group"  = "${var.cluster}/apps/${terraform.workspace}"
   }
 
   port_mappings = [{
