@@ -117,6 +117,14 @@ variable "ssl_cert_domain_name" {
 }
 
 # ==================
+# Cloudfront
+
+variable "use_cloudfront" {
+  default = true
+  description = "If true, will create a Cloudfront distribution. Must be used with webservice=true"
+}
+
+# ==================
 # DB Task
 
 variable "database_task" {
