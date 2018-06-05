@@ -14,7 +14,7 @@ name = "datacube-wps"
 docker_image = "opendatacube/wps:latest"
 
 # Command to run on the container
-docker_command = "gunicorn -b 0.0.0.0:8000 -w 1 --timeout 60 pywps_app:application"
+docker_command = "gunicorn -b 0.0.0.0:8000 -w 1 --timeout 60 wps:app"
 
 alb_name = "fc"
 
@@ -23,7 +23,7 @@ dns_name = "fc"
 
 ssl_cert_region = "ap-southeast-2"
 
-health_check_path = "/wps "
+health_check_path = "/wps/?service=WPS&request=GetCapabilities&version=1.0.0"
 
 # Memory for each container
 memory = 2048
