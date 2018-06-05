@@ -21,5 +21,5 @@ name = "fc-db"
 docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
 
 environment_vars = {
-  "PRODUCT_URLS" = "raw.githubusercontent.com/roarmstrong/dea-config/master/dev/products/fc/ls8_fc_albers.yaml"
+  "PRODUCT_URLS" = "raw.githubusercontent.com/GeoscienceAustralia/dea-config/master/dev/products/fc/ls8_fc_albers.yaml"
 }
