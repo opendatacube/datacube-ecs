@@ -215,7 +215,7 @@ resource "aws_iam_policy_attachment" "cw_logs" {
 }
 
 resource "aws_cloudwatch_log_group" "cw_logs" {
-  name = "${var.cluster}/${var.workspace}/${var.name}"
+  name = "${var.cluster}/apps/${terraform.workspace}"
 
   tags {
     Environment = "${var.workspace}"

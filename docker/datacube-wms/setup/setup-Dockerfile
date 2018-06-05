@@ -17,7 +17,6 @@ RUN unzip terraform.zip && \
 WORKDIR /code/firsttime
 
 COPY assets/setup.sh setup.sh
-COPY assets/code/metadata-types.yaml metadata-types.yaml
 
 WORKDIR /code
 
