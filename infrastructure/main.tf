@@ -145,19 +145,27 @@ module "alb" {
   ssl_cert_region      = "${local.ssl_cert_region}"
 }
 
-# Lack of a module count means we need to use flags
-# and counts inside the route53 module to conditionally
-# create the resources.
 # Terraform doesn't lazily evaluate conditional expressions
 # we have to ensure there is something in the list for
 # terraform to not complain about an empty list, even if webservice is false
+locals {
+  cloudfront      = "${var.webservice && var.use_cloudfront}"
+  target_dns_name = "${local.cloudfront ? element(concat(module.cloudfront.dns_name   , list("")), 0)
+                                        : element(concat(module.alb.dns_name          , list("")), 0)}"
+  target_dns_zone = "${local.cloudfront ? element(concat(module.cloudfront.dns_zone_id, list("")), 0)
+                                        : element(concat(module.alb.dns_zone_id       , list("")), 0)}"
+}
+
+# Lack of a module count means we need to use flags
+# and counts inside the route53 module to conditionally
+# create the resources.
 module "route53" {
   source = "modules/route53"
 
   domain_name        = "${var.dns_name}.${local.dns_zone}"
   zone_domain_name   = "${local.dns_zone}"
-  target_dns_name    = "${var.webservice ? element(concat(module.cloudfront.dns_name, list("")), 0) : ""}"
-  target_dns_zone_id = "${var.webservice ? element(concat(module.cloudfront.dns_zone_id, list("")), 0) : ""}"
+  target_dns_name    = "${var.webservice ? local.target_dns_name : ""}"
+  target_dns_zone_id = "${var.webservice ? local.target_dns_zone : ""}"
   enable             = "${var.webservice}"
 }
 
@@ -170,12 +178,12 @@ module "route53" {
 module "cloudfront" {
   source = "modules/cloudfront"
 
-  origin_domain        = "${var.webservice ? element(concat(module.alb.dns_name, list("")), 0) : ""}"
+  origin_domain        = "${local.cloudfront ? element(concat(module.alb.dns_name, list("")), 0) : ""}"
   origin_id            = "${var.cluster}_${var.workspace}_${var.name}_origin"
   aliases              = ["${local.aliases}"]
   ssl_cert_domain_name = "*.${local.ssl_cert_domain_name}"
   enable_distribution  = true
-  enable               = "${var.webservice}"
+  enable               = "${local.cloudfront}"
 }
 
 # ==============
