@@ -1,5 +1,0 @@
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-export PATH="$HOME/miniconda/bin:$PATH"
-source activate agdc
-cd $HOME
