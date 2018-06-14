@@ -1,0 +1,184 @@
+{
+	"info": {
+		"_postman_id": "84856693-97c8-4f92-b873-20983acd8f11",
+		"name": "Sentinel 2 Near Real Time",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Capabilities",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f5717675-84e4-4c90-8f31-074ec77a09c7",
+						"type": "text/javascript",
+						"exec": [
+							"var _ = require('lodash');",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = xml2Json(responseBody);",
+							"var caps = jsonData.WMS_Capabilities;",
+							"",
+							"pm.test(\"Test product names\", function () {",
+							"    function extractNestedLayers(layer) {",
+							"        l = layer.Layer;",
+							"        if (_.isArrayLike(l)) {",
+							"            return _.flatten(l);",
+							"        }",
+							"        return l;",
+							"    }",
+							"    var layers = _.flatMapDeep(caps.Capability.Layer.Layer, extractNestedLayers);",
+							"    var names  = _.map(layers, function(l) {",
+							"        return l.Name;",
+							"    });",
+							"    pm.expect(layers).to.have.lengthOf(4);",
+							"    pm.expect(names).to.include(\"s2b_nrt_granule_nbar_t\");",
+							"    pm.expect(names).to.include(\"s2a_nrt_granule_nbar_t\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{path}}/?service=WMS&request=GetCapabilities&version=1.3.0&tiled=true",
+					"host": [
+						"{{path}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "service",
+							"value": "WMS"
+						},
+						{
+							"key": "request",
+							"value": "GetCapabilities"
+						},
+						{
+							"key": "version",
+							"value": "1.3.0"
+						},
+						{
+							"key": "tiled",
+							"value": "true"
+						}
+					]
+				},
+				"description": "Get Capabilities"
+			},
+			"response": []
+		},
+		{
+			"name": "GetMap - Zoomed out",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9fedaf35-b555-423e-bd89-e8035efe6b24",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present and is PNG\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\", \"image/png\");",
+							"});",
+							"",
+							"pm.test(\"Image is equal\", function() {",
+							"    pm.expect(btoa(pm.response.stream)).to.equal(data.zoomedoutdata);",
+							"});",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{path}}?time=2018-04-11&srs=EPSG%3A3857&transparent=true&format=image%2Fpng&exceptions=application%2Fvnd.ogc.se_xml&styles=&tiled=true&feature_count=101&service=WMS&version=1.1.1&request=GetMap&layers=s2b_nrt_granule_nbar_t&bbox=15028131.257091936%2C-5009377.085697312%2C16280475.528516259%2C-3757032.814272985&width=256&height=256",
+					"host": [
+						"{{path}}"
+					],
+					"query": [
+						{
+							"key": "time",
+							"value": "2018-04-11"
+						},
+						{
+							"key": "srs",
+							"value": "EPSG%3A3857"
+						},
+						{
+							"key": "transparent",
+							"value": "true"
+						},
+						{
+							"key": "format",
+							"value": "image%2Fpng"
+						},
+						{
+							"key": "exceptions",
+							"value": "application%2Fvnd.ogc.se_xml"
+						},
+						{
+							"key": "styles",
+							"value": ""
+						},
+						{
+							"key": "tiled",
+							"value": "true"
+						},
+						{
+							"key": "feature_count",
+							"value": "101"
+						},
+						{
+							"key": "service",
+							"value": "WMS"
+						},
+						{
+							"key": "version",
+							"value": "1.1.1"
+						},
+						{
+							"key": "request",
+							"value": "GetMap"
+						},
+						{
+							"key": "layers",
+							"value": "s2b_nrt_granule_nbar_t"
+						},
+						{
+							"key": "bbox",
+							"value": "15028131.257091936%2C-5009377.085697312%2C16280475.528516259%2C-3757032.814272985"
+						},
+						{
+							"key": "width",
+							"value": "256"
+						},
+						{
+							"key": "height",
+							"value": "256"
+						}
+					]
+				},
+				"description": "Test a GetMap request in a zoomed out region"
+			},
+			"response": []
+		}
+	]
+}

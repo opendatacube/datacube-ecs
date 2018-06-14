@@ -1,5 +1,5 @@
 output "wms_endpoint" {
-  value = "${local.aliases}"
+  value = "${module.route53.fqdn}"
 }
 
 output "db" {

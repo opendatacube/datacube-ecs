@@ -13,12 +13,16 @@ branches:
 before_install:
 - sudo apt-get update -qq
 - sudo pip install awscli
+language: node_js
+node_js:
+  "8.2.1"
 install:
 - curl -o terraform.zip $(echo "https://releases.hashicorp.com/terraform/$(curl -s
   https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')/terraform_$(curl
   -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r -M '.current_version')_linux_amd64.zip")
 - unzip terraform.zip && sudo mv terraform /usr/local/bin/terraform
 - terraform -v
+- npm install newman
 script:
 - cd infrastructure
 - terraform init -backend-config backend-prod.cfg
@@ -26,6 +30,9 @@ script:
 - terraform plan -input=false -var-file="workspaces/$WORKSPACE/terraform.tfvars" -var 'cluster=datacube-prod'
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then terraform apply -auto-approve -var-file="workspaces/$WORKSPACE/terraform.tfvars" -var 'cluster=datacube-prod'
   -input=false; fi
+- address=$(terraform output wms_endpoint)
+- cd ..
+- ./run_tests.sh "${address}"
 notifications:
   slack:
     secure: XKvkExv3yLq4o+bXenBUML9K+WDiiUahejkq/wEekpk4jJWUUbqP7Pm2o+CDisUb+AJL/0ajcX98jwuIn9L0TMTxL4JBEE5zhbh1VaN3vlwhXJwPiAdqV56saccoDzUgUuCNh8da6garwFRsny/TBCVqznkfzD5sICME6YbgKfdfaFO8jY4XIIpZVVBtxChRDcifH/ibiSvmk+waE9PjOw9VwnRBvVM8y/kbKd4ZAnGom3Kdm1nAtZ93GPYuz4J402HpXafdX6wgGoObASuilzvv8Y1V64JsfeRjiJ8230EzqEOxTXiQbQ3Q2LLDbEeduN6RUarQ8gTXFjslKW+wniIQEGN+em7/tUAidfS5PEXB645nKRfdlXRuIBKX2eYEBCmHUAF8+w0ZZKLTefgQtbcPwqJpVrOF22Ydd+MxOPXqvVrHOXGs0ZmrBRalGwAdTLlkLcQpuXkHukxzAwDkRmEo7AFoJMdLa6L6ayBL0qU8J07n6mK4HVFkJW3aV8Tpwm10ShjKi5HHBP5WuGinuTk7bzzC5bXWHiM3FLmRilH+MurqEaC6mZOz8ShkEfOhubuSgHw8glenIjfzVW9vks7ApMumzyd9nsifBBj5pLKvzNH0eTeHONI3ej3/FtiuHQhwyVVjd71+5/eML9qRXjPiqkbXQTY2q2TEFEjnNB4=
