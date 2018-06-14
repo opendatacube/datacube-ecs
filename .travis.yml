@@ -3,6 +3,7 @@ env:
   - AWS_DEFAULT_REGION=ap-southeast-2
   - IMAGE=geoscienceaustralia/datacube-wms:aux_setup
   matrix:
+  - WORKSPACE=nrt-au
   - WORKSPACE=nrt
 sudo: required
 services:
