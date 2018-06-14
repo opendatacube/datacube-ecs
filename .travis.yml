@@ -25,10 +25,10 @@ install:
 - npm install newman
 script:
 - cd infrastructure
-- terraform init -backend-config backend-prod.cfg
+- terraform init -backend-config backend-dev.cfg
 - terraform workspace new $WORKSPACE || terraform workspace select $WORKSPACE
-- terraform plan -input=false -var-file="workspaces/$WORKSPACE/terraform.tfvars" -var 'cluster=datacube-prod'
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then terraform apply -auto-approve -var-file="workspaces/$WORKSPACE/terraform.tfvars" -var 'cluster=datacube-prod'
+- terraform plan -input=false -var-file="workspaces/$WORKSPACE/terraform.tfvars" -var 'cluster=datacube-dev'
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then terraform apply -auto-approve -var-file="workspaces/$WORKSPACE/terraform.tfvars" -var 'cluster=datacube-dev'
   -input=false; fi
 - address=$(terraform output wms_endpoint)
 - cd ..
