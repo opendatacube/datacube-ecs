@@ -31,7 +31,7 @@ script:
 - terraform plan -input=false -var-file="workspaces/$WORKSPACE/terraform.tfvars" -var 'cluster=datacube-dev'
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then terraform apply -auto-approve -var-file="workspaces/$WORKSPACE/terraform.tfvars" -var 'cluster=datacube-dev'
   -input=false; fi
-- address=$(terraform output wms_endpoint)
+- address=$(terraform output alb_endpoint)
 - cd ..
 - ./run_tests.sh "${address}"
 notifications:

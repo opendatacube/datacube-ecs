@@ -3,7 +3,7 @@ output "wms_endpoint" {
 }
 
 output "alb_endpoint" {
-  value = "${element(concat(module.alb.dns_name, list("")), 0)}}"
+  value = "${element(concat(module.alb.dns_name, list("")), 0)}"
 }
 
 output "db" {

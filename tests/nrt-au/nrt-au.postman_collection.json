@@ -12,7 +12,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "f5717675-84e4-4c90-8f31-074ec77a09c7",
+						"id": "70234c37-ba98-424b-a795-c76931a1a88e",
 						"type": "text/javascript",
 						"exec": [
 							"var _ = require('lodash');",
@@ -25,20 +25,10 @@
 							"var caps = jsonData.WMS_Capabilities;",
 							"",
 							"pm.test(\"Test product names\", function () {",
-							"    function extractNestedLayers(layer) {",
-							"        l = layer.Layer;",
-							"        if (_.isArrayLike(l)) {",
-							"            return _.flatten(l);",
-							"        }",
-							"        return l;",
-							"    }",
-							"    var layers = _.flatMapDeep(caps.Capability.Layer.Layer, extractNestedLayers);",
-							"    var names  = _.map(layers, function(l) {",
-							"        return l.Name;",
-							"    });",
-							"    pm.expect(layers).to.have.lengthOf(4);",
-							"    pm.expect(names).to.include(\"s2b_nrt_granule_nbar_t\");",
-							"    pm.expect(names).to.include(\"s2a_nrt_granule_nbar_t\");",
+							"    var layers = caps.Capability.Layer.Layer.Layer;",
+							"",
+							"    pm.expect(layers[0].Name).to.equal(\"s2b_nrt_granule_nbar_t\");",
+							"    pm.expect(layers[1].Name).to.equal(\"s2a_nrt_granule_nbar_t\");",
 							"});"
 						]
 					}
