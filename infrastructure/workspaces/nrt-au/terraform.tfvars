@@ -5,7 +5,7 @@ workspace = "s2-nrt-au"
 webservice = true
 
 # The number of containers to run at once
-task_desired_count = 1
+task_desired_count = 5
 
 # The name of the database
 database = "nrtau"
@@ -13,7 +13,7 @@ database = "nrtau"
 # The name of the service
 name = "datacube-wms-s2-au"
 
-docker_image = "opendatacube/wms:latest"
+docker_image = "opendatacube/wms:0.2.3"
 
 # Command to run on the container
 docker_command = "gunicorn -b 0.0.0.0:8000 -w 4 --timeout 60 datacube_wms.wsgi"
@@ -33,3 +33,5 @@ alb_name = "s2-nrt-au"
 enable_https = true
 
 ssl_cert_region = "ap-southeast-2"
+
+use_cloudfront = true
