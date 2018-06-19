@@ -1,0 +1,171 @@
+{
+	"info": {
+		"_postman_id": "888b8104-82d6-4c7e-aaec-cdcbe995faef",
+		"name": "Sentinel 2 Near Real Time",
+		"description": "All of Australia Sentinel 2 Near Real Time",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Capabilities",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "70234c37-ba98-424b-a795-c76931a1a88e",
+						"type": "text/javascript",
+						"exec": [
+							"var _ = require('lodash');",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = xml2Json(responseBody);",
+							"var caps = jsonData.WMS_Capabilities;",
+							"",
+							"pm.test(\"Test product names\", function () {",
+							"    var layers = caps.Capability.Layer.Layer.Layer;",
+							"",
+							"    pm.expect(layers[0].Name).to.equal(\"s2b_nrt_granule_nbar_t\");",
+							"    pm.expect(layers[1].Name).to.equal(\"s2a_nrt_granule_nbar_t\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{path}}/?service=WMS&request=GetCapabilities&version=1.3.0&tiled=true",
+					"host": [
+						"{{path}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "service",
+							"value": "WMS"
+						},
+						{
+							"key": "request",
+							"value": "GetCapabilities"
+						},
+						{
+							"key": "version",
+							"value": "1.3.0"
+						},
+						{
+							"key": "tiled",
+							"value": "true"
+						}
+					]
+				},
+				"description": "Get Capabilities"
+			},
+			"response": []
+		},
+		{
+			"name": "GetMap - Zoomed out",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "041f6293-e8ff-44df-8d1f-f55ca069447c",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present and is PNG\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\", \"image/png\");",
+							"});",
+							"",
+							"pm.test(\"Image is not empty\", function() {",
+							"    pm.expect(btoa(pm.response.stream)).to.not.equal(data.emptydata);",
+							"});",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{path}}?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX=-44.73346967119707074,110.3178972847848769,-9.027271042420421665,156.1015050585992583&CRS=EPSG:4326&WIDTH=510&HEIGHT=652&LAYERS=s2b_nrt_granule_nbar_t&STYLES=&FORMAT=image/png&DPI=72&MAP_RESOLUTION=72&FORMAT_OPTIONS=dpi:72&TRANSPARENT=TRUE",
+					"host": [
+						"{{path}}"
+					],
+					"query": [
+						{
+							"key": "SERVICE",
+							"value": "WMS"
+						},
+						{
+							"key": "VERSION",
+							"value": "1.3.0"
+						},
+						{
+							"key": "REQUEST",
+							"value": "GetMap"
+						},
+						{
+							"key": "BBOX",
+							"value": "-44.73346967119707074,110.3178972847848769,-9.027271042420421665,156.1015050585992583"
+						},
+						{
+							"key": "CRS",
+							"value": "EPSG:4326"
+						},
+						{
+							"key": "WIDTH",
+							"value": "510"
+						},
+						{
+							"key": "HEIGHT",
+							"value": "652"
+						},
+						{
+							"key": "LAYERS",
+							"value": "s2b_nrt_granule_nbar_t"
+						},
+						{
+							"key": "STYLES",
+							"value": ""
+						},
+						{
+							"key": "FORMAT",
+							"value": "image/png"
+						},
+						{
+							"key": "DPI",
+							"value": "72"
+						},
+						{
+							"key": "MAP_RESOLUTION",
+							"value": "72"
+						},
+						{
+							"key": "FORMAT_OPTIONS",
+							"value": "dpi:72"
+						},
+						{
+							"key": "TRANSPARENT",
+							"value": "TRUE"
+						}
+					]
+				},
+				"description": "Test a GetMap request in a zoomed out region"
+			},
+			"response": []
+		}
+	]
+}

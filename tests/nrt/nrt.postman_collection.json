@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "84856693-97c8-4f92-b873-20983acd8f11",
-		"name": "Sentinel 2 Near Real Time",
+		"_postman_id": "c094cf7f-5a97-41a1-a0a7-84ab0886f99c",
+		"name": "Sentinel 2 Near Real Time MDBA",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -46,7 +46,10 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{path}}/?service=WMS&request=GetCapabilities&version=1.3.0&tiled=true",
 					"host": [
@@ -107,7 +110,10 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{path}}?time=2018-04-11&srs=EPSG%3A3857&transparent=true&format=image%2Fpng&exceptions=application%2Fvnd.ogc.se_xml&styles=&tiled=true&feature_count=101&service=WMS&version=1.1.1&request=GetMap&layers=s2b_nrt_granule_nbar_t&bbox=15028131.257091936%2C-5009377.085697312%2C16280475.528516259%2C-3757032.814272985&width=256&height=256",
 					"host": [
