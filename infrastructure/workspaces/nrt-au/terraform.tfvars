@@ -13,7 +13,7 @@ database = "nrtau"
 # The name of the service
 name = "datacube-wms-s2-au"
 
-docker_image = "opendatacube/wms:0.2.3"
+docker_image = "opendatacube/wms:0.2.4"
 
 # Command to run on the container
 docker_command = "gunicorn -b 0.0.0.0:8000 -w 4 --timeout 60 datacube_wms.wsgi"

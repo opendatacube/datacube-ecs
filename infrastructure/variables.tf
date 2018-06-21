@@ -146,3 +146,11 @@ variable "new_database_name" {
   default     = ""
   description = "If this is a datasbase task we will create a new db with this name"
 }
+
+# ==================
+# EFS
+
+variable "use_efs" {
+  default     = false
+  description = "Should be true if EFS is available in cluster and should be used in container"
+}
