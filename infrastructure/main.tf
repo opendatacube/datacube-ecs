@@ -83,6 +83,7 @@ module "container_def" {
     "container_port" = "${var.container_port}"
   }]
 
+  mount_points = "${list(map("container_path", "/opt/data", "source_volume", "volume-0"))}"
   environment = "${local.env_vars}"
   command     = ["${compact(split(" ",var.docker_command))}"]
 }

@@ -61,6 +61,11 @@ resource "aws_iam_role" "task_role" {
   ]
 }
 EOF
+
+  provisioner "local-exec" {
+    command = "sleep 60"
+  }
+
 }
 
 resource "aws_iam_policy" "database_task" {
