@@ -14,7 +14,7 @@
 
 usage() { echo "Usage: $0 -p <prefix> -b <bucket> [-s <suffix>] [-y UNSAFE]" 1>&2; exit 1; }
 
-while getopts ":p:b:s:" o; do
+while getopts ":p:b:s:y:d:u:" o; do
     case "${o}" in
         p)
             prefix=${OPTARG}
@@ -30,6 +30,9 @@ while getopts ":p:b:s:" o; do
             ;;
         d)
             product=${OPTARG}
+            ;;
+        u)
+            policy=${OPTARG}
             ;;
     esac
 done
@@ -62,7 +65,7 @@ do
     else
         suffix_string="${suffixes[$i]}"
     fi
-    python3 indexing/ls_s2_cog.py "$b" --prefix "${prefixes[$i]}" ${suffix_string:+"--suffix"} ${suffix_string:+"$suffix_string"} ${safety_arg:+"$safety_arg"}
+    python3 indexing/ls_s2_cog.py "$b" --prefix "${prefixes[$i]}" ${suffix_string:+"--suffix"} ${suffix_string:+"$suffix_string"} ${safety_arg:+"$safety_arg"} ${policy:+"--sources_policy"} ${policy:+"$policy"}
 done
 
 # update ranges in wms database
