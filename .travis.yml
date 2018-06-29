@@ -5,6 +5,7 @@ env:
   matrix:
   - WORKSPACE=nrt-au
   - WORKSPACE=nrt
+  - WORKSPACE=cc-geomedian
 sudo: required
 services:
 - docker
