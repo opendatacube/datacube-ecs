@@ -15,9 +15,9 @@ fi
 # process the json to add the service url
 cat tests/${WORKSPACE}/${WORKSPACE}.data.json\
     | jq --arg SERVICEURL "http://$1" '[.[] | .path = $SERVICEURL]'\
-    > "${WORKSPACE}-data.json"
+    > "${WORKSPACE}.data.json"
 
 newman run tests/${WORKSPACE}/${WORKSPACE}.postman_collection.json -d ${WORKSPACE}.data.json
 success="$?"
-rm "${WORKSPACE}-data.json"
+rm "${WORKSPACE}.data.json"
 exit "$success"

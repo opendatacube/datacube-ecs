@@ -38,7 +38,7 @@ If using `run_tests.sh` the only requirement for `data.json` is each data object
 Using the Postman Collection Runner is the easiest way to test services locally. Make sure to select the corresponding data file for the test collection.
 
 ## Running with Travis
-Following the Postman guide to running with Travis (http://blog.getpostman.com/2017/08/23/integrate-api-tests-with-postman-newman-and-travis-ci/) will get the Travis process up and running. Using the datacube-ecs workspaces we also have a script to automatically run our tests and use data.
+Following the Postman guide to running with Travis (http://blog.getpostman.com/2017/08/23/integrate-api-tests-with-postman-newman-and-travis-ci/) will get the Travis process up and running. If using datacube-ecs workspaces there is a script available to automatically run tests and use data.
 
 ### run_tests.sh
 The URL of the webservice is passed to `run_tests.sh` without protocol. e.g. `run_tests.sh nrt-au.alb.aws.com` The script will update the data file with the URL using HTTP protocol.
