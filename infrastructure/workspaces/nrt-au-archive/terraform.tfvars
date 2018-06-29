@@ -14,7 +14,7 @@ database = "nrtau"
 name = "datacube-wms-s2-au-archive"
 
 # The docker image to deploy
-docker_image = "geoscienceaustralia/datacube-wms:aux_archive"
+docker_image = "opendatacube/wms:archive"
 
 # environment variables configuring the docker container
 environment_vars = {
