@@ -1,0 +1,493 @@
+{
+	"info": {
+		"_postman_id": "9a525e45-1d4e-40dd-9b1b-507843ac4a5d",
+		"name": "Cambodia Cube Geomedian",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Capabilities",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b35ac82c-b5d9-450f-8535-ef2ad607ed39",
+						"type": "text/javascript",
+						"exec": [
+							"var _ = require('lodash');",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = xml2Json(responseBody);",
+							"var caps = jsonData.WMS_Capabilities;",
+							"",
+							"pm.test(\"Test product names\", function () {",
+							"    function extractNestedLayers(layer) {",
+							"        console.log(layer);",
+							"        l = layer.Layer;",
+							"        if (_.isArrayLike(l)) {",
+							"            return _.flatten(l);",
+							"        }",
+							"        console.log(l);",
+							"        return l;",
+							"    }",
+							"    pm.expect(caps.Capability.Layer.Layer.Layer.Name).to.equal(\"ls_level2_geomedian_annual\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{path}}/?service=WMS&request=GetCapabilities&version=1.3.0&tiled=true",
+					"host": [
+						"{{path}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "service",
+							"value": "WMS"
+						},
+						{
+							"key": "request",
+							"value": "GetCapabilities"
+						},
+						{
+							"key": "version",
+							"value": "1.3.0"
+						},
+						{
+							"key": "tiled",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetMap - Zoomed Out 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e6441526-0e27-4623-ad14-dc72b07eb978",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present and is PNG\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\", \"image/png\");",
+							"});",
+							"",
+							"pm.test(\"Image is equal\", function() {",
+							"    pm.expect(btoa(pm.response.stream)).to.equal(data.zoomedoutdata1);",
+							"});",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{path}}/?time=2013-01-01&srs=EPSG%3A3857&transparent=true&format=image%2Fpng&exceptions=application%2Fvnd.ogc.se_xml&styles=&tiled=true&feature_count=101&service=WMS&version=1.1.1&request=GetMap&layers=ls_level2_geomedian_annual&bbox=11271098.44281895%2C1252344.271424327%2C12523442.714243278%2C2504688.542848654&width=256&height=256",
+					"host": [
+						"{{path}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "time",
+							"value": "2013-01-01"
+						},
+						{
+							"key": "srs",
+							"value": "EPSG%3A3857"
+						},
+						{
+							"key": "transparent",
+							"value": "true"
+						},
+						{
+							"key": "format",
+							"value": "image%2Fpng"
+						},
+						{
+							"key": "exceptions",
+							"value": "application%2Fvnd.ogc.se_xml"
+						},
+						{
+							"key": "styles",
+							"value": ""
+						},
+						{
+							"key": "tiled",
+							"value": "true"
+						},
+						{
+							"key": "feature_count",
+							"value": "101"
+						},
+						{
+							"key": "service",
+							"value": "WMS"
+						},
+						{
+							"key": "version",
+							"value": "1.1.1"
+						},
+						{
+							"key": "request",
+							"value": "GetMap"
+						},
+						{
+							"key": "layers",
+							"value": "ls_level2_geomedian_annual"
+						},
+						{
+							"key": "bbox",
+							"value": "11271098.44281895%2C1252344.271424327%2C12523442.714243278%2C2504688.542848654"
+						},
+						{
+							"key": "width",
+							"value": "256"
+						},
+						{
+							"key": "height",
+							"value": "256"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetMap Zoomed Out 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "60e5f25b-6a52-4623-941f-0f219989004b",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present and is PNG\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\", \"image/png\");",
+							"});",
+							"",
+							"pm.test(\"Image is equal\", function() {",
+							"    pm.expect(btoa(pm.response.stream)).to.equal(data.zoomedoutdata2);",
+							"});",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{path}}/?time=2012-01-01&srs=EPSG%3A3857&transparent=true&format=image%2Fpng&exceptions=application%2Fvnd.ogc.se_xml&styles=&tiled=true&feature_count=101&service=WMS&version=1.1.1&request=GetMap&layers=ls_level2_geomedian_annual&bbox=10018754.17139462%2C1252344.271424327%2C11271098.44281895%2C2504688.542848654&width=256&height=256",
+					"host": [
+						"{{path}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "time",
+							"value": "2012-01-01"
+						},
+						{
+							"key": "srs",
+							"value": "EPSG%3A3857"
+						},
+						{
+							"key": "transparent",
+							"value": "true"
+						},
+						{
+							"key": "format",
+							"value": "image%2Fpng"
+						},
+						{
+							"key": "exceptions",
+							"value": "application%2Fvnd.ogc.se_xml"
+						},
+						{
+							"key": "styles",
+							"value": ""
+						},
+						{
+							"key": "tiled",
+							"value": "true"
+						},
+						{
+							"key": "feature_count",
+							"value": "101"
+						},
+						{
+							"key": "service",
+							"value": "WMS"
+						},
+						{
+							"key": "version",
+							"value": "1.1.1"
+						},
+						{
+							"key": "request",
+							"value": "GetMap"
+						},
+						{
+							"key": "layers",
+							"value": "ls_level2_geomedian_annual"
+						},
+						{
+							"key": "bbox",
+							"value": "10018754.17139462%2C1252344.271424327%2C11271098.44281895%2C2504688.542848654"
+						},
+						{
+							"key": "width",
+							"value": "256"
+						},
+						{
+							"key": "height",
+							"value": "256"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetMap Zoomed In 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fd20fe5f-3869-4d8d-a4de-759027d5a64e",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present and is PNG\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\", \"image/png\");",
+							"});",
+							"",
+							"pm.test(\"Image is equal\", function() {",
+							"    pm.expect(btoa(pm.response.stream)).to.equal(data.zoomedindata1);",
+							"});",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{path}}/?time=2015-01-01&srs=EPSG%3A3857&transparent=true&format=image%2Fpng&exceptions=application%2Fvnd.ogc.se_xml&styles=&tiled=true&feature_count=101&service=WMS&version=1.1.1&request=GetMap&layers=ls_level2_geomedian_annual&bbox=11789647.242705584%2C1037097.5997732729%2C11799431.18232609%2C1046881.5393937752&width=256&height=256",
+					"host": [
+						"{{path}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "time",
+							"value": "2015-01-01"
+						},
+						{
+							"key": "srs",
+							"value": "EPSG%3A3857"
+						},
+						{
+							"key": "transparent",
+							"value": "true"
+						},
+						{
+							"key": "format",
+							"value": "image%2Fpng"
+						},
+						{
+							"key": "exceptions",
+							"value": "application%2Fvnd.ogc.se_xml"
+						},
+						{
+							"key": "styles",
+							"value": ""
+						},
+						{
+							"key": "tiled",
+							"value": "true"
+						},
+						{
+							"key": "feature_count",
+							"value": "101"
+						},
+						{
+							"key": "service",
+							"value": "WMS"
+						},
+						{
+							"key": "version",
+							"value": "1.1.1"
+						},
+						{
+							"key": "request",
+							"value": "GetMap"
+						},
+						{
+							"key": "layers",
+							"value": "ls_level2_geomedian_annual"
+						},
+						{
+							"key": "bbox",
+							"value": "11789647.242705584%2C1037097.5997732729%2C11799431.18232609%2C1046881.5393937752"
+						},
+						{
+							"key": "width",
+							"value": "256"
+						},
+						{
+							"key": "height",
+							"value": "256"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetMap Zoomed In 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b5c0bbfe-6e8a-475a-89b2-dc9d954bf970",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present and is PNG\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\", \"image/png\");",
+							"});",
+							"",
+							"pm.test(\"Image is equal\", function() {",
+							"    pm.expect(btoa(pm.response.stream)).to.equal(data.zoomedindata2);",
+							"});",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{path}}/?time=2016-01-01&srs=EPSG%3A3857&transparent=true&format=image%2Fpng&exceptions=application%2Fvnd.ogc.se_xml&styles=&tiled=true&feature_count=101&service=WMS&version=1.1.1&request=GetMap&layers=ls_level2_geomedian_annual&bbox=11785978.265347898%2C1039543.5846783966%2C11787201.25780046%2C1040766.5771309584&width=256&height=256",
+					"host": [
+						"{{path}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "time",
+							"value": "2016-01-01"
+						},
+						{
+							"key": "srs",
+							"value": "EPSG%3A3857"
+						},
+						{
+							"key": "transparent",
+							"value": "true"
+						},
+						{
+							"key": "format",
+							"value": "image%2Fpng"
+						},
+						{
+							"key": "exceptions",
+							"value": "application%2Fvnd.ogc.se_xml"
+						},
+						{
+							"key": "styles",
+							"value": ""
+						},
+						{
+							"key": "tiled",
+							"value": "true"
+						},
+						{
+							"key": "feature_count",
+							"value": "101"
+						},
+						{
+							"key": "service",
+							"value": "WMS"
+						},
+						{
+							"key": "version",
+							"value": "1.1.1"
+						},
+						{
+							"key": "request",
+							"value": "GetMap"
+						},
+						{
+							"key": "layers",
+							"value": "ls_level2_geomedian_annual"
+						},
+						{
+							"key": "bbox",
+							"value": "11785978.265347898%2C1039543.5846783966%2C11787201.25780046%2C1040766.5771309584"
+						},
+						{
+							"key": "width",
+							"value": "256"
+						},
+						{
+							"key": "height",
+							"value": "256"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
