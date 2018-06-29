@@ -14,12 +14,12 @@ database = "nrtau"
 name = "datacube-wms-s2-au-index"
 
 # The docker image to deploy
-docker_image = "geoscienceaustralia/datacube-wms:aux_index"
+docker_image = "opendatacube/wms:index"
 
 # environment variables configuring the docker container
 environment_vars = {
   "DC_S3_INDEX_BUCKET" = "dea-public-data"
-  "DC_S3_INDEX_PREFIX" = " "
+  "DC_S3_INDEX_PREFIX" = "L2/sentinel-2-nrt/S2MSIARD/"
   "DC_S3_INDEX_SUFFIX" = "ARD-METADATA.yaml"
   "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/GeoscienceAustralia/dea-config/master/prod/services/wms/nrt-au/wms_cfg.py"
 }

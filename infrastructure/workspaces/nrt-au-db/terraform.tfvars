@@ -18,7 +18,7 @@ memory = 512
 name = "datacube-wms-s2-au-db"
 
 # The docker image to deploy
-docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
+docker_image = "opendatacube/wms:setup"
 
 environment_vars = {
   "PRODUCT_URLS" = "raw.githubusercontent.com/GeoscienceAustralia/dea-config/master/prod/products/nrt/sentinel/products.yaml"
