@@ -67,7 +67,7 @@ def add_dataset(doc, uri, rules, index):
     dataset = create_dataset(doc, uri, rules)
 
     try:
-        index.datasets.add(dataset) # Source policy to be checked in sentinel 2 datase types 
+        index.datasets.add(dataset, sources_policy='skip') # Source policy to be checked in sentinel 2 datase types 
     except changes.DocumentMismatchError as e:
         index.datasets.update(dataset, {tuple(): changes.allow_any})
 

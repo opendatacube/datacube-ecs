@@ -17,7 +17,7 @@ new_database_name = "geomedian-au"
 name = "datacube-wms-g-au-db"
 
 # The docker image to deploy
-docker_image = "geoscienceaustralia/datacube-wms:aux_setup"
+docker_image = "opendatacube/wms:setup"
 
 environment_vars = {
   "PRODUCT_URLS" = "raw.githubusercontent.com/GeoscienceAustralia/digitalearthau/develop/digitalearthau/config/products/geomedian_nbart_annual.yaml"

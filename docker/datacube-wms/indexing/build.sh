@@ -5,4 +5,4 @@ mkdir -p assets/code
 cp ../../../indexer/ls_s2_cog.py assets/
 
 # Run docker
-docker build -f index-Dockerfile -t geoscienceaustralia/datacube-wms:aux_index .
+docker build --no-cache -f index-Dockerfile -t geoscienceaustralia/datacube-wms:aux_index .

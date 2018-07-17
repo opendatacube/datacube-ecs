@@ -14,18 +14,20 @@ database = "geomedian-au"
 name = "datacube-wms-au-index"
 
 # The docker image to deploy
-docker_image = "geoscienceaustralia/datacube-wms:aux_index"
+docker_image = "opendatacube/wms:index"
 
 # environment variables configuring the docker container
 environment_vars = {
   "DC_S3_INDEX_BUCKET" = "dea-public-data"
-  "DC_S3_INDEX_PREFIX" = "Geomedian-AU/test_folder/"
+  "DC_S3_INDEX_PREFIX" = "geomedian-australia/v2.1.0/L8"
   "DC_S3_INDEX_SUFFIX" = ".yaml"
-  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/GeoscienceAustralia/dea-config/master/dev/services/wms/geomedian-au/wms_cfg.py"
+  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/GeoscienceAustralia/dea-config/geomedian-au/prod/services/wms/geomedian-au/wms_cfg.py"
 }
 
-schedulable = true
 
 memory = 16384
 
-schedule_expression = "cron(1 0 * * ? *)"
+schedulable = false
+
+
+schedule_expression = "cron(1 14 * * ? *)"
