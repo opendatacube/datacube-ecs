@@ -53,6 +53,11 @@ resource "aws_cloudfront_distribution" "cloudfront" {
     ssl_support_method  = "sni-only"
   }
 
+  logging_config {
+    bucket = "${var.log_bucket}"
+    prefix = "${var.log_prefix}"
+  }
+
   price_class = "${var.price_class}"
 }
 

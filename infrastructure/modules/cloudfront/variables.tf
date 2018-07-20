@@ -73,3 +73,13 @@ variable "enable" {
   default     = false
   description = "Whether the cloudfront distribution should be created"
 }
+
+variable "log_bucket" {
+  default = "dea-cloudfront-logs.s3.amazonaws.com"
+  description = "S3 Bucket to store logs"
+}
+
+variable "log_prefix" {
+  default = ""
+  description = "Prefix for logs in this distribution"
+}
