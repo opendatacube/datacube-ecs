@@ -134,6 +134,11 @@ variable "use_cloudfront" {
   description = "If true, will create a Cloudfront distribution. Must be used with webservice=true"
 }
 
+variable "cloudfront_log_bucket" {
+  default     = "dea-cloudfront-logs.s3.amazonaws.com"
+  description = "S3 Bucket to store cloudfront logs"
+}
+
 # ==================
 # DB Task
 

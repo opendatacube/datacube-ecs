@@ -185,6 +185,8 @@ module "cloudfront" {
   ssl_cert_domain_name = "*.${local.ssl_cert_domain_name}"
   enable_distribution  = true
   enable               = "${local.cloudfront}"
+  log_bucket           = "${var.cloudfront_log_bucket}"
+  log_prefix           = "${var.cluster}_${var.workspace}_${var.name}"
 }
 
 # ==============
