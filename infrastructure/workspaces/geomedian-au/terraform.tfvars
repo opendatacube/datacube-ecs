@@ -2,7 +2,7 @@
 workspace = "geomedian-au"
 
 # The number of containers to run at once
-task_desired_count = 20
+task_desired_count = 50
 
 # The name of the database
 database = "geomedian-au"
@@ -17,14 +17,14 @@ docker_image = "opendatacube/wms:0.2.5"
 docker_command = "gunicorn -b 0.0.0.0:8000 -w 4 --timeout 300 datacube_wms.wsgi"
 
 environment_vars = {
-  "WMS_CONFIG_URL" = "https://raw.githubusercontent.com/GeoscienceAustralia/dea-config/geomedian-au/dev/services/wms/geomedian-au/wms_cfg.py"
+  "WMS_CONFIG_URL" = "https://raw.githubusercontent.com/GeoscienceAustralia/dea-config/master/prod/services/wms/geomedian-au/wms_cfg.py"
 }
 
 # DNS address for the WMS service
 dns_name = "geomedianau"
 
 # Memory for each container
-memory = 16384 
+memory = 4096 
 
 alb_name = "geomedianau"
 

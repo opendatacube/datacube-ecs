@@ -19,13 +19,13 @@ docker_image = "opendatacube/wms:index"
 # environment variables configuring the docker container
 environment_vars = {
   "DC_S3_INDEX_BUCKET" = "dea-public-data"
-  "DC_S3_INDEX_PREFIX" = "geomedian-australia/v2.1.0/L8"
+  "DC_S3_INDEX_PREFIX" = "geomedian-australia/v2.1.0/"
   "DC_S3_INDEX_SUFFIX" = ".yaml"
-  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/GeoscienceAustralia/dea-config/geomedian-au/prod/services/wms/geomedian-au/wms_cfg.py"
+  "WMS_CONFIG_URL"     = "https://raw.githubusercontent.com/GeoscienceAustralia/dea-config/master/prod/services/wms/geomedian-au/wms_cfg.py"
 }
 
 
-memory = 16384
+memory = 65536
 
 schedulable = false
 
