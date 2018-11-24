@@ -1,5 +1,8 @@
 # Datacube ECS
 
+:warning: This repository is no longer being actively maintained, you should consider using our kubernetes helm charts instead [datacube-charts](https://github.com/opendatacube/datacube-charts/) - if you want to take over the maintenance of this repo please get in touch via slack.opendatacube.org :warning:
+
+
 [![Build Status](https://travis-ci.org/GeoscienceAustralia/terraform-ecs.svg?branch=master)](https://travis-ci.org/GeoscienceAustralia/terraform-ecs)
 
 This repository contains the Terraform modules for creating a production ready ECS app in AWS [terraform-ecs](https://github.com/GeoscienceAustralia/terraform-ecs) to define the base ECS cluster.
